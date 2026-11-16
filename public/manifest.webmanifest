@@ -1,0 +1,10 @@
+{
+  "name": "Arrival",
+  "short_name": "Arrival",
+  "description": "You move. We handle the paperwork.",
+  "start_url": "/home",
+  "display": "standalone",
+  "background_color": "#f6f7fb",
+  "theme_color": "#0b0f5c",
+  "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+}

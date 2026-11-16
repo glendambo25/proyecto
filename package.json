@@ -1,0 +1,41 @@
+{
+  "name": "arrival-app",
+  "version": "1.0.0",
+  "description": "MVP: international mobility paperwork assistant",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/glendambo25/proyecto.git"
+  },
+  "keywords": [],
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/glendambo25/proyecto/issues"
+  },
+  "homepage": "https://github.com/glendambo25/proyecto#readme",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.8.0",
+    "leaflet": "^1.9.4",
+    "next": "^16.4.6",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "react-leaflet": "^5.0.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.5",
+    "@types/leaflet": "^1.9.22",
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "postcss": "^8.5.33",
+    "tailwindcss": "^4.3.5",
+    "typescript": "^5.9.3"
+  },
+  "private": true
+}
