@@ -40,6 +40,7 @@ export default function Tasks() {
 
         <DependencyMap tasks={checklist.filter((t) => t.phase !== "return")} statuses={statuses} />
 
+        <div className="space-y-8 lg:grid lg:grid-cols-2 lg:gap-x-12 lg:gap-y-10 lg:space-y-0">
         {phases.map((ph) => {
           const list = checklist.filter((t) => t.phase === ph);
           if (!list.length) return null;
@@ -85,6 +86,7 @@ export default function Tasks() {
             </section>
           );
         })}
+        </div>
       </div>
     </main>
   );

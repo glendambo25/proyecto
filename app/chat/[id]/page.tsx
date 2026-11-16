@@ -19,7 +19,7 @@ export default function Thread({ params }: { params: Promise<{ id: string }> }) 
   if (!t) return <Header title="Chat not found" back="/chat" />;
 
   return (
-    <main className="flex min-h-[calc(100dvh-8rem)] flex-col">
+    <main className="mx-auto flex min-h-[calc(100dvh-8rem)] max-w-3xl flex-col">
       <Header back="/chat" eyebrow={`${t.group} · ${t.role}`} title={t.name} right={<Monogram name={t.name} seed={all.indexOf(t)} size={36} />} />
       <div className="flex-1 space-y-2 px-5">
         {t.messages.map((m, i) => (
@@ -35,7 +35,7 @@ export default function Thread({ params }: { params: Promise<{ id: string }> }) 
         {extra.length > 0 && <p className="pt-2 text-center font-mono text-[10.5px] text-ink-3">Demo: messages are not delivered to real people</p>}
       </div>
       <form
-        className="sticky bottom-24 mt-4 px-5"
+        className="sticky bottom-24 lg:bottom-6 mt-4 px-5"
         onSubmit={(e) => {
           e.preventDefault();
           if (!text.trim()) return;

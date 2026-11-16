@@ -122,7 +122,7 @@ export function TaskSources({ task }: { task: Task }) {
 
 export function Header({ eyebrow, title, subtitle, back, right }: { eyebrow?: string; title: React.ReactNode; subtitle?: string; back?: string; right?: React.ReactNode }) {
   return (
-    <header className="px-5 pb-4 pt-6">
+    <header className="px-5 pb-4 pt-6 lg:pb-8 lg:pt-10">
       <div className="mb-5 flex h-9 items-center justify-between">
         {back ? (
           <Link href={back} className="grid h-9 w-9 place-items-center rounded-full border border-line bg-card text-ink transition hover:border-ink" aria-label="Back">
@@ -134,8 +134,8 @@ export function Header({ eyebrow, title, subtitle, back, right }: { eyebrow?: st
         {right}
       </div>
       {back && eyebrow && <p className="eyebrow mb-2">{eyebrow}</p>}
-      <h1 className="display text-[40px]">{title}</h1>
-      {subtitle && <p className="mt-2 text-sm text-ink-2">{subtitle}</p>}
+      <h1 className="display text-[40px] lg:text-[60px]">{title}</h1>
+      {subtitle && <p className="mt-2 max-w-[60ch] text-sm text-ink-2 lg:text-[15px]">{subtitle}</p>}
     </header>
   );
 }

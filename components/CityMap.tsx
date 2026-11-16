@@ -12,9 +12,9 @@ const COLORS: Record<Place["type"], string> = {
   Food: "#b7791f",
 };
 
-export default function CityMap({ center, places }: { center: [number, number]; places: Place[] }) {
+export default function CityMap({ center, places, className = "h-64 w-full" }: { center: [number, number]; places: Place[]; className?: string }) {
   return (
-    <MapContainer center={center} zoom={13} scrollWheelZoom={false} className="h-64 w-full" attributionControl zoomControl={false}>
+    <MapContainer center={center} zoom={13} scrollWheelZoom={false} className={className} attributionControl zoomControl={false}>
       <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
       {places.map((p) => (
         <CircleMarker key={p.id} center={[p.lat, p.lng]} radius={8} pathOptions={{ color: "#fffdf8", weight: 3, fillColor: COLORS[p.type], fillOpacity: 1 }}>

@@ -32,7 +32,7 @@ export default function Documents() {
         }
         subtitle="Every document your checklist asks for, merged. The ones used in several steps come first."
       />
-      <div className="space-y-5 px-5">
+      <div className="space-y-5 px-5 lg:max-w-3xl">
         <div className="flex items-center gap-4">
           <p className="font-serif text-[40px] leading-none">
             {ready}

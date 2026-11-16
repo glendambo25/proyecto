@@ -65,7 +65,7 @@ export default function Deadlines() {
         }
         subtitle="Legal deadlines from official sources. Dates are estimated from your arrival date — the rule itself is what counts."
       />
-      <div className="space-y-6 px-5">
+      <div className="space-y-6 px-5 lg:max-w-3xl">
         <ol className="relative">
           <span className="absolute bottom-4 left-[19px] top-4 w-px bg-line" aria-hidden />
           <li className="flex items-center gap-4 py-3">

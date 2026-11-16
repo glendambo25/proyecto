@@ -96,7 +96,7 @@ function Assistant() {
   };
 
   return (
-    <main className="flex min-h-[calc(100dvh-8rem)] flex-col">
+    <main className="mx-auto flex min-h-[calc(100dvh-8rem)] max-w-3xl flex-col">
       {/* header */}
       <div className="sticky top-0 z-20 flex items-center gap-3 border-b border-line bg-paper/90 px-5 py-3 backdrop-blur">
         <Link href="/chat" className="grid h-9 w-9 place-items-center rounded-full border border-line bg-card" aria-label="Back">
@@ -236,7 +236,7 @@ function Assistant() {
         <div ref={bottom} />
       </div>
 
-      <div className="sticky bottom-24 mt-4 space-y-2 bg-gradient-to-t from-paper via-paper to-transparent px-5 pt-4">
+      <div className="sticky bottom-24 lg:bottom-6 mt-4 space-y-2 bg-gradient-to-t from-paper via-paper to-transparent px-5 pt-4">
         {assistant.length > 0 && !busy && (
           <div className="-mx-5 flex gap-2 overflow-x-auto px-5 pb-1">
             {suggestions.slice(0, 4).map((s) => (

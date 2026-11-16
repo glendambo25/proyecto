@@ -47,8 +47,8 @@ export default function Plans() {
         }
         subtitle="Many universities cover the app for their outgoing students."
       />
-      <div className="space-y-3 px-5">
-        <p className="rounded-2xl border border-dashed border-stamp/40 bg-stamp-soft px-4 py-3 font-mono text-[11px] leading-relaxed text-stamp">
+      <div className="space-y-3 px-5 lg:grid lg:grid-cols-3 lg:items-stretch lg:gap-4 lg:space-y-0">
+        <p className="rounded-2xl border border-dashed border-stamp/40 bg-stamp-soft px-4 py-3 font-mono lg:col-span-3 text-[11px] leading-relaxed text-stamp">
           Pilot Jan 2027 — prices are hypotheses being validated. No payment is taken; we only record interest.
         </p>
         {PLANS.map((p) => {

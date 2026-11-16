@@ -42,7 +42,8 @@ export default function City() {
           </>
         }
       />
-      <div className="space-y-6 px-5">
+      <div className="space-y-6 px-5 lg:grid lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] lg:items-start lg:gap-10 lg:space-y-0">
+        <div className="space-y-6 lg:sticky lg:top-6">
         <label className="flex items-center gap-2 rounded-full border border-line bg-card px-4 py-3 focus-within:border-ink">
           <Search size={16} className="text-ink-3" />
           <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search places" aria-label="Search places" className="flex-1 bg-transparent text-[14px] outline-none" />
@@ -50,8 +51,11 @@ export default function City() {
         <Tabs<F> options={["All", "Housing", "Transport", "Leisure", "Food"]} value={f} onChange={setF} />
 
         <div className="overflow-hidden rounded-[22px] border border-line">
-          <CityMap center={dest.center} places={places} />
+          <CityMap center={dest.center} places={places} className="h-64 w-full lg:h-[560px]" />
         </div>
+        </div>
+
+        <div className="space-y-6">
 
         {(f === "All" || f === "Housing") && (
           <section className="rounded-[26px] bg-stamp p-5 text-white" aria-label="Housing scam alert">
@@ -121,6 +125,7 @@ export default function City() {
           </div>
           <p className="mt-2 font-mono text-[10.5px] text-ink-3">Ratings are sample community data for the demo.</p>
         </section>
+        </div>
       </div>
     </main>
   );

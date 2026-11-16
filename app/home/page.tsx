@@ -25,8 +25,8 @@ export default function Home() {
   const today = new Date().toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" });
 
   return (
-    <main className="px-5 pt-6">
-      <div className="mb-7 flex items-center justify-between">
+    <main className="px-5 pt-6 lg:px-4 lg:pt-10">
+      <div className="mb-7 flex items-center justify-between lg:mb-10">
         <span className="eyebrow">{today}</span>
         <div className="flex items-center gap-2">
           <button onClick={() => setMenu(true)} className="grid h-9 w-9 place-items-center rounded-full border border-line bg-card transition hover:border-ink" aria-label="Open quick menu">
@@ -39,7 +39,9 @@ export default function Home() {
       </div>
       <QuickMenu open={menu} onClose={() => setMenu(false)} />
 
-      <h1 className="display rise text-[46px]">
+      <div className="lg:grid lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:gap-12">
+      <div>
+      <h1 className="display rise text-[46px] lg:text-[72px]">
         Hi, <em className="text-accent">{firstName}</em>.
       </h1>
       <p className="rise mb-6 mt-2 text-[15px] text-ink-2" style={{ animationDelay: "60ms" }}>
@@ -78,8 +80,10 @@ export default function Home() {
           </Link>
         ))}
       </nav>
+      </div>
 
-      <section className="mt-9">
+      <div className="lg:pt-3">
+      <section className="mt-9 lg:mt-0">
         <div className="mb-4 flex items-baseline justify-between">
           <h2 className="font-serif text-[28px] leading-none">Your itinerary</h2>
           <Link href="/tasks" className="inline-flex items-center gap-1 text-[13px] font-semibold text-accent">
@@ -128,6 +132,8 @@ export default function Home() {
           Open assistant <ArrowRight size={14} />
         </span>
       </Link>
+      </div>
+      </div>
     </main>
   );
 }

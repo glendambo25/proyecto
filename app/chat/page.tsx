@@ -28,15 +28,15 @@ export default function Chats() {
           </>
         }
       />
-      <div className="space-y-5 px-5">
-        <Link href="/chat/assistant" className="group block rounded-[26px] bg-ink p-5 text-paper">
+      <div className="space-y-5 px-5 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:items-start lg:gap-10 lg:space-y-0">
+        <Link href="/chat/assistant" className="group block rounded-[26px] bg-ink p-5 text-paper lg:sticky lg:top-6 lg:p-8">
           <div className="flex items-center justify-between">
             <p className="font-mono text-[10.5px] uppercase tracking-[0.16em] text-paper/60">AI assistant · always on</p>
             <span className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider text-paper/70">
               <span className="h-1.5 w-1.5 rounded-full bg-[#7ee0a8]" /> Online
             </span>
           </div>
-          <p className="mt-4 font-serif text-[28px] leading-[1.05]">
+          <p className="mt-4 font-serif text-[28px] leading-[1.05] lg:mt-16 lg:text-[44px]">
             “What do I need to <em>register my address?</em>”
           </p>
           <span className="mt-4 inline-flex items-center gap-2 text-[13px] font-semibold text-paper/90 transition group-hover:gap-3">
@@ -44,6 +44,7 @@ export default function Chats() {
           </span>
         </Link>
 
+        <div className="space-y-5">
         <label className="flex items-center gap-2 rounded-full border border-line bg-card px-4 py-3 focus-within:border-ink">
           <Search size={16} className="text-ink-3" />
           <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search chats" aria-label="Search chats" className="flex-1 bg-transparent text-[14px] outline-none" />
@@ -71,6 +72,7 @@ export default function Chats() {
           ))}
         </ul>
         <p className="text-center font-mono text-[10.5px] text-ink-3">Sample conversations for the demo</p>
+        </div>
       </div>
     </main>
   );

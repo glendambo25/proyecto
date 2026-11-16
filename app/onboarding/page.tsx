@@ -66,22 +66,23 @@ export default function Onboarding() {
 
   if (step === -1)
     return (
-      <main className="flex min-h-dvh flex-col px-6 pb-10 pt-8">
+      <main className="mx-auto flex min-h-dvh max-w-[440px] flex-col px-6 pb-10 pt-8 lg:grid lg:max-w-none lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:gap-20 lg:px-14 lg:pt-12">
+        <div className="flex flex-col lg:sticky lg:top-0 lg:h-[calc(100dvh-6rem)]">
         <div className="flex items-center justify-between">
-          <span className="font-serif text-2xl">{APP_NAME}</span>
+          <span className="font-serif text-2xl lg:text-3xl">{APP_NAME}</span>
           <span className="eyebrow">Pilot · 2027</span>
         </div>
 
-        <div className="mt-12">
+        <div className="mt-12 lg:mt-auto">
           <p className="eyebrow mb-4">For students, interns & movers</p>
-          <h1 className="display rise text-[64px]">
+          <h1 className="display rise text-[64px] lg:text-[112px]">
             You move.
             <br />
             <em className="text-accent">We handle</em>
             <br />
             the paperwork.
           </h1>
-          <p className="mt-6 max-w-[34ch] text-[15px] leading-relaxed text-ink-2">
+          <p className="mt-6 max-w-[34ch] text-[15px] leading-relaxed text-ink-2 lg:max-w-[44ch] lg:text-[18px]">
             A checklist for your city, passport and reason for moving — in the right order, with the official source and the date we last checked it.
           </p>
         </div>
@@ -95,13 +96,14 @@ export default function Onboarding() {
           ))}
         </div>
 
-        <div className="mt-auto pt-10">
-          <button className="btn-primary w-full" onClick={() => setStep(0)}>
+        <div className="mt-auto pt-10 lg:mt-10 lg:pt-0">
+          <button className="btn-primary w-full lg:w-auto lg:px-8" onClick={() => setStep(0)}>
             Build my checklist <ArrowRight size={16} />
           </button>
         </div>
+        </div>
 
-        <section className="mt-12">
+        <section className="mt-12 lg:mt-0 lg:self-center">
           <div className="mb-3 flex items-baseline justify-between">
             <h2 className="font-serif text-[26px]">Or try a demo traveller</h2>
           </div>
@@ -141,7 +143,7 @@ export default function Onboarding() {
     );
 
   return (
-    <main className="flex min-h-dvh flex-col px-6 pb-8 pt-6">
+    <main className="mx-auto flex min-h-dvh max-w-[440px] flex-col px-6 pb-8 pt-6 lg:max-w-xl lg:pt-12">
       <div className="flex items-center justify-between">
         <button onClick={() => setStep(step - 1)} className="grid h-9 w-9 place-items-center rounded-full border border-line bg-card" aria-label="Back">
           <ArrowLeft size={16} />

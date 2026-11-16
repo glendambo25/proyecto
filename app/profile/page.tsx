@@ -55,7 +55,7 @@ export default function Profile() {
   return (
     <main>
       <Header eyebrow="Profile" title={profile.name.split(" ")[0]} />
-      <div className="space-y-7 px-5">
+      <div className="space-y-7 px-5 lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-10 lg:gap-y-8 lg:space-y-0">
         <section className="-mt-2 flex items-center gap-4">
           <span className="grid h-20 w-20 shrink-0 place-items-center rounded-full bg-ink font-serif text-[32px] text-paper">{initials}</span>
           <div>

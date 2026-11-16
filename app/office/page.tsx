@@ -63,7 +63,7 @@ export default function Office() {
   const count = (t: string) => events.filter((e) => e.type === t).length;
 
   return (
-    <main className="space-y-6 p-5">
+    <main className="space-y-6 p-5 lg:p-10">
       <header className="flex flex-wrap items-end justify-between gap-2">
         <div>
           <p className="eyebrow">International office · B2B view</p>
