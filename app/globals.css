@@ -1,53 +1,187 @@
 @import "tailwindcss";
 
+/*
+ * Visual language: an editorial travel document.
+ * Warm paper, navy ink, one indigo accent, a tangerine "stamp" colour for deadlines.
+ * Serif display (Instrument Serif) for voice, Plus Jakarta Sans for reading,
+ * IBM Plex Mono for the ticket-like metadata.
+ */
 @theme {
-  --color-navy: #0b0f5c;
-  --color-brand: #5b5fe8;
-  --color-brand-soft: #eceefe;
-  --color-ok: #16a34a;
-  --color-ok-soft: #e7f6ec;
-  --color-prog: #2563eb;
-  --color-prog-soft: #e6eefc;
-  --color-pend: #6b7280;
-  --color-pend-soft: #f1f2f4;
-  --color-bg: #f6f7fb;
-  --font-sans: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
+  --color-paper: #f3efe6;
+  --color-paper-2: #ebe6da;
+  --color-card: #fffdf8;
+  --color-line: #e2dccd;
+  --color-ink: #0b0f5c;
+  --color-ink-2: #4b4f7c;
+  --color-ink-3: #8a8cab;
+  --color-accent: #5b5fe8;
+  --color-accent-soft: #e6e6fb;
+  --color-ok: #1d7a55;
+  --color-ok-soft: #dfeee5;
+  --color-stamp: #d4572a;
+  --color-stamp-soft: #f8e4d8;
+
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-instrument), ui-serif, Georgia, serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
 }
 
 html,
 body {
-  background: var(--color-bg);
-  color: #12142b;
+  background: var(--color-paper);
+  color: var(--color-ink);
+}
+
+body {
+  /* subtle paper grain */
+  background-image: radial-gradient(rgba(11, 15, 92, 0.035) 1px, transparent 1px);
+  background-size: 3px 3px;
+}
+
+::selection {
+  background: var(--color-accent);
+  color: white;
 }
 
 @utility card {
-  @apply rounded-2xl bg-white shadow-[0_2px_12px_rgba(11,15,92,0.06)];
+  @apply rounded-[22px] border border-line bg-card;
+}
+
+@utility eyebrow {
+  @apply font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-ink-3;
+}
+
+@utility display {
+  @apply font-serif leading-[0.95] tracking-[-0.01em] text-ink;
 }
 
 @utility chip {
-  @apply inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold;
+  @apply inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-mono text-[10.5px] font-medium uppercase tracking-[0.08em];
 }
 
 @utility btn {
-  @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold transition active:scale-[0.98] disabled:opacity-50;
+  @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-3.5 text-sm font-semibold transition duration-200 active:scale-[0.98] disabled:opacity-40;
 }
 
 @utility btn-primary {
-  @apply btn bg-brand text-white hover:bg-navy;
+  @apply btn bg-ink text-paper hover:bg-accent;
 }
 
 @utility btn-ghost {
-  @apply btn border border-gray-200 bg-white text-navy hover:bg-brand-soft;
+  @apply btn border border-line bg-card text-ink hover:border-ink;
 }
 
-/* Voice agent (from voice-agent-kit) sits above the bottom nav and uses the brand colours. */
+@utility hairline {
+  @apply border-t border-dashed border-line;
+}
+
+/* Horizontal scrollers (tabs, carousels) without a visible scrollbar */
+.overflow-x-auto {
+  scrollbar-width: none;
+}
+.overflow-x-auto::-webkit-scrollbar {
+  display: none;
+}
+
+/* Ticket perforation */
+.perf {
+  position: relative;
+  border-top: 1.5px dashed var(--color-line);
+}
+.perf::before,
+.perf::after {
+  content: "";
+  position: absolute;
+  top: -11px;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: var(--color-paper);
+}
+.perf::before {
+  left: -12px;
+}
+.perf::after {
+  right: -12px;
+}
+.perf-dark::before,
+.perf-dark::after {
+  background: var(--color-paper);
+}
+
+@keyframes rise {
+  from {
+    transform: translateY(10px);
+  }
+  to {
+    transform: none;
+  }
+}
+.rise {
+  animation: rise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+/* Voice agent (voice-agent-kit) restyled to the brand, above the floating nav. */
 .va-root {
-  bottom: 84px !important;
-  right: max(12px, calc(50vw - 230px)) !important;
+  bottom: 96px !important;
+  right: max(16px, calc(50vw - 214px)) !important;
+  font-family: var(--font-jakarta), system-ui, sans-serif !important;
 }
 .va-btn {
-  background: var(--color-navy) !important;
+  position: relative;
+  width: 52px;
+  height: 52px;
+  justify-content: center;
+  background: var(--color-accent) !important;
+  padding: 0 !important;
+  box-shadow: 0 12px 30px -6px rgba(91, 95, 232, 0.55) !important;
+}
+.va-btn .va-dot {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 9px !important;
+  height: 9px !important;
+  border: 2px solid var(--color-accent);
+}
+/* Icon-only button: the label stays for screen readers. */
+.va-bt {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+.va-btn::after {
+  content: "";
+  width: 20px;
+  height: 20px;
+  background: white;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='9' y='2' width='6' height='12' rx='3'/%3E%3Cpath d='M19 10v1a7 7 0 0 1-14 0v-1M12 18v4'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='9' y='2' width='6' height='12' rx='3'/%3E%3Cpath d='M19 10v1a7 7 0 0 1-14 0v-1M12 18v4'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+/* Pages with their own mic button hide the floating one until a call starts. */
+body[data-va-hidden] .va-root[data-s="idle"]:not(.open) {
+  display: none;
+}
+.va-root[data-s="listening"] .va-btn,
+.va-root[data-s="speaking"] .va-btn,
+.va-root[data-s="connecting"] .va-btn {
+  background: var(--color-stamp) !important;
+}
+.va-panel {
+  border-radius: 22px !important;
+  border: 1px solid var(--color-line) !important;
+  background: var(--color-card) !important;
+  box-shadow: 0 20px 50px rgba(11, 15, 92, 0.18) !important;
+}
+.va-l.a {
+  background: var(--color-accent-soft) !important;
 }
 .leaflet-container {
   font: inherit;
+  background: var(--color-paper-2);
+}
+.leaflet-tile-pane {
+  filter: grayscale(0.85) sepia(0.15) contrast(0.95);
 }

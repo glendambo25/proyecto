@@ -6,25 +6,26 @@ import type { Place } from "@/lib/types";
 
 const COLORS: Record<Place["type"], string> = {
   University: "#0b0f5c",
-  Housing: "#dc2626",
-  Transport: "#2563eb",
-  Leisure: "#16a34a",
-  Food: "#f59e0b",
+  Housing: "#d4572a",
+  Transport: "#5b5fe8",
+  Leisure: "#1d7a55",
+  Food: "#b7791f",
 };
 
 export default function CityMap({ center, places }: { center: [number, number]; places: Place[] }) {
   return (
-    <MapContainer center={center} zoom={13} scrollWheelZoom={false} className="h-56 w-full rounded-2xl" attributionControl>
-      <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+    <MapContainer center={center} zoom={13} scrollWheelZoom={false} className="h-64 w-full" attributionControl zoomControl={false}>
+      <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
       {places.map((p) => (
-        <CircleMarker key={p.id} center={[p.lat, p.lng]} radius={9} pathOptions={{ color: "#fff", weight: 2, fillColor: COLORS[p.type], fillOpacity: 1 }}>
+        <CircleMarker key={p.id} center={[p.lat, p.lng]} radius={8} pathOptions={{ color: "#fffdf8", weight: 3, fillColor: COLORS[p.type], fillOpacity: 1 }}>
           <Popup>
             <b>{p.name}</b>
             <br />
             {p.note}
             {p.transit && (
               <>
-                <br />🚋 {p.transit}
+                <br />
+                {p.transit}
               </>
             )}
           </Popup>

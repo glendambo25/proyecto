@@ -3,16 +3,34 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { formatDate, getDestination, personas, progressOf, purposeLabel } from "@/lib/content";
+import { ArrowRight, BarChart3, Check, CircleHelp, LogOut, Star, Ticket, UserRoundCheck } from "lucide-react";
+import { cityCode, formatDate, getDestination, personas, progressOf, purposeLabel } from "@/lib/content";
 import { statusOf, useApp } from "@/lib/store";
-import { Header } from "@/components/ui";
+import { Header, Segments } from "@/components/ui";
 
-function Row({ k, v, ok }: { k: string; v: React.ReactNode; ok?: boolean }) {
+function Row({ k, v, tone }: { k: string; v: React.ReactNode; tone?: "ok" | "warn" }) {
   return (
-    <div className="flex items-center justify-between border-b border-gray-100 py-2.5 text-sm last:border-0">
-      <span className="text-gray-500">{k}</span>
-      <span className={`text-right font-semibold ${ok === undefined ? "text-navy" : ok ? "text-ok" : "text-amber-600"}`}>{v}</span>
+    <div className="flex items-center justify-between gap-4 px-4 py-3 text-[14px]">
+      <span className="text-ink-3">{k}</span>
+      <span className={`text-right font-semibold ${tone === "ok" ? "text-ok" : tone === "warn" ? "text-stamp" : ""}`}>{v}</span>
     </div>
+  );
+}
+
+function Toggle({ on, onChange, label }: { on: boolean; onChange: (v: boolean) => void; label: string }) {
+  return (
+    <button role="switch" aria-checked={on} aria-label={label} onClick={() => onChange(!on)} className={`relative h-6 w-11 rounded-full transition ${on ? "bg-ink" : "bg-paper-2"}`}>
+      <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-card shadow transition-all ${on ? "left-[22px]" : "left-0.5"}`} />
+    </button>
+  );
+}
+
+function Group({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <section>
+      <p className="eyebrow mb-2 px-1">{title}</p>
+      <div className="divide-y divide-line overflow-hidden rounded-[22px] border border-line bg-card">{children}</div>
+    </section>
   );
 }
 
@@ -36,125 +54,130 @@ export default function Profile() {
 
   return (
     <main>
-      <Header title="Profile" />
-      <div className="space-y-4 px-4">
-        <section className="card flex items-center gap-4 p-4">
-          <span className="grid h-16 w-16 place-items-center rounded-full bg-gradient-to-br from-navy to-brand text-xl font-extrabold text-white">{initials}</span>
+      <Header eyebrow="Profile" title={profile.name.split(" ")[0]} />
+      <div className="space-y-7 px-5">
+        <section className="-mt-2 flex items-center gap-4">
+          <span className="grid h-20 w-20 shrink-0 place-items-center rounded-full bg-ink font-serif text-[32px] text-paper">{initials}</span>
           <div>
-            <h2 className="text-lg font-extrabold text-navy">{profile.name}</h2>
-            <p className="text-sm text-gray-500">
-              {purposeLabel[profile.purpose]} · {profile.institution}
+            <p className="text-[15px] font-semibold">{profile.name}</p>
+            <p className="text-[13px] text-ink-2">
+              {profile.purpose === "study" ? "Erasmus student" : purposeLabel[profile.purpose]} · {profile.institution}
             </p>
-            <div className="mt-1 flex flex-wrap gap-1">
-              {profile.age && <span className="chip bg-brand-soft text-navy">{profile.age}</span>}
-              <span className="chip bg-brand-soft text-navy">{profile.purpose === "study" ? "Erasmus" : purposeLabel[profile.purpose]}</span>
-              <span className="chip bg-brand-soft text-navy">{dest.city}</span>
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {profile.age && <span className="chip border-line text-ink-2">{profile.age} yrs</span>}
+              <span className="chip border-line text-ink-2">{profile.purpose === "study" ? "Erasmus" : profile.purpose}</span>
+              <span className="chip border-accent/30 bg-accent-soft text-accent">{cityCode[dest.id]} · {dest.city}</span>
             </div>
           </div>
         </section>
 
-        <Link href="/tasks" className="card block p-4">
-          <p className="text-sm font-bold text-navy">Arrival preparation</p>
-          <p className="text-sm text-gray-500">
-            {prog.done} of {prog.total} steps · {prog.pct}%
-          </p>
-          <div className="mt-2 h-2 rounded-full bg-brand-soft">
-            <div className="h-2 rounded-full bg-brand" style={{ width: `${prog.pct}%` }} />
+        <Link href="/tasks" className="card block p-4 transition hover:border-ink">
+          <div className="flex items-baseline justify-between">
+            <p className="text-[14px] font-semibold">Arrival preparation</p>
+            <p className="font-mono text-[11px] text-ink-3">
+              {prog.done} of {prog.total} · {prog.pct}%
+            </p>
+          </div>
+          <div className="mt-3">
+            <Segments total={prog.total} done={prog.done} />
           </div>
         </Link>
 
-        <section className="card px-4 py-2">
-          <h3 className="pt-2 text-xs font-bold uppercase text-gray-500">My details</h3>
+        <Group title="My details">
           <Row k="Nationality" v={profile.nationalityLabel} />
-          <Row k="Passport" v={profile.passport} />
+          <Row k="Passport" v={<span className="font-mono text-[12.5px]">{profile.passport}</span>} />
           <Row k="Phone" v={profile.phone} />
           <Row k="Email" v={profile.email} />
           <Row k="Arrival date" v={formatDate(profile.arrivalDate)} />
-        </section>
+        </Group>
 
-        <section className="card px-4 py-2">
-          <h3 className="pt-2 text-xs font-bold uppercase text-gray-500">Destination</h3>
-          <Row k="City" v={`${dest.flag} ${dest.city}`} />
+        <Group title="Destination">
+          <Row k="City" v={`${dest.city}, ${dest.country}`} />
           <Row k={profile.purpose === "study" ? "University" : "Host"} v={profile.institution} />
-          <Row k="Accommodation" v={done("accommodation") ? "Confirmed" : profile.accommodation} ok={done("accommodation")} />
+          <Row k="Accommodation" v={done("accommodation") ? "Confirmed" : profile.accommodation} tone={done("accommodation") ? "ok" : "warn"} />
           <Row k="Neighbourhood" v={profile.neighbourhood} />
-        </section>
+        </Group>
 
-        <section className="card px-4 py-2">
-          <h3 className="pt-2 text-xs font-bold uppercase text-gray-500">Documents</h3>
-          <Row k="Passport / ID" v="✓" ok />
-          {insuranceId && <Row k="Insurance" v={done(insuranceId) ? "✓" : "Pending"} ok={done(insuranceId)} />}
-          <Row k="Visa" v={visaId ? (done(visaId) ? "✓" : "Pending") : "✓ Not needed (EU)"} ok={visaId ? done(visaId) : true} />
-          <Row k="Contract" v={done("accommodation") ? "✓" : "Pending"} ok={done("accommodation")} />
-        </section>
+        <Group title="Documents">
+          <Row k="Passport / ID" v={<Check size={16} className="inline text-ok" />} />
+          {insuranceId && <Row k="Insurance" v={done(insuranceId) ? <Check size={16} className="inline" /> : "Pending"} tone={done(insuranceId) ? "ok" : "warn"} />}
+          <Row k="Visa" v={visaId ? (done(visaId) ? <Check size={16} className="inline" /> : "Pending") : "Not needed (EU)"} tone={visaId ? (done(visaId) ? "ok" : "warn") : "ok"} />
+          <Row k="Contract" v={done("accommodation") ? <Check size={16} className="inline" /> : "Pending"} tone={done("accommodation") ? "ok" : "warn"} />
+          <Link href="/documents" className="flex items-center justify-between px-4 py-3 text-[14px] font-semibold text-accent">
+            Open document wallet <ArrowRight size={15} />
+          </Link>
+        </Group>
 
-        <section className="card px-4 py-2">
-          <h3 className="pt-2 text-xs font-bold uppercase text-gray-500">Preferences</h3>
+        <Group title="Preferences">
           <Row k="App language" v="English" />
-          <div className="flex items-center justify-between border-b border-gray-100 py-2.5 text-sm">
-            <span className="text-gray-500">Notifications & deadline reminders</span>
-            <input type="checkbox" checked={notif} onChange={(e) => setNotif(e.target.checked)} className="h-5 w-5 accent-brand" aria-label="Notifications" />
+          <div className="flex items-center justify-between px-4 py-3 text-[14px]">
+            <span className="text-ink-3">Deadline reminders</span>
+            <Toggle on={notif} onChange={setNotif} label="Deadline reminders" />
           </div>
-          <div className="flex items-center justify-between border-b border-gray-100 py-2.5 text-sm">
-            <span className="text-gray-500">Linked family account</span>
-            <input type="checkbox" checked={family} onChange={(e) => setFamily(e.target.checked)} className="h-5 w-5 accent-brand" aria-label="Linked family account" />
+          <div className="flex items-center justify-between px-4 py-3 text-[14px]">
+            <span className="text-ink-3">Linked family account</span>
+            <Toggle on={family} onChange={setFamily} label="Linked family account" />
           </div>
-          <Row k="Privacy" v="Demo: data stays on this device" />
-        </section>
+          <Row k="Privacy" v="Data stays on this device" />
+        </Group>
 
         <section className="card p-4">
-          <h3 className="mb-2 text-xs font-bold uppercase text-gray-500">How useful is the app so far?</h3>
-          <div className="flex gap-2">
+          <p className="text-[14px] font-semibold">How useful is the app so far?</p>
+          <div className="mt-3 flex gap-1.5">
             {[1, 2, 3, 4, 5].map((n) => (
-              <button key={n} onClick={() => rate(n)} className={`h-10 flex-1 rounded-xl text-lg ${satisfaction && n <= satisfaction ? "bg-amber-400" : "bg-bg"}`} aria-label={`${n} stars`}>
-                ★
+              <button key={n} onClick={() => rate(n)} aria-label={`${n} stars`} className={`grid h-11 flex-1 place-items-center rounded-2xl border transition ${satisfaction && n <= satisfaction ? "border-ink bg-ink text-paper" : "border-line text-ink-3 hover:border-ink"}`}>
+                <Star size={16} fill={satisfaction && n <= satisfaction ? "currentColor" : "none"} />
               </button>
             ))}
           </div>
         </section>
 
-        <section className="card px-4 py-2">
-          <h3 className="pt-2 text-xs font-bold uppercase text-gray-500">Help & support</h3>
-          <Link href="/chat/assistant" className="block border-b border-gray-100 py-2.5 text-sm font-semibold text-navy">
-            Help centre (AI assistant)
-          </Link>
-          <Link href="/chat/advisor" className="block border-b border-gray-100 py-2.5 text-sm font-semibold text-navy">
-            Contact an advisor
-          </Link>
-          <Link href="/plans" className="block border-b border-gray-100 py-2.5 text-sm font-semibold text-navy">
-            Plans
-          </Link>
+        <Group title="Help & support">
+          {[
+            { href: "/chat/assistant", label: "Help centre", Icon: CircleHelp },
+            { href: "/chat/advisor", label: "Contact an advisor", Icon: UserRoundCheck },
+            { href: "/plans", label: "Plans", Icon: Ticket },
+            { href: "/office", label: "International office view", Icon: BarChart3 },
+          ].map(({ href, label, Icon }) => (
+            <Link key={href} href={href} className="flex items-center gap-3 px-4 py-3.5 text-[14px] font-semibold transition hover:bg-paper">
+              <Icon size={17} className="text-ink-3" />
+              <span className="flex-1">{label}</span>
+              <ArrowRight size={15} className="text-ink-3" />
+            </Link>
+          ))}
           <button
-            className="block py-2.5 text-sm font-semibold text-red-600"
+            className="flex w-full items-center gap-3 px-4 py-3.5 text-left text-[14px] font-semibold text-stamp transition hover:bg-paper"
             onClick={() => {
               reset();
               router.push("/onboarding");
             }}
           >
-            Log out (reset demo)
+            <LogOut size={17} /> Log out (reset demo)
           </button>
-        </section>
+        </Group>
 
-        <section className="card p-4">
-          <h3 className="mb-2 text-xs font-bold uppercase text-gray-500">Demo: switch profile</h3>
-          <div className="grid grid-cols-2 gap-2">
-            {personas.map((p) => (
-              <button
-                key={p.id}
-                onClick={() => {
-                  startPersona(p.id);
-                  router.push("/home");
-                }}
-                className={`rounded-xl border px-2 py-2 text-left text-xs ${profile.personaId === p.id ? "border-brand bg-brand-soft" : "border-gray-200"}`}
-              >
-                <b className="block text-navy">{p.name.split(" ")[0]}</b>
-                {getDestination(p.destinationId).flag} {getDestination(p.destinationId).city} · {p.nationalityLabel}
-              </button>
-            ))}
+        <section>
+          <p className="eyebrow mb-2 px-1">Demo · switch traveller</p>
+          <div className="-mx-5 flex gap-2 overflow-x-auto px-5 pb-2">
+            {personas.map((p) => {
+              const pd = getDestination(p.destinationId);
+              const active = profile.personaId === p.id;
+              return (
+                <button
+                  key={p.id}
+                  onClick={() => {
+                    startPersona(p.id);
+                    router.push("/home");
+                  }}
+                  className={`w-32 shrink-0 rounded-[20px] border p-3 text-left transition ${active ? "border-ink bg-ink text-paper" : "border-line bg-card hover:border-ink"}`}
+                >
+                  <span className={`font-mono text-[11px] ${active ? "text-paper/60" : "text-accent"}`}>{cityCode[pd.id]}</span>
+                  <span className="mt-4 block font-serif text-[20px] leading-none">{p.name.split(" ")[0]}</span>
+                  <span className={`mt-1 block text-[11px] ${active ? "text-paper/60" : "text-ink-3"}`}>{p.nationalityLabel}</span>
+                </button>
+              );
+            })}
           </div>
-          <Link href="/office" className="mt-3 block text-center text-xs font-semibold text-brand underline">
-            International office view →
-          </Link>
         </section>
       </div>
     </main>

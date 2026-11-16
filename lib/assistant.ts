@@ -63,6 +63,26 @@ export function offlineAnswer(req: AssistantRequest): AssistantResponse {
   const tasks = buildChecklist(req.destinationId, req.nationality, req.purpose);
   const dest = getDestination(req.destinationId);
   const q = req.question.toLowerCase();
+  const done = (id: string) => req.statuses?.[id] === "completed";
+  // Intent: order / next step — answered from the dependency graph itself.
+  if (/(next step|what now|what should i do|in what order|which order|order should)/.test(q)) {
+    const open = tasks.filter((t) => t.phase !== "return" && !done(t.id));
+    const ready = open.filter((t) => t.dependsOn.every(done));
+    if (!open.length)
+      return { answer: "You've completed every arrival step in your checklist. When you go back, check the return reminders in Tasks.", covered: true, sources: [], missingTaskIds: [], suggestAdvisor: false, offline: true };
+    const lines = open.slice(0, 6).map((t, i) => {
+      const needs = t.dependsOn.filter((d) => !done(d)).map((d) => tasks.find((x) => x.id === d)?.title);
+      return `${i + 1}. ${t.title}${needs.length ? ` (after: ${needs.join(", ")})` : ""}${t.deadline ? ` — ${t.deadline}` : ""}`;
+    });
+    return {
+      answer: `Here is your order for ${dest.city}. You can start now with: ${ready.map((t) => t.title).join(", ")}.\n\n${lines.join("\n")}\n\nI've marked what's missing in your checklist.`,
+      covered: true,
+      sources: sourcesFor(ready.map((t) => t.id), tasks),
+      missingTaskIds: open.map((t) => t.id),
+      suggestAdvisor: false,
+      offline: true,
+    };
+  }
   const words = q.split(/[^a-zà-ÿ0-9]+/).filter((w) => w.length > 3);
   const scored = tasks
     .map((t) => {
@@ -82,13 +102,13 @@ export function offlineAnswer(req: AssistantRequest): AssistantResponse {
     return { answer: `${NO_SOURCE} I can connect you with an advisor or the international office.`, covered: false, sources: [], missingTaskIds: [], suggestAdvisor: true, offline: true };
   const needs = top.dependsOn.map((d) => tasks.find((t) => t.id === d)?.title).filter(Boolean);
   const missing = [top.id, ...top.dependsOn].filter((id) => req.statuses?.[id] !== "completed");
-  let answer = `${top.title}${top.localName ? ` — ${top.localName}` : ""}: ${top.description}`;
-  if (needs.length) answer += ` Do this first: ${needs.join(", ")}.`;
-  if (top.deadline) answer += ` Deadline: ${top.deadline}.`;
-  answer += ` You'll need: ${top.documentsNeeded.join(", ")}.`;
-  if (top.category === "Accommodation") answer += ` Scam check for ${dest.city}: ${dest.housingAlert[0]}`;
-  if (top.verificationStatus === "todo") answer = `${NO_SOURCE} What the app has so far: ${answer}`;
-  if (missing.length) answer += " I've marked what's missing in your checklist.";
+  let answer = `${top.title}${top.localName ? ` (${top.localName})` : ""}. ${top.description}`;
+  if (needs.length) answer += `\n\nDo this first: ${needs.join(", ")}.`;
+  if (top.deadline) answer += `\nDeadline: ${top.deadline}.`;
+  answer += `\n\nYou'll need: ${top.documentsNeeded.join(" · ")}.`;
+  if (top.category === "Accommodation") answer += `\n\nScam check for ${dest.city}: ${dest.housingAlert[0]}`;
+  if (top.verificationStatus === "todo") answer = `${NO_SOURCE} What the app has so far:\n\n${answer}`;
+  if (missing.length) answer += "\n\nI've marked what's missing in your checklist.";
   return {
     answer,
     covered: top.verificationStatus === "verified",

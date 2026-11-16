@@ -76,6 +76,7 @@
       "estimatedTime": "Online or 1 appointment",
       "cost": "Free",
       "deadline": "Within 14 days of moving in",
+      "deadlineRule": { "days": 14, "workingDays": false },
       "appliesTo": { "nationality": "any", "purpose": ["study", "internship", "work"] },
       "doneForYouAvailable": true,
       "critical": true,

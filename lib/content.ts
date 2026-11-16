@@ -12,6 +12,29 @@ export const TAGLINE = "You move. We handle the paperwork.";
 export const destinations = [turin, milan, munich, luxembourg, newYork] as unknown as Destination[];
 export const personas = personasJson as unknown as Persona[];
 
+/** IATA-style city codes for the boarding-pass card. */
+export const cityCode: Record<string, string> = { turin: "TRN", milan: "MIL", munich: "MUC", luxembourg: "LUX", "new-york": "NYC" };
+export function originCode(nationalityLabel: string): string {
+  return ({ Spanish: "ESP", Indian: "IND", Chinese: "CHN" } as Record<string, string>)[nationalityLabel] ?? "HOME";
+}
+export function shortDate(iso: string | null | undefined): string {
+  if (!iso) return "—";
+  return new Date(iso + "T12:00:00").toLocaleDateString("en-GB", { day: "2-digit", month: "short" }).toUpperCase();
+}
+
+/** Estimated due date from the arrival date (move-in assumed on arrival). Returns ISO date or null. */
+export function estimateDue(arrivalIso: string, rule?: { days: number; workingDays: boolean }): string | null {
+  if (!rule || !arrivalIso) return null;
+  const d = new Date(arrivalIso + "T12:00:00");
+  let left = rule.days;
+  while (left > 0) {
+    d.setDate(d.getDate() + 1);
+    const wd = d.getDay();
+    if (!rule.workingDays || (wd !== 0 && wd !== 6)) left--;
+  }
+  return d.toISOString().slice(0, 10);
+}
+
 export function getDestination(id: string): Destination {
   return destinations.find((d) => d.id === id) ?? destinations[0];
 }

@@ -2,23 +2,31 @@
 
 import dynamic from "next/dynamic";
 import { useState } from "react";
+import { Bus, Building2, GraduationCap, Search, ShieldAlert, Star, TreePine, UtensilsCrossed } from "lucide-react";
 import { getDestination } from "@/lib/content";
 import { useApp } from "@/lib/store";
-import { FilterChips, Header } from "@/components/ui";
+import { Header, Tabs } from "@/components/ui";
 import type { Place } from "@/lib/types";
 
 const CityMap = dynamic(() => import("@/components/CityMap"), {
   ssr: false,
-  loading: () => <div className="h-56 animate-pulse rounded-2xl bg-white" />,
+  loading: () => <div className="h-64 animate-pulse rounded-[22px] bg-paper-2" />,
 });
 
 type F = "All" | "Housing" | "Transport" | "Leisure" | "Food";
-const ICON: Record<Place["type"], string> = { University: "🎓", Housing: "🏠", Transport: "🚋", Leisure: "🌳", Food: "🍝" };
+const ICON: Record<Place["type"], React.ComponentType<{ size?: number; className?: string }>> = {
+  University: GraduationCap,
+  Housing: Building2,
+  Transport: Bus,
+  Leisure: TreePine,
+  Food: UtensilsCrossed,
+};
 
 export default function City() {
   const { profile, log } = useApp();
   const [f, setF] = useState<F>("All");
   const [q, setQ] = useState("");
+  const [reported, setReported] = useState(false);
   if (!profile) return null;
   const dest = getDestination(profile.destinationId);
   const places = dest.places.filter((p) => (f === "All" || p.type === f || p.type === "University") && (p.name + p.note).toLowerCase().includes(q.toLowerCase()));
@@ -26,63 +34,92 @@ export default function City() {
 
   return (
     <main>
-      <Header title={`Explore ${dest.city}`} subtitle={`${dest.flag} Useful places near ${profile.neighbourhood !== "—" ? profile.neighbourhood : "you"}`} />
-      <div className="space-y-4 px-4">
-        <input
-          type="search"
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder="Search places"
-          aria-label="Search places"
-          className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm"
-        />
-        <FilterChips<F> options={["All", "Housing", "Transport", "Leisure", "Food"]} value={f} onChange={setF} />
+      <Header
+        eyebrow={`${dest.country} · ${profile.neighbourhood !== "—" ? profile.neighbourhood : "City guide"}`}
+        title={
+          <>
+            Explore <em>{dest.city}</em>
+          </>
+        }
+      />
+      <div className="space-y-6 px-5">
+        <label className="flex items-center gap-2 rounded-full border border-line bg-card px-4 py-3 focus-within:border-ink">
+          <Search size={16} className="text-ink-3" />
+          <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search places" aria-label="Search places" className="flex-1 bg-transparent text-[14px] outline-none" />
+        </label>
+        <Tabs<F> options={["All", "Housing", "Transport", "Leisure", "Food"]} value={f} onChange={setF} />
+
+        <div className="overflow-hidden rounded-[22px] border border-line">
+          <CityMap center={dest.center} places={places} />
+        </div>
 
         {(f === "All" || f === "Housing") && (
-          <section className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-900" aria-label="Housing scam alert">
-            <h2 className="mb-1 font-bold">⚠ Housing scam alert</h2>
-            <ul className="list-disc space-y-1 pl-4">
-              {dest.housingAlert.map((a) => (
-                <li key={a}>{a}</li>
+          <section className="rounded-[26px] bg-stamp p-5 text-white" aria-label="Housing scam alert">
+            <div className="flex items-center gap-2">
+              <ShieldAlert size={16} />
+              <p className="font-mono text-[10.5px] uppercase tracking-[0.16em]">Housing scam alert</p>
+            </div>
+            <p className="mt-3 font-serif text-[26px] leading-[1.05]">Never pay before you’ve seen it and signed.</p>
+            <ul className="mt-4 space-y-2 text-[13px] text-white/90">
+              {dest.housingAlert.slice(1).map((a) => (
+                <li key={a} className="flex gap-2">
+                  <span>—</span>
+                  {a}
+                </li>
               ))}
             </ul>
-            <button className="mt-2 text-xs font-semibold underline" onClick={() => log("scam_report_click", { city: dest.id })}>
-              Report a suspicious offer to the community
+            <button
+              className="mt-4 rounded-full bg-white/15 px-4 py-2 text-[12.5px] font-semibold transition hover:bg-white/25"
+              onClick={() => {
+                setReported(true);
+                log("scam_report_click", { city: dest.id });
+              }}
+            >
+              {reported ? "Thanks — the community will review it (demo)" : "Report a suspicious offer"}
             </button>
           </section>
         )}
 
-        <CityMap center={dest.center} places={places} />
-
-        <ul className="space-y-2">
-          {places.map((p) => (
-            <li key={p.id} className="card flex items-center gap-3 p-3">
-              <span className="grid h-10 w-10 place-items-center rounded-full bg-brand-soft text-lg" aria-hidden>
-                {ICON[p.type]}
-              </span>
-              <span className="flex-1">
-                <span className="block text-sm font-bold text-navy">{p.name}</span>
-                <span className="block text-xs text-gray-500">{p.note}</span>
-                {p.transit && <span className="block text-xs font-semibold text-prog">🚋 {p.transit}</span>}
-              </span>
-            </li>
-          ))}
-        </ul>
+        <section>
+          <p className="eyebrow mb-2">Key places · approx. travel time</p>
+          <ul className="divide-y divide-line overflow-hidden rounded-[22px] border border-line bg-card">
+            {places.map((p) => {
+              const I = ICON[p.type];
+              return (
+                <li key={p.id} className="flex items-center gap-3 px-4 py-3.5">
+                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-paper">
+                    <I size={17} className="text-ink" />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-[14.5px] font-semibold">{p.name}</span>
+                    <span className="block truncate text-[12.5px] text-ink-3">{p.note}</span>
+                  </span>
+                  {p.transit && <span className="max-w-[110px] text-right font-mono text-[10.5px] leading-tight text-accent">{p.transit}</span>}
+                </li>
+              );
+            })}
+          </ul>
+        </section>
 
         <section>
-          <h2 className="mb-2 font-bold text-navy">Recommended for you</h2>
-          <div className="flex gap-3 overflow-x-auto pb-2">
-            {recommended.map((p) => (
-              <div key={p.id} className="card w-40 shrink-0 p-3">
-                <div className="mb-2 grid h-16 place-items-center rounded-xl bg-gradient-to-br from-brand-soft to-white text-3xl" aria-hidden>
-                  {ICON[p.type]}
-                </div>
-                <p className="text-sm font-bold text-navy">{p.name}</p>
-                <p className="text-xs text-amber-600">★ {p.rating?.toFixed(1)} · community</p>
-              </div>
-            ))}
+          <div className="mb-3 flex items-baseline justify-between">
+            <h2 className="font-serif text-[26px]">Recommended for you</h2>
           </div>
-          <p className="text-[11px] text-gray-400">Ratings are sample community data for the demo. Travel times are approximate.</p>
+          <div className="-mx-5 flex gap-3 overflow-x-auto px-5 pb-2">
+            {recommended.map((p, i) => {
+              const I = ICON[p.type];
+              return (
+                <article key={p.id} className={`w-44 shrink-0 rounded-[22px] p-4 ${i % 2 ? "bg-accent text-white" : "bg-ink text-paper"}`}>
+                  <I size={20} />
+                  <p className="mt-10 font-serif text-[22px] leading-[1.05]">{p.name}</p>
+                  <p className="mt-2 flex items-center gap-1 font-mono text-[11px] opacity-75">
+                    <Star size={11} fill="currentColor" /> {p.rating?.toFixed(1)} · community
+                  </p>
+                </article>
+              );
+            })}
+          </div>
+          <p className="mt-2 font-mono text-[10.5px] text-ink-3">Ratings are sample community data for the demo.</p>
         </section>
       </div>
     </main>

@@ -1,11 +1,13 @@
 import type { Metadata, Viewport } from "next";
-import { Montserrat } from "next/font/google";
+import { IBM_Plex_Mono, Instrument_Serif, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { AppProvider } from "@/lib/store";
 import AppShell from "@/components/AppShell";
 import VoiceAgentMount from "@/components/VoiceAgentMount";
 
-const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-montserrat" });
+const jakarta = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-jakarta" });
+const instrument = Instrument_Serif({ subsets: ["latin"], weight: "400", style: ["normal", "italic"], variable: "--font-instrument" });
+const plexMono = IBM_Plex_Mono({ subsets: ["latin"], weight: ["400", "500"], variable: "--font-plex-mono" });
 
 export const metadata: Metadata = {
   title: "Arrival – You move. We handle the paperwork.",
@@ -16,12 +18,12 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#0b0f5c",
+  themeColor: "#f3efe6",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={montserrat.variable}>
+    <html lang="en" className={`${jakarta.variable} ${instrument.variable} ${plexMono.variable}`}>
       <body className="font-sans antialiased">
         <AppProvider>
           <AppShell>{children}</AppShell>

@@ -5,38 +5,58 @@ import { isBlocked } from "@/lib/content";
 import { statusOf } from "@/lib/store";
 import type { Task, TaskStatus } from "@/lib/types";
 
-/** Layered view: each column ("level") only contains tasks whose dependencies are in earlier columns. */
+/**
+ * Route map: columns are "stations" in order. A step only appears after
+ * the steps it needs. Read left to right, like a transit line.
+ */
 export default function DependencyMap({ tasks, statuses }: { tasks: Task[]; statuses: Record<string, TaskStatus> }) {
   const level: Record<string, number> = {};
   for (const t of tasks) level[t.id] = t.dependsOn.length ? Math.max(...t.dependsOn.map((d) => (level[d] ?? 0) + 1)) : 0;
   const maxL = Math.max(0, ...Object.values(level));
   const cols = Array.from({ length: maxL + 1 }, (_, i) => tasks.filter((t) => level[t.id] === i));
-  const color = (t: Task) => {
+
+  const style = (t: Task) => {
     const s = statusOf(statuses, t.id);
-    if (s === "completed") return "border-ok bg-ok-soft text-ok";
-    if (s === "in_progress") return "border-prog bg-prog-soft text-prog";
-    return isBlocked(t, statuses) ? "border-dashed border-gray-300 bg-white text-gray-400" : "border-gray-300 bg-white text-navy";
+    if (s === "completed") return "border-ink bg-ink text-paper";
+    if (s === "in_progress") return "border-accent bg-accent text-white";
+    return isBlocked(t, statuses) ? "border-dashed border-ink-3/40 bg-transparent text-ink-3" : "border-line bg-card text-ink";
   };
 
   return (
-    <div className="card overflow-x-auto p-3">
-      <p className="mb-2 text-xs text-gray-500">What unlocks what — read left to right. Dashed = blocked until the step on its left is done.</p>
-      <div className="flex min-w-max gap-2">
-        {cols.map((col, i) => (
-          <div key={i} className="flex w-32 flex-col gap-2">
-            <span className="text-[10px] font-bold uppercase tracking-wide text-gray-400">{i === 0 ? "Start here" : `Then (${i + 1})`}</span>
-            {col.map((t) => (
-              <Link key={t.id} href={`/tasks/${t.id}`} className={`rounded-xl border-2 p-2 text-[11px] font-semibold leading-tight ${color(t)}`}>
-                {t.title}
-                {t.dependsOn.length > 0 && (
-                  <span className="mt-1 block text-[10px] font-normal opacity-80">
-                    ← needs {t.dependsOn.map((d) => tasks.find((x) => x.id === d)?.title.split(" ")[0]).join(", ")}
-                  </span>
-                )}
-              </Link>
-            ))}
-          </div>
-        ))}
+    <div className="card overflow-hidden">
+      <div className="flex items-center justify-between border-b border-line px-4 py-3">
+        <span className="eyebrow">Route map · what unlocks what</span>
+        <span className="flex items-center gap-3 font-mono text-[9.5px] uppercase tracking-wider text-ink-3">
+          <span className="flex items-center gap-1">
+            <i className="h-2 w-2 rounded-full bg-ink" /> done
+          </span>
+          <span className="flex items-center gap-1">
+            <i className="h-2 w-2 rounded-full border border-dashed border-ink-3" /> locked
+          </span>
+        </span>
+      </div>
+      <div className="overflow-x-auto p-4">
+        <div className="flex min-w-max items-stretch">
+          {cols.map((col, i) => (
+            <div key={i} className="flex items-stretch">
+              <div className="flex w-[136px] flex-col gap-2">
+                <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-3">{i === 0 ? "Start" : `Stage ${i + 1}`}</span>
+                {col.map((t) => (
+                  <Link key={t.id} href={`/tasks/${t.id}`} className={`rounded-2xl border p-2.5 text-[12px] font-semibold leading-snug transition hover:-translate-y-0.5 ${style(t)}`}>
+                    {t.title}
+                  </Link>
+                ))}
+              </div>
+              {i < cols.length - 1 && (
+                <div className="flex w-8 items-center justify-center" aria-hidden>
+                  <svg width="24" height="12" viewBox="0 0 24 12" className="text-ink-3">
+                    <path d="M0 6h20M16 1l5 5-5 5" fill="none" stroke="currentColor" strokeWidth="1.4" />
+                  </svg>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

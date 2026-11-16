@@ -185,6 +185,7 @@
       "estimatedTime": "Several weeks until the permit is issued",
       "cost": "Not stated on the pages checked",
       "deadline": "Apply within 8 working days of arrival",
+      "deadlineRule": { "days": 8, "workingDays": true },
       "todo": "Fee and Questura document list not verified.",
       "appliesTo": { "nationality": "non-eu", "purpose": ["study"] },
       "doneForYouAvailable": true,
@@ -253,6 +254,7 @@
       "estimatedTime": "1 appointment",
       "cost": "Not stated on the official page",
       "deadline": "Residence declaration within 20 days of moving (Turin)",
+      "deadlineRule": { "days": 20, "workingDays": false },
       "appliesTo": { "nationality": "any", "purpose": ["study", "internship", "work"] },
       "doneForYouAvailable": true,
       "hoursSavedEstimate": 4

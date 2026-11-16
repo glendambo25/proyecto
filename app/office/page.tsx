@@ -40,9 +40,9 @@ function simulatedCohort(): Student[] {
 function Kpi({ label, value, note }: { label: string; value: string; note?: string }) {
   return (
     <div className="card p-4">
-      <p className="text-xs font-semibold uppercase text-gray-500">{label}</p>
-      <p className="mt-1 text-2xl font-extrabold text-navy">{value}</p>
-      {note && <p className="text-[11px] text-gray-400">{note}</p>}
+      <p className="eyebrow">{label}</p>
+      <p className="mt-3 font-serif text-[44px] leading-none">{value}</p>
+      {note && <p className="mt-1 font-mono text-[10.5px] text-ink-3">{note}</p>}
     </div>
   );
 }
@@ -66,15 +66,17 @@ export default function Office() {
     <main className="space-y-6 p-5">
       <header className="flex flex-wrap items-end justify-between gap-2">
         <div>
-          <p className="text-sm font-semibold text-brand">International office · B2B view</p>
-          <h1 className="text-2xl font-extrabold text-navy">Outgoing students dashboard</h1>
+          <p className="eyebrow">International office · B2B view</p>
+          <h1 className="display mt-2 text-[44px]">
+            Outgoing students, <em className="text-accent">at a glance</em>
+          </h1>
         </div>
         <Link href="/home" className="btn-ghost">
           ← Back to student app
         </Link>
       </header>
 
-      <p className="rounded-xl bg-amber-50 p-3 text-xs text-amber-900">
+      <p className="rounded-2xl border border-dashed border-stamp/40 bg-stamp-soft px-4 py-3 font-mono text-[11px] leading-relaxed text-stamp">
         <b>Simulated cohort (demo data)</b> to show what the office would see during the pilot. “Hours saved” uses per-step estimates that are hypotheses to validate, not measured results.
       </p>
 
@@ -87,20 +89,20 @@ export default function Office() {
 
       <section className="grid gap-4 md:grid-cols-2">
         <div className="card p-4">
-          <h2 className="mb-3 font-bold text-navy">Stuck procedures</h2>
+          <h2 className="mb-4 font-serif text-[26px] leading-none">Stuck procedures</h2>
           <ul className="space-y-2 text-sm">
             {stuck.map((s) => (
               <li key={s.city + s.title} className="flex items-center justify-between">
                 <span>
-                  {s.title} <span className="text-gray-400">· {s.city}</span>
+                  {s.title} <span className="text-ink-3">· {s.city}</span>
                 </span>
-                <span className="chip bg-red-50 text-red-700">{s.n} students</span>
+                <span className="chip border-stamp/30 bg-stamp-soft text-stamp">{s.n} students</span>
               </li>
             ))}
           </ul>
         </div>
         <div className="card p-4">
-          <h2 className="mb-3 font-bold text-navy">Students by destination</h2>
+          <h2 className="mb-4 font-serif text-[26px] leading-none">Students by destination</h2>
           <ul className="space-y-2 text-sm">
             {destinations.map((d) => {
               const n = cohort.filter((s) => s.dest === d.id).length;
@@ -112,8 +114,8 @@ export default function Office() {
                     </span>
                     <span className="font-semibold">{n}</span>
                   </div>
-                  <div className="mt-1 h-2 rounded-full bg-brand-soft">
-                    <div className="h-2 rounded-full bg-brand" style={{ width: `${(n / cohort.length) * 100}%` }} />
+                  <div className="mt-1 h-2 rounded-full bg-paper-2">
+                    <div className="h-2 rounded-full bg-ink" style={{ width: `${(n / cohort.length) * 100}%` }} />
                   </div>
                 </li>
               );
@@ -123,9 +125,9 @@ export default function Office() {
       </section>
 
       <section className="card p-4">
-        <h2 className="mb-1 font-bold text-navy">Pilot metrics — live from this device</h2>
-        <p className="mb-3 text-xs text-gray-500">Real events recorded in this browser while you use the demo (stored locally, no personal data sent).</p>
-        <div className="grid grid-cols-2 gap-3 text-sm md:grid-cols-3">
+        <h2 className="mb-1 font-serif text-[26px] leading-none">Pilot metrics — live from this device</h2>
+        <p className="mb-3 text-xs text-ink-3">Real events recorded in this browser while you use the demo (stored locally, no personal data sent).</p>
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
           <Kpi label="Assistant questions" value={String(count("assistant_question"))} />
           <Kpi label="Premium interest" value={String(count("premium_interest"))} note="free → premium conversion signal" />
           <Kpi label="Done-for-you requests" value={String(count("done_for_you_request") + count("done_for_you_interest"))} note="contacts to partners" />

@@ -29,6 +29,8 @@ export interface Task {
   estimatedTime: string;
   cost: string;
   deadline?: string;
+  /** Lets the app estimate a calendar date from the arrival / move-in date. */
+  deadlineRule?: { days: number; workingDays: boolean };
   appliesTo: { nationality: Nationality | "any"; purpose: Purpose[] };
   doneForYouAvailable: boolean;
   critical?: boolean;

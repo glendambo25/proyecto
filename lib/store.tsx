@@ -16,6 +16,9 @@ export interface ChatMsg {
   sources?: { taskId: string; name: string; url: string | null; lastVerified: string | null; verificationStatus: string }[];
   covered?: boolean;
   offline?: boolean;
+  missingTaskIds?: string[];
+  feedback?: "up" | "down";
+  ts?: string;
 }
 
 interface State {
@@ -26,10 +29,11 @@ interface State {
   assistant: ChatMsg[];
   highlighted: string[];
   satisfaction?: number;
+  docs: string[];
 }
 
 const KEY = "arrival-demo-v1";
-const empty: State = { profile: null, statuses: {}, completedOn: {}, events: [], assistant: [], highlighted: [] };
+const empty: State = { profile: null, statuses: {}, completedOn: {}, events: [], assistant: [], highlighted: [], docs: [] };
 
 interface Ctx extends State {
   ready: boolean;
@@ -42,6 +46,9 @@ interface Ctx extends State {
   setHighlighted: (ids: string[]) => void;
   rate: (n: number) => void;
   reset: () => void;
+  toggleDoc: (doc: string) => void;
+  setFeedback: (index: number, f: "up" | "down") => void;
+  clearAssistant: () => void;
 }
 
 const AppCtx = createContext<Ctx | null>(null);
@@ -126,7 +133,22 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     [state.profile],
   );
 
-  const value: Ctx = { ...state, ready, checklist, startPersona, startCustom, setStatus, log, addAssistant, setHighlighted, rate, reset };
+  const toggleDoc = useCallback(
+    (doc: string) => setState((s) => ({ ...s, docs: s.docs.includes(doc) ? s.docs.filter((d) => d !== doc) : [...s.docs, doc] })),
+    [],
+  );
+  const setFeedback = useCallback(
+    (index: number, f: "up" | "down") =>
+      setState((s) => ({
+        ...s,
+        assistant: s.assistant.map((m, i) => (i === index ? { ...m, feedback: f } : m)),
+        events: [...s.events, { type: "assistant_feedback", ts: new Date().toISOString(), data: { value: f } }],
+      })),
+    [],
+  );
+  const clearAssistant = useCallback(() => setState((s) => ({ ...s, assistant: [] })), []);
+
+  const value: Ctx = { ...state, docs: state.docs ?? [], ready, checklist, startPersona, startCustom, setStatus, log, addAssistant, setHighlighted, rate, reset, toggleDoc, setFeedback, clearAssistant };
   return <AppCtx.Provider value={value}>{children}</AppCtx.Provider>;
 }
 

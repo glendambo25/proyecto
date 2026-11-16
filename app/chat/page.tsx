@@ -2,10 +2,12 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { ArrowRight, Search } from "lucide-react";
 import { getDestination } from "@/lib/content";
 import { threadsFor, type ChatFilter } from "@/lib/chats";
 import { useApp } from "@/lib/store";
-import { FilterChips, Header } from "@/components/ui";
+import { Header, Tabs } from "@/components/ui";
+import Monogram from "@/components/Monogram";
 
 export default function Chats() {
   const { profile } = useApp();
@@ -13,55 +15,62 @@ export default function Chats() {
   const [q, setQ] = useState("");
   if (!profile) return null;
   const dest = getDestination(profile.destinationId);
-  const threads = threadsFor(dest, profile.institution).filter(
-    (t) => (filter === "All" || t.group === filter) && (t.name + t.role).toLowerCase().includes(q.toLowerCase()),
-  );
+  const all = threadsFor(dest, profile.institution);
+  const threads = all.filter((t) => (filter === "All" || t.group === filter) && (t.name + t.role).toLowerCase().includes(q.toLowerCase()));
 
   return (
     <main>
-      <Header title="Chats" subtitle={`Talk to people who help you in ${dest.city}`} />
-      <div className="space-y-3 px-4">
-        <Link href="/chat/assistant" className="card flex items-center gap-3 bg-gradient-to-r from-navy to-brand p-4 text-white">
-          <span className="grid h-11 w-11 place-items-center rounded-full bg-white/20 text-xl" aria-hidden>
-            ✦
+      <Header
+        eyebrow="Messages"
+        title={
+          <>
+            People who help you <em>in {dest.city}</em>
+          </>
+        }
+      />
+      <div className="space-y-5 px-5">
+        <Link href="/chat/assistant" className="group block rounded-[26px] bg-ink p-5 text-paper">
+          <div className="flex items-center justify-between">
+            <p className="font-mono text-[10.5px] uppercase tracking-[0.16em] text-paper/60">AI assistant · always on</p>
+            <span className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider text-paper/70">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#7ee0a8]" /> Online
+            </span>
+          </div>
+          <p className="mt-4 font-serif text-[28px] leading-[1.05]">
+            “What do I need to <em>register my address?</em>”
+          </p>
+          <span className="mt-4 inline-flex items-center gap-2 text-[13px] font-semibold text-paper/90 transition group-hover:gap-3">
+            Ask with official sources <ArrowRight size={14} />
           </span>
-          <span className="flex-1">
-            <span className="block font-bold">AI assistant · 24/7</span>
-            <span className="block text-xs opacity-90">Every answer shows the official source and the date it was verified.</span>
-          </span>
-          <span aria-hidden>›</span>
         </Link>
-        <input
-          type="search"
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder="Search chats"
-          className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm"
-          aria-label="Search chats"
-        />
-        <FilterChips<ChatFilter> options={["All", "Uni", "City", "Work"]} value={filter} onChange={setFilter} />
-        <ul className="space-y-2">
+
+        <label className="flex items-center gap-2 rounded-full border border-line bg-card px-4 py-3 focus-within:border-ink">
+          <Search size={16} className="text-ink-3" />
+          <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search chats" aria-label="Search chats" className="flex-1 bg-transparent text-[14px] outline-none" />
+        </label>
+        <Tabs<ChatFilter> options={["All", "Uni", "City", "Work"]} value={filter} onChange={setFilter} />
+
+        <ul className="divide-y divide-line overflow-hidden rounded-[22px] border border-line bg-card">
           {threads.map((t) => (
             <li key={t.id}>
-              <Link href={`/chat/${t.id}`} className="card flex items-center gap-3 p-3">
-                <span className="grid h-11 w-11 place-items-center rounded-full bg-brand-soft text-xl" aria-hidden>
-                  {t.avatar}
-                </span>
+              <Link href={`/chat/${t.id}`} className="flex items-center gap-3 px-4 py-4 transition hover:bg-paper">
+                <Monogram name={t.name} seed={all.indexOf(t)} />
                 <span className="min-w-0 flex-1">
-                  <span className="flex items-baseline justify-between">
-                    <span className="truncate text-sm font-bold text-navy">{t.name}</span>
-                    <span className="text-[11px] text-gray-400">{t.time}</span>
+                  <span className="flex items-baseline justify-between gap-2">
+                    <span className="truncate text-[15px] font-semibold">{t.name}</span>
+                    <span className="shrink-0 font-mono text-[10.5px] text-ink-3">{t.time}</span>
                   </span>
-                  <span className="block truncate text-xs text-gray-500">
-                    {t.role} · {t.messages[t.messages.length - 1].text}
+                  <span className="block font-mono text-[10px] uppercase tracking-wider text-accent">
+                    {t.group} · {t.role}
                   </span>
+                  <span className="mt-0.5 block truncate text-[13px] text-ink-2">{t.messages[t.messages.length - 1].text}</span>
                 </span>
-                {t.unread && <span className="grid h-5 w-5 place-items-center rounded-full bg-brand text-[10px] font-bold text-white">{t.unread}</span>}
+                {t.unread && <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-stamp font-mono text-[10px] text-white">{t.unread}</span>}
               </Link>
             </li>
           ))}
         </ul>
-        <p className="pb-4 text-center text-xs text-gray-400">Sample conversations for the demo.</p>
+        <p className="text-center font-mono text-[10.5px] text-ink-3">Sample conversations for the demo</p>
       </div>
     </main>
   );
