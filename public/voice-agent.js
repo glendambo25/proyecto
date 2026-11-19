@@ -139,14 +139,22 @@
     { type: 'function', name: 'point_at', description: 'Scroll to and highlight a text on screen, to show the user where something is.', parameters: { type: 'object', properties: { text: { type: 'string' } }, required: ['text'] } },
     { type: 'function', name: 'scroll', description: 'Scroll the current page.', parameters: { type: 'object', properties: { direction: { type: 'string', enum: ['up', 'down', 'top', 'bottom'] } }, required: ['direction'] } },
     { type: 'function', name: 'click', description: 'Click a button, tab or link by its visible text, to open a section or a step. Never for sending, paying, signing, saving or deleting: the user does that.', parameters: { type: 'object', properties: { text: { type: 'string' } }, required: ['text'] } },
-    { type: 'function', name: 'fill_field', description: 'Write a value the user just told you into a form field, found by its label. Never passwords. The user reviews and submits.', parameters: { type: 'object', properties: { field: { type: 'string' }, value: { type: 'string' } }, required: ['field', 'value'] } }
+    { type: 'function', name: 'fill_field', description: 'Write a value the user just told you into a form field, found by its label. Never passwords. The user reviews and submits.', parameters: { type: 'object', properties: { field: { type: 'string' }, value: { type: 'string' } }, required: ['field', 'value'] } },
+    { type: 'function', name: 'set_accent', description: 'Change how you speak when the user asks for a different accent or language (e.g. "speak with a Mexican accent", "talk like a Londoner", "háblame en español de Argentina", "go back to normal"). Applies at once and is remembered.', parameters: { type: 'object', properties: { accent: { type: 'string', description: 'The accent to use, e.g. "Mexican", "Argentinian", "Castilian Spanish", "British", "Indian English", "American". Empty string = neutral.' }, language: { type: 'string', description: 'Language to speak in, only if the user asked to change it, e.g. "Spanish", "English", "French". Empty = keep current.' } }, required: ['accent'] } }
   ];
+  /* Arrival: accent and language the user asked for, remembered between calls. */
+  var VOICE = { accent: '', language: '' };
+  try { VOICE = Object.assign(VOICE, JSON.parse(localStorage.getItem('va-voice') || '{}')); } catch (e) {}
+  function speakLine() {
+    var base = VOICE.language ? 'Speak ' + VOICE.language + '.' : (C.speak || ('Speak ' + (ES ? 'Spanish from Spain' : 'in the user\'s language') + '.'));
+    return base + (VOICE.accent ? ' Speak with a clear, natural ' + VOICE.accent + ' accent and keep it until the user asks to change it; never mock or caricature it.' : '');
+  }
   function instructions() {
     var pages = (C.pages || []).map(function (p) { return '- ' + p.url + ': ' + p.title + (p.description ? '. ' + p.description : ''); }).join('\n');
     return [
       'You are ' + C.name + ', a voice assistant inside this web app. You talk with the user and move the screen for them.',
       C.context ? 'About the app: ' + C.context : '',
-      (C.speak || ('Speak ' + (ES ? 'Spanish from Spain' : 'in the user\'s language') + '.')) + ' Short answers: one or two sentences, no lists, no markdown, no URLs read aloud.',
+      speakLine() + ' If the user asks for another accent or language, call set_accent, then continue in it. Short answers: one or two sentences, no lists, no markdown, no URLs read aloud.',
       'Do things instead of describing them: if another page helps, call go_to_page; to explain the screen or a form, call read_screen first and answer only with what is really there; use point_at to show where.',
       'You can open sections with click and fill a field with fill_field when the user gives you the value. Never send, submit, pay, sign, save or delete anything: tell the user which button to press and let them do it.',
       'Do not invent requirements, deadlines, fees or legal facts that are not on screen or in the app context; if you do not know, say so and show the closest page.',
@@ -160,6 +168,16 @@
   function runTool(name, a) {
     if (EXTRA[name]) { emit('tool', { name: name }); return Promise.resolve().then(function () { return EXTRA[name](a || {}); }).catch(function (e) { return { ok: false, error: String(e && e.message || e) }; }); }
     if (name === 'read_screen') return Promise.resolve(readScreen());
+    if (name === 'set_accent') {
+      VOICE.accent = String(a.accent || '').trim();
+      if (a.language) VOICE.language = String(a.language).trim();
+      try { localStorage.setItem('va-voice', JSON.stringify(VOICE)); } catch (e) {}
+      // New instructions apply to the next responses in this same call.
+      send({ type: 'session.update', session: { type: 'realtime', instructions: instructions() } });
+      line('s', T('Voice: ', 'Voz: ') + (VOICE.accent || T('neutral accent', 'acento neutro')) + (VOICE.language ? ' · ' + VOICE.language : ''));
+      emit('accent', { accent: VOICE.accent, language: VOICE.language });
+      return Promise.resolve({ ok: true, accent: VOICE.accent || 'neutral', language: VOICE.language || 'unchanged', note: 'Answer from now on with this accent.' });
+    }
     if (name === 'go_to_page') {
       var url = String(a.url || '');
       try { var u = new URL(url, location.href); if (u.origin !== location.origin) return Promise.resolve({ ok: false, error: 'only pages of this app' }); url = u.pathname + u.search + u.hash; } catch (e) { return Promise.resolve({ ok: false, error: 'bad url' }); }
