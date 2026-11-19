@@ -1,5 +1,34 @@
 [
   {
+    "id": "priya",
+    "name": "Priya Nair",
+    "age": 22,
+    "nationalityLabel": "Indian",
+    "nationality": "non-eu",
+    "passport": "Indian passport ···· 3318",
+    "phone": "+91 90000 00001",
+    "email": "priya.demo@example.com",
+    "destinationId": "madrid",
+    "purpose": "study",
+    "institution": "Universidad Pontificia Comillas",
+    "arrivalDate": "2027-01-25",
+    "duration": "1 academic year",
+    "neighbourhood": "Argüelles",
+    "accommodation": "Searching",
+    "note": "Main demo: non-EU master student arriving in Madrid; visa, TIE and padrón in order.",
+    "initialStatus": {
+      "admission": "completed",
+      "insurance": "completed",
+      "funds": "in_progress",
+      "medical-certificate": "completed"
+    },
+    "completedOn": {
+      "admission": "2026-10-02",
+      "insurance": "2026-11-03",
+      "medical-certificate": "2026-11-10"
+    }
+  },
+  {
     "id": "eduardo",
     "name": "Eduardo Martín",
     "age": 20,
@@ -16,8 +45,25 @@
     "neighbourhood": "Crocetta",
     "accommodation": "Shared flat, Crocetta (Confirmed)",
     "note": "Erasmus student from Spain (demo user from the mockups).",
-    "initialStatus": { "ehic": "completed", "accommodation": "completed", "documents": "completed", "codice-fiscale": "completed", "esim": "completed", "bank": "completed", "anagrafe": "in_progress", "transport": "pending", "return-anagrafe": "pending" },
-    "completedOn": { "bank": "2026-09-14", "ehic": "2026-08-20", "accommodation": "2026-08-28", "documents": "2026-09-17", "codice-fiscale": "2026-09-11", "esim": "2026-09-12" }
+    "initialStatus": {
+      "ehic": "completed",
+      "accommodation": "completed",
+      "documents": "completed",
+      "codice-fiscale": "completed",
+      "esim": "completed",
+      "bank": "completed",
+      "anagrafe": "in_progress",
+      "transport": "pending",
+      "return-anagrafe": "pending"
+    },
+    "completedOn": {
+      "bank": "2026-09-14",
+      "ehic": "2026-08-20",
+      "accommodation": "2026-08-28",
+      "documents": "2026-09-17",
+      "codice-fiscale": "2026-09-11",
+      "esim": "2026-09-12"
+    }
   },
   {
     "id": "arjun",
@@ -36,8 +82,13 @@
     "neighbourhood": "San Salvario",
     "accommodation": "Searching",
     "note": "Non-EU variant: same city, different checklist (visa, permesso, order).",
-    "initialStatus": { "pre-enrolment": "completed", "visa": "in_progress" },
-    "completedOn": { "pre-enrolment": "2026-11-02" }
+    "initialStatus": {
+      "pre-enrolment": "completed",
+      "visa": "in_progress"
+    },
+    "completedOn": {
+      "pre-enrolment": "2026-11-02"
+    }
   },
   {
     "id": "lucia",
@@ -56,8 +107,13 @@
     "neighbourhood": "Città Studi",
     "accommodation": "Searching",
     "note": "Case: housing scam attempt, contradictory codice fiscale info, didn't know Anagrafe was mandatory.",
-    "initialStatus": { "ehic": "completed", "accommodation": "in_progress" },
-    "completedOn": { "ehic": "2026-11-05" }
+    "initialStatus": {
+      "ehic": "completed",
+      "accommodation": "in_progress"
+    },
+    "completedOn": {
+      "ehic": "2026-11-05"
+    }
   },
   {
     "id": "alvaro",
@@ -76,8 +132,12 @@
     "neighbourhood": "Maxvorstadt",
     "accommodation": "Searching",
     "note": "Case: flat → Anmeldung → bank loop; forgot to deregister the broadcasting fee.",
-    "initialStatus": { "ehic": "completed" },
-    "completedOn": { "ehic": "2026-11-01" }
+    "initialStatus": {
+      "ehic": "completed"
+    },
+    "completedOn": {
+      "ehic": "2026-11-01"
+    }
   },
   {
     "id": "julio",

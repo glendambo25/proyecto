@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { BarChart3, CalendarClock, FolderCheck, House, ListChecks, Map, MessageCircle, Mic, Sparkles, Ticket, UserRound } from "lucide-react";
-import { APP_NAME, cityCode, getDestination, progressOf } from "@/lib/content";
+import { APP_NAME, cityCode, getDestination, personas, progressOf } from "@/lib/content";
 import { useApp } from "@/lib/store";
 import { Segments } from "./ui";
 
@@ -85,12 +85,27 @@ function Sidebar({ path }: { path: string }) {
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const path = usePathname();
   const router = useRouter();
-  const { ready, profile } = useApp();
+  const { ready, profile, startPersona } = useApp();
   const isPublic = PUBLIC.includes(path);
 
+  // Demo links: ?demo=<persona> opens a demo traveller, ?design=chart|minimal picks the direction.
   useEffect(() => {
-    if (ready && !profile && !isPublic) router.replace("/onboarding");
-  }, [ready, profile, isPublic, router]);
+    if (!ready) return;
+    const q = new URLSearchParams(window.location.search);
+    const demo = q.get("demo");
+    const design = q.get("design");
+    if (design === "chart" || design === "minimal") {
+      try {
+        localStorage.setItem("arrival-design", design);
+      } catch {}
+      window.dispatchEvent(new Event("arrival-design-change"));
+    }
+    if (demo && personas.some((p) => p.id === demo) && profile?.personaId !== demo) {
+      startPersona(demo);
+      return;
+    }
+    if (!profile && !isPublic) router.replace("/onboarding");
+  }, [ready, profile, isPublic, router, startPersona]);
 
   // Conversation screens have their own composer + mic: hide the floating voice button there (and on onboarding).
   useEffect(() => {

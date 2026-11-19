@@ -1,29 +1,29 @@
 @import "tailwindcss";
 
 /*
- * Visual language: an editorial travel document.
- * Warm paper, navy ink, one indigo accent, a tangerine "stamp" colour for deadlines.
- * Serif display (Instrument Serif) for voice, Plus Jakarta Sans for reading,
- * IBM Plex Mono for the ticket-like metadata.
+ * Palette chosen by the founder: white, ink #111827, indigo #4f46e5, green #16a34a.
+ * Two directions share it: "Arrival chart" (creative) and "Minimal".
  */
 @theme {
-  --color-paper: #f3efe6;
-  --color-paper-2: #ebe6da;
-  --color-card: #fffdf8;
-  --color-line: #e2dccd;
-  --color-ink: #0b0f5c;
-  --color-ink-2: #4b4f7c;
-  --color-ink-3: #8a8cab;
-  --color-accent: #5b5fe8;
-  --color-accent-soft: #e6e6fb;
-  --color-ok: #1d7a55;
-  --color-ok-soft: #dfeee5;
-  --color-stamp: #d4572a;
-  --color-stamp-soft: #f8e4d8;
+  --color-paper: #ffffff;
+  --color-paper-2: #f3f4f6;
+  --color-card: #ffffff;
+  --color-line: #e5e7eb;
+  --color-ink: #111827;
+  --color-ink-2: #4b5563;
+  --color-ink-3: #6b7280;
+  --color-accent: #4f46e5;
+  --color-accent-soft: #eef2ff;
+  --color-ok: #16a34a;
+  --color-ok-soft: #dcfce7;
+  --color-stamp: #dc2626;
+  --color-stamp-soft: #fee2e2;
 
-  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-instrument), ui-serif, Georgia, serif;
   --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+  --font-hand: var(--font-reenie), cursive;
+  --font-ui: ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif;
 }
 
 html,
@@ -32,10 +32,17 @@ body {
   color: var(--color-ink);
 }
 
-body {
-  /* subtle paper grain */
-  background-image: radial-gradient(rgba(11, 15, 92, 0.035) 1px, transparent 1px);
-  background-size: 3px 3px;
+/* Browser surfaces carry the palette too */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+input,
+textarea {
+  caret-color: var(--color-accent);
+}
+.tabular {
+  font-variant-numeric: tabular-nums;
 }
 
 ::selection {
@@ -125,7 +132,7 @@ body {
 .va-root {
   bottom: 96px !important;
   right: max(16px, calc(50vw - 214px)) !important;
-  font-family: var(--font-jakarta), system-ui, sans-serif !important;
+  font-family: var(--font-archivo), system-ui, sans-serif !important;
 }
 .va-btn {
   position: relative;

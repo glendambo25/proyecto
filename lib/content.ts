@@ -1,3 +1,4 @@
+import madrid from "@/content/madrid.json";
 import turin from "@/content/turin.json";
 import milan from "@/content/milan.json";
 import munich from "@/content/munich.json";
@@ -9,11 +10,11 @@ import type { Destination, Nationality, Persona, Purpose, Task, TaskStatus } fro
 export const APP_NAME = "Arrival";
 export const TAGLINE = "You move. We handle the paperwork.";
 
-export const destinations = [turin, milan, munich, luxembourg, newYork] as unknown as Destination[];
+export const destinations = [madrid, turin, milan, munich, luxembourg, newYork] as unknown as Destination[];
 export const personas = personasJson as unknown as Persona[];
 
 /** IATA-style city codes for the boarding-pass card. */
-export const cityCode: Record<string, string> = { turin: "TRN", milan: "MIL", munich: "MUC", luxembourg: "LUX", "new-york": "NYC" };
+export const cityCode: Record<string, string> = { madrid: "MAD", turin: "TRN", milan: "MIL", munich: "MUC", luxembourg: "LUX", "new-york": "NYC" };
 export function originCode(nationalityLabel: string): string {
   return ({ Spanish: "ESP", Indian: "IND", Chinese: "CHN" } as Record<string, string>)[nationalityLabel] ?? "HOME";
 }
