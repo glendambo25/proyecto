@@ -263,13 +263,23 @@
     };
     var key = preload(); PRE = null;
     // Without a microphone (denied or none) it still works by text, with spoken answers.
+    var micErr = null;
+    // Arrival: say WHY there is no microphone, so the user can fix it.
+    function micReason() {
+      var tail = T(' Meanwhile, type and I will answer out loud.', ' Mientras, escribe y te contesto en voz alta.');
+      if (!window.isSecureContext || !navigator.mediaDevices) return T('The microphone only works on a secure page: open the app at http://localhost:3000 or over https.', 'El micrófono solo funciona en una página segura: abre la app en http://localhost:3000 o con https.') + tail;
+      if (micErr === 'NotAllowedError' || micErr === 'SecurityError') return T('Microphone blocked: allow it in the browser (padlock icon next to the address → Microphone → Allow) and in your system privacy settings, then hang up and tap the mic again.', 'Micrófono bloqueado: permítelo en el navegador (candado junto a la dirección → Micrófono → Permitir) y en la privacidad del sistema, cuelga y vuelve a pulsar el micro.') + tail;
+      if (micErr === 'NotFoundError' || micErr === 'OverconstrainedError') return T('No microphone found on this device. Plug one in or check the system sound input.', 'No se ha encontrado ningún micrófono. Conecta uno o revisa la entrada de sonido del sistema.') + tail;
+      if (micErr === 'NotReadableError') return T('Another app is using the microphone. Close it and try again.', 'Otra aplicación está usando el micrófono. Ciérrala y vuelve a probar.') + tail;
+      return T('No microphone available.', 'No hay micrófono disponible.') + tail;
+    }
     var mic = navigator.mediaDevices && navigator.mediaDevices.getUserMedia
-      ? navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } }).catch(function () { return null; })
+      ? navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } }).catch(function (e) { micErr = (e && e.name) || 'Error'; return null; })
       : Promise.resolve(null);
     return Promise.all([key, mic])
       .then(function (r) {
         RT.mic = r[1];
-        if (r[1]) pc.addTrack(r[1].getTracks()[0]); else { pc.addTransceiver('audio', { direction: 'recvonly' }); line('s', T('No microphone: type and I will answer out loud.', 'Sin micrófono: escribe y te contesto en voz alta.')); }
+        if (r[1]) pc.addTrack(r[1].getTracks()[0]); else { pc.addTransceiver('audio', { direction: 'recvonly' }); line('s', micReason()); }
         return pc.createOffer().then(function (o) { return pc.setLocalDescription(o).then(function () {
           return fetch('https://api.openai.com/v1/realtime/calls', { method: 'POST', body: o.sdp, headers: { Authorization: 'Bearer ' + r[0].value, 'Content-Type': 'application/sdp' } });
         }); });
