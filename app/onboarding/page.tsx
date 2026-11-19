@@ -75,9 +75,9 @@ export default function Onboarding() {
                 <h1 className="text-[50px] font-extrabold leading-[0.95] tracking-[-0.035em] [font-stretch:112%] [text-wrap:balance] lg:text-[76px] lg:[font-stretch:106%]">
                   You move.
                   <br />
-                  <span className="text-accent">We chart</span>
+                  <span className="text-accent">We chart the</span>
                   <br />
-                  the paperwork.
+                  paperwork.
                 </h1>
               ) : (
                 <h1 className="text-[34px] font-semibold leading-[1.1] tracking-[-0.02em] lg:text-[52px]">

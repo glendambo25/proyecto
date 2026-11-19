@@ -1,0 +1,164 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-19T00:00:00Z",
+  "title": "Design System: Arrival",
+  "extensions": {
+    "colorMeta": {
+      "paper": { "role": "neutral", "displayName": "Paper", "canonical": "#ffffff", "tonalRamp": ["#030712", "#111827", "#374151", "#6b7280", "#d1d5db", "#f3f4f6", "#f9fafb", "#ffffff"] },
+      "paper-2": { "role": "neutral", "displayName": "Mist", "canonical": "#f3f4f6", "tonalRamp": ["#030712", "#111827", "#374151", "#6b7280", "#d1d5db", "#e5e7eb", "#f3f4f6", "#f9fafb"] },
+      "card": { "role": "neutral", "displayName": "Paper (card)", "canonical": "#ffffff", "tonalRamp": ["#030712", "#111827", "#374151", "#6b7280", "#d1d5db", "#f3f4f6", "#f9fafb", "#ffffff"] },
+      "line": { "role": "neutral", "displayName": "Hairline", "canonical": "#e5e7eb", "tonalRamp": ["#030712", "#111827", "#374151", "#6b7280", "#9ca3af", "#d1d5db", "#e5e7eb", "#f9fafb"] },
+      "ink": { "role": "neutral", "displayName": "Ink", "canonical": "#111827", "tonalRamp": ["#030712", "#111827", "#1f2937", "#374151", "#4b5563", "#6b7280", "#d1d5db", "#f9fafb"] },
+      "ink-2": { "role": "neutral", "displayName": "Ink Mid", "canonical": "#4b5563", "tonalRamp": ["#030712", "#111827", "#1f2937", "#374151", "#4b5563", "#6b7280", "#d1d5db", "#f9fafb"] },
+      "ink-3": { "role": "neutral", "displayName": "Ink Soft", "canonical": "#6b7280", "tonalRamp": ["#030712", "#111827", "#1f2937", "#374151", "#4b5563", "#6b7280", "#d1d5db", "#f9fafb"] },
+      "accent": { "role": "primary", "displayName": "Route Indigo", "canonical": "#4f46e5", "tonalRamp": ["#1e1b4b", "#312e81", "#3730a3", "#4338ca", "#4f46e5", "#6366f1", "#a5b4fc", "#e0e7ff"] },
+      "accent-soft": { "role": "primary", "displayName": "Indigo Wash", "canonical": "#eef2ff", "tonalRamp": ["#1e1b4b", "#312e81", "#3730a3", "#4338ca", "#6366f1", "#a5b4fc", "#e0e7ff", "#eef2ff"] },
+      "ok": { "role": "secondary", "displayName": "Done Green", "canonical": "#16a34a", "tonalRamp": ["#052e16", "#14532d", "#166534", "#15803d", "#16a34a", "#4ade80", "#bbf7d0", "#f0fdf4"] },
+      "ok-soft": { "role": "secondary", "displayName": "Done Wash", "canonical": "#dcfce7", "tonalRamp": ["#052e16", "#14532d", "#166534", "#16a34a", "#4ade80", "#bbf7d0", "#dcfce7", "#f0fdf4"] },
+      "stamp": { "role": "tertiary", "displayName": "Stamp Red", "canonical": "#dc2626", "tonalRamp": ["#450a0a", "#7f1d1d", "#991b1b", "#b91c1c", "#dc2626", "#f87171", "#fecaca", "#fef2f2"] },
+      "stamp-soft": { "role": "tertiary", "displayName": "Stamp Wash", "canonical": "#fee2e2", "tonalRamp": ["#450a0a", "#7f1d1d", "#991b1b", "#dc2626", "#f87171", "#fecaca", "#fee2e2", "#fef2f2"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Onboarding welcome line only (Chart). 76px at wdth 106 on desktop." },
+      "headline": { "displayName": "Headline", "purpose": "One per screen: checklist title (52px desktop); step title at 28/40px wdth 108; onboarding questions 40px wdth 115." },
+      "numeral": { "displayName": "Numeral", "purpose": "Indigo step number on step detail; city codes reuse the voice at 22-28px." },
+      "title": { "displayName": "Title", "purpose": "Step row titles; 14px semibold for source names and chain links." },
+      "body": { "displayName": "Body", "purpose": "Reading copy; 17px relaxed for step descriptions, max 65ch." },
+      "scale-label": { "displayName": "Scale label", "purpose": "Rail ticks, today readout, phase headings: uppercase condensed caps that belong to the chart's scale only." },
+      "hand": { "displayName": "Hand", "purpose": "Margin notes about order and time, indigo or red. Never headings, body, buttons or labels." },
+      "minimal-headline": { "displayName": "Minimal headline", "purpose": "Minimal sibling page titles (34px desktop; step 26/32px; onboarding 34/52px)." },
+      "minimal-body": { "displayName": "Minimal body", "purpose": "Minimal rows and copy." },
+      "minimal-meta": { "displayName": "Minimal meta", "purpose": "Section names, dependency and deadline lines, in Ink Soft, sentence case." }
+    },
+    "shadows": [
+      { "name": "marker-glow", "value": "0 2px 6px rgba(79,70,229,0.45)", "purpose": "The today marker on the day rail only. Everything else is flat." }
+    ],
+    "motion": [
+      { "name": "state-color", "value": "150ms ease", "purpose": "Colour and border transitions on rows, buttons, tiles, tabs and the design switch." },
+      { "name": "progress-fill", "value": "width 200ms ease-out", "purpose": "Minimal progress bar and onboarding step segments." },
+      { "name": "arc-state", "value": "redraw, no tween", "purpose": "Marking a step done redraws its arcs from dashed (3 4) to solid 2px and moves the rail marker on the next measure." }
+    ],
+    "breakpoints": [
+      { "name": "lg", "value": "1024px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Ink pill that turns indigo on hover; Mark as done in both siblings and every CTA in Minimal.",
+      "html": "<button class=\"ds-btn-primary\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20 6 9 17l-5-5\"/></svg>Mark as done</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: none; border-radius: 9999px; padding: 14px 20px; background: var(--color-ink, #111827); color: #fff; font: 600 15px/1.25 Archivo, ui-sans-serif, system-ui, sans-serif; cursor: pointer; transition: background-color 150ms ease; } .ds-btn-primary:hover { background: var(--color-accent, #4f46e5); } .ds-btn-primary:focus-visible { outline: 2px solid var(--color-accent, #4f46e5); outline-offset: 2px; }"
+    },
+    {
+      "name": "Route Button",
+      "kind": "button",
+      "refersTo": "button-route",
+      "description": "Indigo pill CTA on Chart onboarding; hovers to Ink.",
+      "html": "<button class=\"ds-btn-route\">Build my checklist<svg width=\"17\" height=\"17\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14M12 5l7 7-7 7\"/></svg></button>",
+      "css": ".ds-btn-route { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: none; border-radius: 9999px; padding: 16px 28px; background: var(--color-accent, #4f46e5); color: #fff; font: 600 16px/1.25 Archivo, ui-sans-serif, system-ui, sans-serif; cursor: pointer; transition: background-color 150ms ease; } .ds-btn-route:hover { background: var(--color-ink, #111827); } .ds-btn-route:focus-visible { outline: 2px solid var(--color-accent, #4f46e5); outline-offset: 2px; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "White pill with a hairline border that darkens to Ink on hover; Start and Undo. Disabled state is dashed, never faded.",
+      "html": "<div style=\"display:flex;gap:8px\"><button class=\"ds-btn-secondary\">Start</button><button class=\"ds-btn-secondary\" disabled>Mark as done</button></div>",
+      "css": ".ds-btn-secondary { border: 1px solid var(--color-line, #e5e7eb); border-radius: 9999px; padding: 14px 20px; background: var(--color-card, #fff); color: var(--color-ink, #111827); font: 600 15px/1.25 Archivo, ui-sans-serif, system-ui, sans-serif; cursor: pointer; transition: border-color 150ms ease; } .ds-btn-secondary:hover { border-color: var(--color-ink, #111827); } .ds-btn-secondary:focus-visible { outline: 2px solid var(--color-accent, #4f46e5); outline-offset: 2px; } .ds-btn-secondary:disabled { border-style: dashed; color: var(--color-ink-3, #6b7280); cursor: not-allowed; } .ds-btn-secondary:disabled:hover { border-color: var(--color-line, #e5e7eb); }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "16px-radius field with a hairline border; focus moves the border to indigo.",
+      "html": "<label class=\"ds-field\"><span class=\"ds-field-label\">First name</span><input class=\"ds-input\" placeholder=\"Priya\"></label>",
+      "css": ".ds-field { display: block; font-family: Archivo, ui-sans-serif, system-ui, sans-serif; } .ds-field-label { font-size: 13px; font-weight: 500; color: var(--color-ink-2, #4b5563); } .ds-input { display: block; width: 100%; margin-top: 8px; border: 1px solid var(--color-line, #e5e7eb); border-radius: 16px; padding: 14px 16px; background: var(--color-card, #fff); color: var(--color-ink, #111827); font: 400 16px/1.4 inherit; outline: none; caret-color: var(--color-accent, #4f46e5); transition: border-color 150ms ease; } .ds-input::placeholder { color: var(--color-ink-3, #6b7280); } .ds-input:focus { border-color: var(--color-accent, #4f46e5); }"
+    },
+    {
+      "name": "Choice Tile",
+      "kind": "chip",
+      "refersTo": "choice-tile",
+      "description": "Onboarding option; selected fills indigo in Chart (Ink in Minimal) with a check.",
+      "html": "<div style=\"display:grid;gap:8px\"><button class=\"ds-choice\" aria-pressed=\"true\"><span>Indian</span><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20 6 9 17l-5-5\"/></svg></button><button class=\"ds-choice\" aria-pressed=\"false\"><span>Chinese</span></button></div>",
+      "css": ".ds-choice { display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 12px; border: 1px solid var(--color-line, #e5e7eb); border-radius: 16px; padding: 14px 16px; background: var(--color-card, #fff); color: var(--color-ink, #111827); font: 400 15px/1.3 Archivo, ui-sans-serif, system-ui, sans-serif; text-align: left; cursor: pointer; transition: border-color 150ms ease, background-color 150ms ease; } .ds-choice:hover { border-color: var(--color-ink, #111827); } .ds-choice:focus-visible { outline: 2px solid var(--color-accent, #4f46e5); outline-offset: 2px; } .ds-choice[aria-pressed=\"true\"] { border-color: var(--color-accent, #4f46e5); background: var(--color-accent, #4f46e5); color: #fff; }"
+    },
+    {
+      "name": "Design Switch",
+      "kind": "nav",
+      "refersTo": "design-switch-active",
+      "description": "Pill segmented control that swaps Chart and Minimal; Ink fill marks the active direction.",
+      "html": "<div class=\"ds-switch\" role=\"radiogroup\" aria-label=\"Design direction\"><button role=\"radio\" aria-checked=\"true\">Chart</button><button role=\"radio\" aria-checked=\"false\">Minimal</button></div>",
+      "css": ".ds-switch { display: inline-flex; border: 1px solid var(--color-line, #e5e7eb); border-radius: 9999px; padding: 2px; background: var(--color-card, #fff); font: 600 12px/1 Archivo, ui-sans-serif, system-ui, sans-serif; } .ds-switch button { border: none; border-radius: 9999px; padding: 6px 12px; background: transparent; color: var(--color-ink-2, #4b5563); font: inherit; cursor: pointer; transition: color 150ms ease, background-color 150ms ease; } .ds-switch button:hover { color: var(--color-ink, #111827); } .ds-switch button:focus-visible { outline: 2px solid var(--color-accent, #4f46e5); outline-offset: 2px; } .ds-switch button[aria-checked=\"true\"] { background: var(--color-ink, #111827); color: #fff; }"
+    },
+    {
+      "name": "Charted Step Rows",
+      "kind": "custom",
+      "refersTo": "step-row-next",
+      "description": "Signature: steps on the day rail, joined to their prerequisite by an indigo arc (solid once done), the next step on the indigo wash with a hand note.",
+      "html": "<div class=\"ds-chart\"><svg class=\"ds-chart-g\" width=\"108\" height=\"132\" aria-hidden=\"true\"><line x1=\"22\" x2=\"22\" y1=\"0\" y2=\"132\" stroke=\"#111827\" stroke-width=\"1.5\"/><line x1=\"15\" x2=\"22\" y1=\"6\" y2=\"6\" stroke=\"#111827\" stroke-opacity=\".5\"/><line x1=\"18\" x2=\"22\" y1=\"30\" y2=\"30\" stroke=\"#111827\" stroke-opacity=\".22\"/><line x1=\"18\" x2=\"22\" y1=\"54\" y2=\"54\" stroke=\"#111827\" stroke-opacity=\".22\"/><line x1=\"18\" x2=\"22\" y1=\"78\" y2=\"78\" stroke=\"#111827\" stroke-opacity=\".22\"/><line x1=\"15\" x2=\"22\" y1=\"102\" y2=\"102\" stroke=\"#111827\" stroke-opacity=\".5\"/><path d=\"M80 24 H84 Q74 24 74 34 V80 Q74 90 84 90 H80\" fill=\"none\" stroke=\"#4f46e5\" stroke-width=\"2\" stroke-linecap=\"round\"/></svg><a class=\"ds-row\" href=\"#\"><span class=\"ds-node ds-node-done\"><svg width=\"13\" height=\"13\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#fff\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M20 6 9 17l-5-5\"/></svg></span><span><span class=\"ds-row-t ds-done\">Study visa</span><span class=\"ds-row-m\">01 · Visado de estudios</span></span><span class=\"ds-row-d ds-ok\">done</span></a><a class=\"ds-row ds-row-next\" href=\"#\"><span class=\"ds-node\"></span><span><span class=\"ds-row-t\">Residence card (TIE)</span><span class=\"ds-row-m\">02 · Tarjeta de Identidad de Extranjero</span><span class=\"ds-hand\">next: book the appointment</span></span><span class=\"ds-row-d\">day +30</span></a></div>",
+      "css": ".ds-chart { position: relative; font-family: Archivo, ui-sans-serif, system-ui, sans-serif; color: var(--color-ink, #111827); } .ds-chart-g { position: absolute; left: 0; top: 0; pointer-events: none; } .ds-row { position: relative; display: grid; grid-template-columns: 108px 1fr auto; align-items: start; gap: 12px; padding: 12px 12px 12px 0; border-radius: 16px; color: inherit; text-decoration: none; transition: background-color 150ms ease; } .ds-row:hover { background: rgba(238,242,255,.6); } .ds-row:focus-visible { outline: 2px solid var(--color-accent, #4f46e5); outline-offset: 2px; } .ds-row-next { background: rgba(238,242,255,.7); } .ds-node { position: relative; z-index: 1; display: grid; place-items: center; width: 24px; height: 24px; margin: 2px 0 0 80px; border: 2px solid var(--color-ink, #111827); border-radius: 9999px; background: #fff; box-sizing: border-box; } .ds-node-done { border: none; background: var(--color-ok, #16a34a); } .ds-row-t { display: block; font-size: 16px; font-weight: 600; line-height: 1.375; } .ds-done { color: var(--color-ink-3, #6b7280); text-decoration: line-through; } .ds-row-m { display: block; font-size: 12.5px; color: var(--color-ink-3, #6b7280); } .ds-hand { display: block; margin-top: 2px; font: 400 22px/24px 'Reenie Beanie', cursive; color: var(--color-accent, #4f46e5); } .ds-row-d { padding-top: 2px; font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; } .ds-ok { color: var(--color-ok, #16a34a); }"
+    },
+    {
+      "name": "Today Marker",
+      "kind": "custom",
+      "refersTo": "today-readout",
+      "description": "Signature: the indigo marker on the rail with its condensed readout; the system's only shadow.",
+      "html": "<div class=\"ds-today\"><span class=\"ds-today-dot\"></span><span class=\"ds-today-tag\">Today +64</span></div>",
+      "css": ".ds-today { position: relative; display: inline-flex; align-items: center; gap: 4px; font-family: Archivo, ui-sans-serif, system-ui, sans-serif; } .ds-today-dot { width: 18px; height: 18px; box-sizing: border-box; border: 3px solid #fff; border-radius: 9999px; background: var(--color-accent, #4f46e5); box-shadow: 0 2px 6px rgba(79,70,229,0.45); } .ds-today-tag { border-radius: 6px; padding: 2px 6px; background: var(--color-accent, #4f46e5); color: #fff; font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; font-stretch: 80%; font-variant-numeric: tabular-nums; }"
+    },
+    {
+      "name": "Source Card",
+      "kind": "card",
+      "refersTo": "source-card",
+      "description": "Official source with its verified date; unverified sources switch to a dashed red border and red line.",
+      "html": "<div style=\"display:grid;gap:8px\"><a class=\"ds-source\" href=\"#\"><span class=\"ds-source-mark\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M20 6 9 17l-5-5\"/></svg></span><span><span class=\"ds-source-n\">Policia Nacional: TIE</span><span class=\"ds-source-v\">Official source · verified 16 Nov 2026</span></span></a><div class=\"ds-source ds-source-bad\"><span class=\"ds-source-mark\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 8v4M12 16h.01\"/></svg></span><span><span class=\"ds-source-n\">No verified official source yet</span><span class=\"ds-source-v\">TODO: verify</span></span></div></div>",
+      "css": ".ds-source { display: flex; align-items: flex-start; gap: 12px; border: 1px solid var(--color-line, #e5e7eb); border-radius: 16px; padding: 14px; background: var(--color-card, #fff); color: var(--color-ink, #111827); text-decoration: none; font-family: Archivo, ui-sans-serif, system-ui, sans-serif; transition: border-color 150ms ease; } a.ds-source:hover { border-color: var(--color-ink, #111827); } a.ds-source:focus-visible { outline: 2px solid var(--color-accent, #4f46e5); outline-offset: 2px; } .ds-source-mark { display: grid; place-items: center; flex-shrink: 0; width: 28px; height: 28px; margin-top: 2px; border-radius: 9999px; background: var(--color-accent, #4f46e5); color: #fff; } .ds-source-n { display: block; font-size: 14px; font-weight: 600; line-height: 1.375; } .ds-source-v { display: block; font-size: 12.5px; color: var(--color-accent, #4f46e5); } .ds-source-bad { border-style: dashed; border-color: rgba(220,38,38,.5); } .ds-source-bad .ds-source-mark { background: var(--color-stamp-soft, #fee2e2); color: var(--color-stamp, #dc2626); } .ds-source-bad .ds-source-v { color: var(--color-stamp, #dc2626); }"
+    },
+    {
+      "name": "Minimal Row",
+      "kind": "custom",
+      "refersTo": "minimal-body",
+      "description": "Minimal sibling: hairline-divided rows in the system face with the same status states, one indigo accent.",
+      "html": "<ul class=\"ds-min\"><li><a href=\"#\"><span class=\"ds-min-dot ds-min-done\"><svg width=\"11\" height=\"11\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#fff\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M20 6 9 17l-5-5\"/></svg></span><span class=\"ds-min-t ds-min-muted\">Study visa</span></a></li><li><a href=\"#\"><span class=\"ds-min-dot ds-min-prog\"></span><span class=\"ds-min-t\">Residence card (TIE)<span class=\"ds-min-m\">Within 30 days of arrival</span></span><span class=\"ds-min-s\">In progress</span></a></li><li><a href=\"#\"><span class=\"ds-min-dot ds-min-blocked\"></span><span class=\"ds-min-t\">Bank account<span class=\"ds-min-m ds-min-muted\">After Residence card (TIE)</span></span></a></li></ul>",
+      "css": ".ds-min { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--color-line, #e5e7eb); border-bottom: 1px solid var(--color-line, #e5e7eb); font-family: ui-sans-serif, -apple-system, 'Segoe UI', system-ui, sans-serif; } .ds-min li + li { border-top: 1px solid var(--color-line, #e5e7eb); } .ds-min a { display: flex; align-items: center; gap: 12px; padding: 14px 0; color: var(--color-ink, #111827); text-decoration: none; } .ds-min a:hover .ds-min-t { color: var(--color-accent, #4f46e5); } .ds-min a:focus-visible { outline: 2px solid var(--color-accent, #4f46e5); outline-offset: 2px; } .ds-min-dot { display: grid; place-items: center; flex-shrink: 0; width: 20px; height: 20px; box-sizing: border-box; border: 1px solid var(--color-ink-3, #6b7280); border-radius: 9999px; } .ds-min-done { border: none; background: var(--color-ok, #16a34a); } .ds-min-prog { border: 2px solid var(--color-accent, #4f46e5); } .ds-min-blocked { border-style: dashed; } .ds-min-t { flex: 1; font-size: 15px; line-height: 1.375; transition: color 150ms ease; } .ds-min-m { display: block; font-size: 13px; color: var(--color-ink-2, #4b5563); } .ds-min-muted { color: var(--color-ink-3, #6b7280); } .ds-min-s { font-size: 13px; color: var(--color-accent, #4f46e5); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Arrival Chart",
+    "overview": "The arrival is measured the way a coastal chart measures height: a vertical day rail counts days from landing, every step sits at its place on it, and indigo arcs in the gutter show what each step waits for. The ground is white paper with faint indigo contour lines rising toward the landing. Type is Archivo, used across its width axis: condensed caps for the scale and numerals, normal width for reading, slightly expanded heavy weights for headlines. A pen face writes the few notes a person would scribble in the margin: what a step is waiting for, how many days are left, that a deadline has passed.\n\nThe system ships as two siblings on one palette and one content model, switched per viewer (Chart is the default). Chart is the world above. Minimal keeps the same content and functions with the system UI face, hairline rows, one indigo accent and no ornament: no rail, no contours, no hand. Both are flat, white, mobile-first and calm under stress; colour carries state, never decoration.",
+    "keyCharacteristics": [
+      "White paper ground; indigo is the route, green is done, red is risk.",
+      "A measured day rail and dependency arcs (dashed while waiting, solid once the prerequisite is done) in Chart.",
+      "Archivo across its width axis; a single hand face for margin notes only.",
+      "Flat surfaces, hairline dividers, fully rounded actions.",
+      "Minimal sibling: system face, hairline list, a 4px progress bar, the same states."
+    ],
+    "rules": [
+      { "name": "The Green Means Done Rule", "body": "Green appears only on something the student has finished. Never as a positive brand colour, a \"verified\" badge or a CTA.", "section": "colors" },
+      { "name": "The Red Is Risk Rule", "body": "Red marks a missed deadline, an unverified source or an official warning, and nothing else. It is never used for emphasis or for the \"hang on\" of a blocked step (blocked is dashed Ink Soft).", "section": "colors" },
+      { "name": "The Indigo Is the Route Rule", "body": "In Chart, anything that traces order or attention (arcs, marker, numeral, hand notes, the next row) is indigo; decoration is not.", "section": "colors" },
+      { "name": "The Width Carries Role Rule", "body": "Condensed (wdth 75-80) is for measuring: ticks, readouts, numerals, codes. Normal width is for reading. Expanded (wdth 106-115) at 800 is for the one headline per screen.", "section": "typography" },
+      { "name": "The Pen Speaks Last Rule", "body": "The hand face writes short notes about order and time (what a step waits for, days left, a missed deadline, the example-route caption), always 22px, indigo or red, with a small hand-drawn squiggle when attached to a row. Never headings, body copy, buttons or labels.", "section": "typography" },
+      { "name": "The One Face Rule (Minimal)", "body": "Minimal uses the system UI stack only, weights 400-600, sentence case, no condensed caps.", "section": "typography" },
+      { "name": "The Gutter Is Data Rule", "body": "In Chart, the left gutter is measured: rail ticks every 24px, labelled ticks only where an official rule sets a deadline, arcs only for real dependencies. Nothing ornamental goes there.", "section": "layout" },
+      { "name": "The Flat Chart Rule", "body": "Cards, rows, inputs and buttons carry no shadow. Separation is a 1px Hairline border or a divider.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do keep green for done, red for risk (missed deadline, unverified source, official warning) and indigo for the route and attention.",
+      "Do use dashed strokes for \"not yet\" (open dependency, blocked step, disabled action, unverified source) and turn them solid when the condition is met.",
+      "Do put a source line with its verified date on every step, and say \"No verified official source yet\" when there is none.",
+      "Do use Archivo's width axis for hierarchy: wdth 75-80 for the scale, normal for reading, 106-115 at 800 for the one headline.",
+      "Do keep hand notes short, 22px, indigo or red, and about order or time.",
+      "Do keep Minimal to the system face, hairline rows and one indigo accent, with the same content and states as Chart."
+    ],
+    "donts": [
+      "Don't replace the rail and arcs with a progress ring or percentage donut.",
+      "Don't add shadows to cards, rows or buttons; the today marker's glow is the only one.",
+      "Don't use the hand face for headings, body copy, buttons or labels.",
+      "Don't use green for anything not finished, or red for emphasis.",
+      "Don't bring contours, the rail, the hand face or condensed caps into Minimal.",
+      "Don't put small uppercase tracked labels above headings; uppercase condensed caps belong only to the rail's scale and phase headings."
+    ]
+  }
+}

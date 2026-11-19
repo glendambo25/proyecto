@@ -35,7 +35,7 @@ export default function TasksMinimal() {
           </span>
         </p>
         <p className="mt-0.5 text-[15px] text-ink-2">
-          {prog.done} of {prog.total} done
+          {prog.done} of {prog.total} arrival steps done ({checklist.length} with going home)
           {next && (
             <>
               {" · next: "}

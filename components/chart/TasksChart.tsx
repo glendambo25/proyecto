@@ -120,7 +120,7 @@ export default function TasksChart() {
           {dest.city}, charted for {profile.name.split(" ")[0]}.
         </h1>
         <p className="relative mt-3 max-w-[52ch] text-[15px] text-ink-2">
-          {prog.done} of {prog.total} arrival steps done · {profile.nationalityLabel} passport · {profile.purpose === "study" ? "studies" : profile.purpose}. The rail measures days from landing; arcs show what each step waits for.
+          {prog.done} of {prog.total} arrival steps done ({checklist.length} with going home) · {profile.nationalityLabel} passport · {profile.purpose === "study" ? "studies" : profile.purpose}. The rail measures days from landing; arcs show what each step waits for.
         </p>
       </header>
 
@@ -129,8 +129,9 @@ export default function TasksChart() {
           {/* Rail, ticks, today marker and arcs */}
           <svg className="pointer-events-none absolute left-0 top-0 overflow-visible" width={COL} height={h} aria-hidden>
             <line x1={RAIL_X} x2={RAIL_X} y1={0} y2={h} stroke="#111827" strokeWidth="1.5" />
-            {Array.from({ length: Math.floor(h / 24) }, (_, i) => (
-              <line key={i} x1={RAIL_X - (i % 4 === 0 ? 7 : 4)} x2={RAIL_X} y1={i * 24 + 6} y2={i * 24 + 6} stroke="#111827" strokeOpacity={i % 4 === 0 ? 0.5 : 0.22} />
+            {/* Only real graduations: landing and rule-dated deadlines (no uniform ruler). */}
+            {ticks.map((t) => (
+              <line key={`tk-${t.y}`} x1={RAIL_X - 8} x2={RAIL_X + 4} y1={t.y} y2={t.y} stroke="#111827" strokeWidth={t.strong ? 2 : 1.4} />
             ))}
             {arcs.map((a) => (
               <path key={a.key} d={a.d} fill="none" stroke="#4f46e5" strokeWidth={a.solid ? 2 : 1.5} strokeDasharray={a.solid ? undefined : "3 4"} strokeLinecap="round" />
@@ -152,7 +153,11 @@ export default function TasksChart() {
           {todayY != null && (
             <div className="pointer-events-none absolute z-20 -translate-y-1/2" style={{ top: todayY, left: RAIL_X - 9 }} aria-label={`Today: ${readoutValue} days from landing`}>
               <span className="block h-[18px] w-[18px] rounded-full border-[3px] border-white bg-accent shadow-[0_2px_6px_rgba(79,70,229,0.45)]" />
-              <span className="tabular absolute left-[22px] top-1/2 -translate-y-1/2 whitespace-nowrap rounded-md bg-accent px-1.5 py-0.5 text-[11px] font-bold uppercase tracking-[0.04em] text-white [font-stretch:80%]">
+              {/* Readout set vertically on the rail's left, like an altitude scale; never over the arc lanes. */}
+              <span
+                className="tabular absolute bottom-[-2px] left-[-14px] whitespace-nowrap text-[11px] font-bold uppercase tracking-[0.06em] text-accent [font-stretch:80%]"
+                style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
+              >
                 Today {readoutValue}
               </span>
             </div>
@@ -215,8 +220,8 @@ export default function TasksChart() {
               {task.verificationStatus === "verified" ? "" : " · source pending"}
             </span>
             {note && (
-              <span className={`mt-0.5 flex items-center gap-1.5 font-hand text-[22px] leading-6 ${overdue ? "text-stamp" : "text-accent"}`}>
-                <svg width="18" height="10" viewBox="0 0 18 10" aria-hidden className="shrink-0">
+              <span className={`mt-0.5 block font-hand text-[21px] leading-[22px] ${overdue ? "text-stamp" : "text-accent"}`}>
+                <svg width="16" height="9" viewBox="0 0 18 10" aria-hidden className="mr-1 inline-block align-middle">
                   <path d="M1 5 C 6 1, 10 9, 17 5" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
                 </svg>
                 {overdue ? "deadline passed: ask an advisor" : note}
