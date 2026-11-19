@@ -170,6 +170,19 @@ body {
 body[data-va-hidden] .va-root[data-s="idle"]:not(.open) {
   display: none;
 }
+/* During a call the round button becomes "hang up" (X icon). */
+.va-root.open .va-btn::after {
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M6 6l12 12M18 6 6 18'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M6 6l12 12M18 6 6 18'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.va-ic {
+  border-color: var(--color-line) !important;
+  background: var(--color-card) !important;
+}
+.va-ic:hover {
+  border-color: var(--color-ink) !important;
+}
+.va-root.open .va-btn,
 .va-root[data-s="listening"] .va-btn,
 .va-root[data-s="speaking"] .va-btn,
 .va-root[data-s="connecting"] .va-btn {

@@ -54,7 +54,10 @@
     '@keyframes va-p{50%{opacity:.3}}' +
     '.va-panel{width:min(340px,calc(100vw - 40px));background:#fff;border-radius:14px;box-shadow:0 12px 36px rgba(0,0,0,.22);padding:12px;display:none}' +
     '.va-root.open .va-panel{display:block}' +
-    '.va-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}.va-head b{flex:1}.va-head small{color:#666}' +
+    '.va-head{display:flex;align-items:center;gap:8px;margin-bottom:8px;cursor:grab;touch-action:none;user-select:none}.va-head b{flex:1}.va-head small{color:#666}' +
+    '.va-root.dragging .va-head{cursor:grabbing}' +
+    '.va-ic{display:grid;place-items:center;width:28px;height:28px;border:1px solid #ddd;border-radius:999px;background:#fff;cursor:pointer;font:600 13px system-ui,sans-serif;color:inherit;padding:0}' +
+    '.va-root.min .va-lines,.va-root.min .va-form{display:none}.va-root.min .va-head{margin-bottom:0}' +
     '.va-lines{max-height:220px;overflow:auto;display:flex;flex-direction:column;gap:6px;margin-bottom:8px}' +
     '.va-l{margin:0;padding:6px 9px;border-radius:10px;max-width:92%}.va-l.u{align-self:flex-end;background:#f0f0f3}.va-l.a{background:#eef5ff}.va-l.s{align-self:center;color:#777;font-size:12px;background:none}' +
     '.va-form{display:flex;gap:6px}.va-in{flex:1;border:1px solid #ddd;border-radius:8px;padding:8px}.va-sm{border:1px solid #ddd;background:#fff;border-radius:8px;padding:8px 10px;cursor:pointer}' +
@@ -63,7 +66,9 @@
 
   var root = document.createElement('div'); root.className = 'va-root'; root.dataset.s = 'idle';
   root.innerHTML =
-    '<section class="va-panel" aria-label="' + esc(C.name) + '"><div class="va-head"><span class="va-dot"></span><b>' + esc(C.name) + '</b><small class="va-st"></small></div>' +
+    '<section class="va-panel" aria-label="' + esc(C.name) + '"><div class="va-head"><span class="va-dot"></span><b>' + esc(C.name) + '</b><small class="va-st"></small>' +
+    '<button class="va-ic va-min" type="button" title="' + T('Minimise', 'Minimizar') + '" aria-label="' + T('Minimise', 'Minimizar') + '">–</button>' +
+    '<button class="va-ic va-x" type="button" title="' + T('Hang up and close', 'Colgar y cerrar') + '" aria-label="' + T('Hang up and close', 'Colgar y cerrar') + '">✕</button></div>' +
     '<div class="va-lines"><p class="va-l s">' + T('Talk or type. I can show you around and help you fill things in; you always press send yourself.', 'Habla o escribe. Te enseño la web y te ayudo a rellenar cosas; enviar siempre lo pulsas tú.') + '</p></div>' +
     '<form class="va-form"><input class="va-in" placeholder="' + T('Type a question…', 'Escribe una pregunta…') + '"><button class="va-sm" type="submit">↵</button></form></section>' +
     '<button class="va-btn" type="button"><span class="va-dot"></span><span class="va-bt">🎙️ ' + T('Talk', 'Hablar') + '</span></button>';
@@ -276,8 +281,27 @@
   function stop(keepFrame) {
     if (RT) { try { RT.mic && RT.mic.getTracks().forEach(function (t) { t.stop(); }); RT.pc.close(); } catch (e) {} RT = null; emit('call_end'); }
     busy = false; pending = []; state('idle', ''); btnText.textContent = '🎙️ ' + T('Talk', 'Hablar');
-    if (!keepFrame) leaveFrame();
+    if (!keepFrame) { leaveFrame(); root.classList.remove('open', 'min'); }
   }
+
+  /* Panel controls (Arrival): close, minimise, drag anywhere on screen. */
+  root.querySelector('.va-x').addEventListener('click', function () { if (RT) stop(); else root.classList.remove('open', 'min'); });
+  root.querySelector('.va-min').addEventListener('click', function () { root.classList.toggle('min'); });
+  var drag = null, off = { x: 0, y: 0 };
+  function place(x, y) {
+    var r = root.getBoundingClientRect(), bx = r.left - off.x, by = r.top - off.y;
+    // keep the whole assistant on screen
+    x = Math.min(Math.max(x, 8 - bx), window.innerWidth - r.width - 8 - bx);
+    y = Math.min(Math.max(y, 8 - by), window.innerHeight - r.height - 8 - by);
+    off = { x: x, y: y }; root.style.transform = 'translate(' + x + 'px,' + y + 'px)';
+  }
+  root.querySelector('.va-head').addEventListener('pointerdown', function (e) {
+    if (e.target.closest('button')) return;
+    drag = { sx: e.clientX, sy: e.clientY, ox: off.x, oy: off.y }; root.classList.add('dragging');
+    try { e.target.setPointerCapture(e.pointerId); } catch (x) {}
+  });
+  window.addEventListener('pointermove', function (e) { if (drag) place(drag.ox + e.clientX - drag.sx, drag.oy + e.clientY - drag.sy); });
+  window.addEventListener('pointerup', function () { drag = null; root.classList.remove('dragging'); });
 
   /* ---------------- wiring ---------------- */
   var btn = root.querySelector('.va-btn');
