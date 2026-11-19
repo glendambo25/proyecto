@@ -60,6 +60,7 @@
     '.va-root.min .va-lines,.va-root.min .va-form{display:none}.va-root.min .va-head{margin-bottom:0}' +
     '.va-lines{max-height:220px;overflow:auto;display:flex;flex-direction:column;gap:6px;margin-bottom:8px}' +
     '.va-l{margin:0;padding:6px 9px;border-radius:10px;max-width:92%}.va-l.u{align-self:flex-end;background:#f0f0f3}.va-l.a{background:#eef5ff}.va-l.s{align-self:center;color:#777;font-size:12px;background:none}' +
+    '.va-acc{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:12px;color:#666}.va-acc select{flex:1;border:1px solid #ddd;border-radius:8px;padding:6px 8px;background:#fff;font:inherit;color:#111}.va-root.min .va-acc{display:none}' +
     '.va-form{display:flex;gap:6px}.va-in{flex:1;border:1px solid #ddd;border-radius:8px;padding:8px}.va-sm{border:1px solid #ddd;background:#fff;border-radius:8px;padding:8px 10px;cursor:pointer}' +
     '.va-mark{outline:3px solid #ff3b30!important;outline-offset:3px!important;border-radius:4px;transition:outline .2s}';
   document.head.appendChild(css);
@@ -70,7 +71,11 @@
     '<button class="va-ic va-min" type="button" title="' + T('Minimise', 'Minimizar') + '" aria-label="' + T('Minimise', 'Minimizar') + '">–</button>' +
     '<button class="va-ic va-x" type="button" title="' + T('Hang up and close', 'Colgar y cerrar') + '" aria-label="' + T('Hang up and close', 'Colgar y cerrar') + '">✕</button></div>' +
     '<div class="va-lines"><p class="va-l s">' + T('Talk or type. I can show you around and help you fill things in; you always press send yourself.', 'Habla o escribe. Te enseño la web y te ayudo a rellenar cosas; enviar siempre lo pulsas tú.') + '</p></div>' +
-    '<form class="va-form"><input class="va-in" placeholder="' + T('Type a question…', 'Escribe una pregunta…') + '"><button class="va-sm" type="submit">↵</button></form></section>' +
+    '<form class="va-form"><input class="va-in" placeholder="' + T('Type a question…', 'Escribe una pregunta…') + '"><button class="va-sm" type="submit">↵</button></form>' +
+    '<label class="va-acc"><span>' + T('Accent', 'Acento') + '</span><select class="va-acc-sel">' +
+    ['', 'British', 'American', 'Irish', 'Australian', 'Indian English', 'Nigerian English', 'Castilian Spanish', 'Mexican', 'Argentinian', 'Colombian', 'French', 'Italian', 'German']
+      .map(function (a) { return '<option value="' + esc(a) + '">' + esc(a || T('Neutral', 'Neutro')) + '</option>'; }).join('') +
+    '</select></label></section>' +
     '<button class="va-btn" type="button"><span class="va-dot"></span><span class="va-bt">🎙️ ' + T('Talk', 'Hablar') + '</span></button>';
   var lines = root.querySelector('.va-lines'), stEl = root.querySelector('.va-st'), btnText = root.querySelector('.va-bt');
   function state(s, text) { root.dataset.s = s; stEl.textContent = text || ''; }
@@ -146,12 +151,22 @@
   var VOICE = { accent: '', language: '' };
   try { VOICE = Object.assign(VOICE, JSON.parse(localStorage.getItem('va-voice') || '{}')); } catch (e) {}
   function speakLine() {
-    var base = VOICE.language ? 'Speak ' + VOICE.language + '.' : (C.speak || ('Speak ' + (ES ? 'Spanish from Spain' : 'in the user\'s language') + '.'));
-    return base + (VOICE.accent ? ' Speak with a clear, natural ' + VOICE.accent + ' accent and keep it until the user asks to change it; never mock or caricature it.' : '');
+    return VOICE.language ? 'Speak ' + VOICE.language + '.' : (C.speak || ('Speak ' + (ES ? 'Spanish from Spain' : 'in the user\'s language') + '.'));
+  }
+  // Accent goes FIRST in the instructions and is phrased as a delivery rule: the model weighs it more there.
+  function accentBlock() {
+    if (!VOICE.accent) return '';
+    return '# Voice and accent (highest priority for HOW you sound)\n' +
+      'Deliver every spoken word with a strong, clearly audible ' + VOICE.accent + ' accent: its vowels, intonation, rhythm and typical pronunciation' +
+      (VOICE.language ? ', speaking ' + VOICE.language : '') + '. Keep this accent in every reply until the user asks to change it. Sound natural and respectful, never a caricature.';
+  }
+  function accentResponse() {
+    return { response: { instructions: instructions() + '\nNow say one short sentence confirming the change, already speaking with the new accent' + (VOICE.accent ? ' (' + VOICE.accent + ')' : ' (neutral)') + ', then wait for the user.' } };
   }
   function instructions() {
     var pages = (C.pages || []).map(function (p) { return '- ' + p.url + ': ' + p.title + (p.description ? '. ' + p.description : ''); }).join('\n');
     return [
+      accentBlock(),
       'You are ' + C.name + ', a voice assistant inside this web app. You talk with the user and move the screen for them.',
       C.context ? 'About the app: ' + C.context : '',
       speakLine() + ' If the user asks for another accent or language, call set_accent, then continue in it. Short answers: one or two sentences, no lists, no markdown, no URLs read aloud.',
@@ -230,7 +245,7 @@
   function respond(extra) { if (busy) { pending.push(extra || {}); return; } busy = true; send(Object.assign({ type: 'response.create' }, extra && extra.response ? { response: extra.response } : {})); }
   function toolOutput(callId, out) { send({ type: 'conversation.item.create', item: { type: 'function_call_output', call_id: callId, output: JSON.stringify(out) } }); }
   function onTool(name, args, callId) {
-    var go = function () { runTool(name, args).then(function (out) { toolOutput(callId, out); respond(); }); };
+    var go = function () { runTool(name, args).then(function (out) { toolOutput(callId, out); respond(name === 'set_accent' ? accentResponse() : undefined); }); };
     if (!ACTS[name]) return go();
     var asked = Date.now();
     // Margin before acting: if the user keeps talking right after asking, the action is dropped.
@@ -315,6 +330,12 @@
   /* Panel controls (Arrival): close, minimise, drag anywhere on screen. */
   root.querySelector('.va-x').addEventListener('click', function () { if (RT) stop(); else root.classList.remove('open', 'min'); });
   root.querySelector('.va-min').addEventListener('click', function () { root.classList.toggle('min'); });
+  // Accent picker: same effect as asking out loud; works before or during a call.
+  var accSel = root.querySelector('.va-acc-sel');
+  accSel.value = VOICE.accent || '';
+  accSel.addEventListener('change', function () {
+    runTool('set_accent', { accent: accSel.value }).then(function () { if (RT && RT.dc.readyState === 'open') respond(accentResponse()); });
+  });
   var drag = null, off = { x: 0, y: 0 };
   function place(x, y) {
     var r = root.getBoundingClientRect(), bx = r.left - off.x, by = r.top - off.y;
