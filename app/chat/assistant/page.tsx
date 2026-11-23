@@ -7,6 +7,7 @@ import { ArrowRight, ArrowUp, Check, Copy, Mic, RotateCcw, Sparkles, ThumbsDown,
 import { getDestination, isBlocked } from "@/lib/content";
 import { statusOf, useApp, type ChatMsg } from "@/lib/store";
 import { SourceBadge } from "@/components/ui";
+import { requestAnswer } from "@/lib/assistant-client";
 
 /** Reveals the latest answer progressively, like a live reply. */
 function Typewriter({ text, active }: { text: string; active: boolean }) {
@@ -58,13 +59,7 @@ function Assistant() {
     log("assistant_question", { channel: "text" });
     try {
       const history = assistant.slice(-6).map((m) => ({ role: m.role, text: m.text }));
-      const r = await fetch("/api/assistant", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question, destinationId: profile.destinationId, nationality: profile.nationality, purpose: profile.purpose, statuses, history }),
-      });
-      const j = await r.json();
-      if (!r.ok) throw new Error(j.error || "error");
+      const j = await requestAnswer({ question, destinationId: profile.destinationId, nationality: profile.nationality, purpose: profile.purpose, statuses, history });
       setFresh(assistant.length + 1);
       addAssistant({ role: "assistant", text: j.answer, sources: j.sources, covered: j.covered, offline: j.offline, missingTaskIds: j.missingTaskIds, ts: new Date().toISOString() });
       if (j.missingTaskIds?.length) setHighlighted(j.missingTaskIds);

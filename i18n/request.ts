@@ -7,9 +7,11 @@ import { DEFAULT_LOCALE, LOCALE_COOKIE, isLocale, matchAcceptLanguage, type AppL
  * then the Accept-Language header, then English. URLs stay the same for every locale.
  */
 export default getRequestConfig(async () => {
-  const cookieLocale = (await cookies()).get(LOCALE_COOKIE)?.value;
+  // Static export (GitHub Pages) has no request: pages are prerendered in English.
+  const cookieLocale = process.env.NEXT_PUBLIC_STATIC_EXPORT === "1" ? undefined : (await cookies()).get(LOCALE_COOKIE)?.value;
   let locale: AppLocale = DEFAULT_LOCALE;
   if (isLocale(cookieLocale)) locale = cookieLocale;
+  else if (process.env.NEXT_PUBLIC_STATIC_EXPORT === "1") locale = DEFAULT_LOCALE;
   // Until screens are translated (UX session), only an explicit choice switches the UI language; Accept-Language is ready below.
   else locale = process.env.NEXT_PUBLIC_I18N_AUTODETECT === "1" ? (matchAcceptLanguage((await headers()).get("accept-language")) ?? DEFAULT_LOCALE) : DEFAULT_LOCALE;
 

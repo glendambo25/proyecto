@@ -1,11 +1,11 @@
-"use client";
+import { destinations } from "@/lib/content";
+import TaskDetail from "./TaskDetail";
 
-import { use } from "react";
-import StepView from "@/components/StepView";
-import { useDesign } from "@/lib/design";
+/** Every step id across destinations, so the static export can prerender each step page. */
+export function generateStaticParams() {
+  return [...new Set(destinations.flatMap((d) => d.tasks.map((t) => t.id)))].map((id) => ({ id }));
+}
 
-export default function TaskDetail({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
-  const [variant] = useDesign();
-  return <StepView id={id} variant={variant} />;
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+  return <TaskDetail id={(await params).id} />;
 }

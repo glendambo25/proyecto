@@ -12,7 +12,8 @@ const HOST = process.env.NEXT_PUBLIC_POSTHOG_HOST ?? "https://eu.i.posthog.com";
 let started = false;
 
 function start() {
-  if (started || !KEY || typeof window === "undefined") return started;
+  if (started) return true;
+  if (!KEY || typeof window === "undefined") return false;
   posthog.init(KEY, {
     api_host: HOST,
     person_profiles: "identified_only",

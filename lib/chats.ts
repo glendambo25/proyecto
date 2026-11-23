@@ -39,7 +39,7 @@ export function threadsFor(d: Destination, institution: string): Thread[] {
       avatar: "🙋‍♀️",
       time: "Yesterday",
       messages: [
-        { from: "them", text: `Ciao! I did my Erasmus two years ago and now I live in ${d.city}. Ask me anything about neighbourhoods or day-to-day life.` },
+        { from: "them", text: `${italy ? "Ciao" : d.country === "Spain" ? "¡Hola" : "Hi"}! I did my exchange two years ago and now I live in ${d.city}. Ask me anything about neighbourhoods or day-to-day life.` },
         { from: "me", text: "Which area is good and close to the university?" },
         { from: "them", text: "Check the City tab: I added my favourite places and how long it takes to get there." },
       ],

@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { ArrowRight, Mail } from "lucide-react";
 import { getBrowserSupabase } from "@/lib/supabase/client";
 import { track } from "@/lib/analytics";
+import { BASE_PATH } from "@/lib/runtime";
 
 function Login() {
   const params = useSearchParams();
@@ -19,7 +20,7 @@ function Login() {
     setState("sending");
     const { error } = await supabase.auth.signInWithOtp({
       email: email.trim(),
-      options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
+      options: { emailRedirectTo: `${window.location.origin}${BASE_PATH}/auth/callback` },
     });
     setState(error ? "error" : "sent");
     track("login_link_requested", { ok: !error });

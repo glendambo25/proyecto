@@ -19,7 +19,7 @@ const TABS = [
   { href: "/chat", key: "chats", Icon: MessageCircle },
 ] as const;
 
-const PUBLIC = ["/", "/onboarding", "/office", "/login"];
+const PUBLIC = ["/", "/onboarding", "/office", "/login", "/auth/callback"];
 
 function isActive(path: string, href: string) {
   if (href === "/chat") return path === "/chat" || (path.startsWith("/chat/") && !path.startsWith("/chat/assistant"));
