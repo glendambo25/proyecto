@@ -7,6 +7,9 @@ import { ArrowRight, BarChart3, Check, CircleHelp, LogOut, Star, Ticket, UserRou
 import { cityCode, formatDate, getDestination, personas, progressOf, purposeLabel } from "@/lib/content";
 import { statusOf, useApp } from "@/lib/store";
 import { Header, Segments } from "@/components/ui";
+import { DesignSwitch } from "@/lib/design";
+import LocaleSwitcher from "@/components/i18n/LocaleSwitcher";
+import { useTranslations } from "next-intl";
 
 function Row({ k, v, tone }: { k: string; v: React.ReactNode; tone?: "ok" | "warn" }) {
   return (
@@ -37,6 +40,7 @@ function Group({ title, children }: { title: string; children: React.ReactNode }
 export default function Profile() {
   const { profile, checklist, statuses, startPersona, reset, satisfaction, rate } = useApp();
   const router = useRouter();
+  const tp = useTranslations("profile");
   const [notif, setNotif] = useState(true);
   const [family, setFamily] = useState(false);
   if (!profile) return null;
@@ -46,7 +50,7 @@ export default function Profile() {
   const has = (id: string) => checklist.some((t) => t.id === id);
   const insuranceId = ["ehic", "health-non-eu", "insurance"].find(has);
   const visaId = ["visa", "ds160-interview"].find(has);
-  const initials = profile.name
+  const initials = (profile.name || profile.nationalityLabel)
     .split(" ")
     .map((w) => w[0])
     .join("")
@@ -54,18 +58,18 @@ export default function Profile() {
 
   return (
     <main>
-      <Header eyebrow="Profile" title={profile.name.split(" ")[0]} />
+      <Header eyebrow="Profile" title={profile.name.split(" ")[0] || "Your profile"} />
       <div className="space-y-7 px-5 lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-10 lg:gap-y-8 lg:space-y-0">
         <section className="-mt-2 flex items-center gap-4">
           <span className="grid h-20 w-20 shrink-0 place-items-center rounded-full bg-ink font-serif text-[32px] text-paper">{initials}</span>
           <div>
-            <p className="text-[15px] font-semibold">{profile.name}</p>
+            <p className="text-[15px] font-semibold">{profile.name || `${profile.nationalityLabel} passport`}</p>
             <p className="text-[13px] text-ink-2">
-              {profile.purpose === "study" ? "Erasmus student" : purposeLabel[profile.purpose]} · {profile.institution}
+              {purposeLabel[profile.purpose]} · {profile.institution}
             </p>
             <div className="mt-2 flex flex-wrap gap-1.5">
               {profile.age && <span className="chip border-line text-ink-2">{profile.age} yrs</span>}
-              <span className="chip border-line text-ink-2">{profile.purpose === "study" ? "Erasmus" : profile.purpose}</span>
+              <span className="chip border-line text-ink-2">{purposeLabel[profile.purpose]}</span>
               <span className="chip border-accent/30 bg-accent-soft text-accent">{cityCode[dest.id]} · {dest.city}</span>
             </div>
           </div>
@@ -109,7 +113,9 @@ export default function Profile() {
         </Group>
 
         <Group title="Preferences">
-          <Row k="App language" v="English" />
+          <div className="flex min-h-[52px] items-center justify-between gap-4 px-4 py-2 text-[14px]">
+            <LocaleSwitcher className="w-full justify-between [&_select]:min-h-[44px]" />
+          </div>
           <div className="flex items-center justify-between px-4 py-3 text-[14px]">
             <span className="text-ink-3">Deadline reminders</span>
             <Toggle on={notif} onChange={setNotif} label="Deadline reminders" />
@@ -119,6 +125,10 @@ export default function Profile() {
             <Toggle on={family} onChange={setFamily} label="Linked family account" />
           </div>
           <Row k="Privacy" v="Data stays on this device" />
+          <div className="flex items-center justify-between gap-4 px-4 py-3 text-[14px]">
+            <span className="text-ink-3">{tp("checklistStyle")}</span>
+            <DesignSwitch />
+          </div>
         </Group>
 
         <section className="card p-4">

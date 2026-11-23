@@ -25,7 +25,7 @@ export default function BoardingPass({ profile, checklist, statuses }: { profile
           <rect width="100%" height="100%" fill="url(#lines)" />
         </svg>
         <div className="relative flex items-center justify-between">
-          <span className="font-mono text-[10.5px] uppercase tracking-[0.16em] text-paper/60">Arrival pass</span>
+          <span className="font-mono text-[10.5px] uppercase tracking-[0.16em] text-paper/60">Nomad pass</span>
           <span className="rounded-full border border-paper/20 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.12em] text-paper/80">{status}</span>
         </div>
         <div className="relative mt-5 flex items-end justify-between">
@@ -49,7 +49,7 @@ export default function BoardingPass({ profile, checklist, statuses }: { profile
           {[
             ["Passenger", profile.name.split(" ")[0]],
             ["Arrival", shortDate(profile.arrivalDate)],
-            ["Purpose", profile.purpose === "study" ? "Erasmus" : purposeLabel[profile.purpose].split(" ")[0]],
+            ["Purpose", purposeLabel[profile.purpose]],
           ].map(([k, v]) => (
             <div key={k}>
               <dt className="font-mono text-[9.5px] uppercase tracking-[0.16em] text-paper/45">{k}</dt>

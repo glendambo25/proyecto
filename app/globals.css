@@ -20,8 +20,9 @@
   --color-stamp-soft: #fee2e2;
 
   --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
-  --font-serif: var(--font-instrument), ui-serif, Georgia, serif;
-  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+  /* One family across the app (DESIGN.md): the old serif and mono tokens now resolve to Archivo. */
+  --font-serif: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
   --font-hand: var(--font-reenie), cursive;
   --font-ui: ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif;
 }
@@ -54,16 +55,17 @@ textarea {
   @apply rounded-[22px] border border-line bg-card;
 }
 
+/* Small labels: sentence case, readable (no tracked monospace caps). */
 @utility eyebrow {
-  @apply font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-ink-3;
+  @apply font-sans text-[12.5px] font-semibold text-ink-3;
 }
 
 @utility display {
-  @apply font-serif leading-[0.95] tracking-[-0.01em] text-ink;
+  @apply font-sans font-extrabold leading-[1.02] tracking-[-0.025em] text-ink [font-stretch:110%] [text-wrap:balance];
 }
 
 @utility chip {
-  @apply inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-mono text-[10.5px] font-medium uppercase tracking-[0.08em];
+  @apply inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[12px] font-semibold;
 }
 
 @utility btn {
@@ -128,9 +130,48 @@ textarea {
   animation: rise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
 
+/* Small confirmation when a step is marked as done. */
+@keyframes pop {
+  0% {
+    transform: scale(0.6);
+  }
+  60% {
+    transform: scale(1.12);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.pop {
+  animation: pop 0.32s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise,
+  .pop {
+    animation: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* Long words (German compounds, Spanish procedure names) wrap instead of overflowing. */
+h1,
+h2,
+h3 {
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+
+/* Directional icons (arrows, chevrons) mirror in right-to-left languages. */
+[dir="rtl"] .flip-rtl {
+  transform: scaleX(-1);
+}
+
 /* Voice agent (voice-agent-kit) restyled to the brand, above the floating nav. */
 .va-root {
-  bottom: 96px !important;
+  bottom: 76px !important;
   right: max(16px, calc(50vw - 214px)) !important;
   font-family: var(--font-archivo), system-ui, sans-serif !important;
 }
@@ -173,9 +214,16 @@ textarea {
     right: 32px !important;
   }
 }
-/* Pages with their own mic button hide the floating one until a call starts. */
+/* Pages with their own mic button hide the floating one until a call starts.
+ * On phones the idle button is always hidden: it covered content. Voice starts from
+ * the Ask screen's mic, the step's "Ask" button or More > Talk by voice; the call UI still shows. */
 body[data-va-hidden] .va-root[data-s="idle"]:not(.open) {
   display: none;
+}
+@media (max-width: 1023px) {
+  .va-root[data-s="idle"]:not(.open) {
+    display: none;
+  }
 }
 /* During a call the round button becomes "hang up" (X icon). */
 .va-root.open .va-btn::after {

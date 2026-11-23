@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { Check, ChevronRight, Lock } from "lucide-react";
 import { getDestination, isBlocked, phaseLabel, progressOf } from "@/lib/content";
-import { daysFromArrival, dueDay, nextOpen } from "@/lib/chart";
-import { DesignSwitch } from "@/lib/design";
+import { daysFromArrival, dueDay } from "@/lib/chart";
+import { pickNext } from "@/lib/ux/guide";
 import { statusOf, useApp } from "@/lib/store";
 import type { Task } from "@/lib/types";
 
@@ -14,7 +14,7 @@ export default function TasksMinimal() {
   if (!profile) return null;
   const dest = getDestination(profile.destinationId);
   const prog = progressOf(checklist, statuses);
-  const next = nextOpen(checklist, statuses);
+  const next = pickNext(checklist, statuses, profile.arrivalDate);
   const phases = (["before", "arrival", "settle", "return"] as const).filter((p) => checklist.some((t) => t.phase === p));
   const days = daysFromArrival(profile.arrivalDate);
   const overdueOf = (t: Task) => {
@@ -25,10 +25,7 @@ export default function TasksMinimal() {
   return (
     <main className="font-ui">
       <header className="px-5 pb-6 pt-6 lg:px-8 lg:pt-10">
-        <div className="flex items-center justify-end">
-          <DesignSwitch />
-        </div>
-        <h1 className="mt-6 text-[28px] font-semibold tracking-[-0.015em] lg:text-[34px]">Checklist</h1>
+        <h1 className="mt-2 text-[28px] font-semibold tracking-[-0.015em] lg:text-[34px]">Checklist</h1>
         <p className="mt-1 text-[15px] text-ink-2">
           <span className="tabular">
             {dest.city} · {days === 0 ? "landing day" : days < 0 ? `${-days} days to landing` : `${days} days since landing`}
@@ -52,7 +49,7 @@ export default function TasksMinimal() {
 
       <div className="space-y-8 px-5 pb-6 lg:grid lg:grid-cols-2 lg:gap-x-12 lg:space-y-0 lg:px-8">
         {phases.map((ph) => (
-          <section key={ph} className="lg:mb-8">
+          <section key={ph} id={ph} className="scroll-mt-4 lg:mb-8">
             <h2 className="mb-1 text-[13px] font-medium text-ink-3">{phaseLabel[ph]}</h2>
             <ul className="divide-y divide-line border-y border-line">
               {checklist
@@ -63,7 +60,7 @@ export default function TasksMinimal() {
                   const waits = t.dependsOn.filter((d) => statuses[d] !== "completed").map((d) => checklist.find((x) => x.id === d)?.title);
                   return (
                     <li key={t.id}>
-                      <Link href={`/tasks/${t.id}`} className="group flex items-center gap-3 py-3.5 transition-colors duration-150">
+                      <Link href={`/tasks/${t.id}`} className="group flex min-h-[56px] items-center gap-3 py-3.5 transition-colors duration-150">
                         <span
                           className={`grid h-5 w-5 shrink-0 place-items-center rounded-full ${
                             st === "completed" ? "bg-ok text-white" : st === "in_progress" ? "border-2 border-accent" : blocked ? "border border-dashed border-ink-3 text-ink-3" : "border border-ink-3"
@@ -76,7 +73,7 @@ export default function TasksMinimal() {
                           <span className={`block break-words text-[15px] leading-snug ${st === "completed" ? "text-ink-3" : "text-ink"} group-hover:text-accent`}>{t.title}</span>
                           {(blocked || t.deadline) && st !== "completed" && (
                             <span className="block break-words text-[13px] leading-snug">
-                              {blocked && <span className="text-ink-3">After {waits.join(", ")}</span>}
+                              {blocked && <span className="text-ink-2">Locked · first: {waits.join(" + ")}</span>}
                               {blocked && t.deadline && <span className="text-ink-3"> · </span>}
                               {t.deadline && <span className={overdueOf(t) ? "text-stamp" : "text-ink-2"}>{t.deadline}</span>}
                             </span>
@@ -84,7 +81,7 @@ export default function TasksMinimal() {
                         </span>
                         {st === "in_progress" && <span className="text-[13px] text-accent">In progress</span>}
                         {t.verificationStatus !== "verified" && st !== "completed" && <span className="text-[12px] text-ink-3">Source pending</span>}
-                        <ChevronRight size={16} className="shrink-0 text-ink-3" />
+                        <ChevronRight size={16} className="flip-rtl shrink-0 text-ink-3" aria-hidden />
                       </Link>
                     </li>
                   );

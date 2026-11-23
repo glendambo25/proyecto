@@ -1,0 +1,88 @@
+/**
+ * UX helpers: turn the checklist into plain answers to "what now, and why?".
+ * Everything here is derived from content/*.json (no new procedure content is written).
+ */
+import { isBlocked, unlocksOf } from "@/lib/content";
+import { daysFromArrival, dueDay, nextOpen } from "@/lib/chart";
+import type { Task, TaskStatus } from "@/lib/types";
+
+export type RowState = "done" | "doing" | "ready" | "locked";
+
+export function rowState(task: Task, statuses: Record<string, TaskStatus>): RowState {
+  const st = statuses[task.id] ?? "pending";
+  if (st === "completed") return "done";
+  if (st === "in_progress") return "doing";
+  return isBlocked(task, statuses) ? "locked" : "ready";
+}
+
+/** Prerequisites that are not finished yet. */
+export function blockersOf(task: Task, checklist: Task[], statuses: Record<string, TaskStatus>): Task[] {
+  return task.dependsOn.filter((d) => statuses[d] !== "completed").map((d) => checklist.find((t) => t.id === d)).filter((t): t is Task => !!t);
+}
+
+/** Why a step matters now, taken from its data (deadline, what it unlocks, critical flag). Screens translate the kind. */
+export type Reason = { kind: "deadline"; deadline: string } | { kind: "unlocks"; steps: string } | { kind: "critical" };
+
+export function reasonsFor(task: Task, checklist: Task[]): Reason[] {
+  const out: Reason[] = [];
+  if (task.deadline) out.push({ kind: "deadline", deadline: task.deadline });
+  const unlocks = unlocksOf(task, checklist);
+  if (unlocks.length) out.push({ kind: "unlocks", steps: unlocks.map((t) => t.title).join(", ") });
+  if (task.critical && !task.deadline) out.push({ kind: "critical" });
+  return out;
+}
+
+/** Countdown to (or days since) arrival. `kind` picks the message: home.countdown.<kind>. */
+export function countdown(arrivalIso: string): { kind: "before" | "landing" | "after"; count: number } {
+  const d = daysFromArrival(arrivalIso);
+  if (d < 0) return { kind: "before", count: -d };
+  if (d === 0) return { kind: "landing", count: 0 };
+  return { kind: "after", count: d };
+}
+
+export function overdue(task: Task, arrivalIso: string, statuses: Record<string, TaskStatus>): boolean {
+  const due = dueDay(task, arrivalIso);
+  return due != null && statuses[task.id] !== "completed" && daysFromArrival(arrivalIso) > due;
+}
+
+export interface Summary {
+  next?: Task;
+  doing: Task[];
+  ready: Task[];
+  locked: Task[];
+  done: Task[];
+  /** Steps that count for progress (going-home steps excluded). */
+  total: number;
+}
+
+/** Days of warning before an official deadline makes a step jump the queue. */
+export const URGENT_DAYS = 14;
+
+/**
+ * The one step to do next. Normally the first open step in dependency order, but a step whose
+ * official deadline (deadlineRule) is within URGENT_DAYS, or already passed, goes first: the nearest one wins.
+ */
+export function pickNext(checklist: Task[], statuses: Record<string, TaskStatus>, arrivalIso?: string): Task | undefined {
+  if (arrivalIso) {
+    const today = daysFromArrival(arrivalIso);
+    const urgent = checklist
+      .filter((t) => t.phase !== "return" && (statuses[t.id] ?? "pending") !== "completed" && !isBlocked(t, statuses))
+      .map((t) => ({ t, due: dueDay(t, arrivalIso) }))
+      .filter((x): x is { t: Task; due: number } => x.due != null && x.due - today <= URGENT_DAYS)
+      .sort((a, b) => a.due - b.due)[0];
+    if (urgent) return urgent.t;
+  }
+  return nextOpen(checklist, statuses);
+}
+
+export function summarise(checklist: Task[], statuses: Record<string, TaskStatus>, arrivalIso?: string): Summary {
+  const main = checklist.filter((t) => t.phase !== "return");
+  const by = (s: RowState) => main.filter((t) => rowState(t, statuses) === s);
+  return { next: pickNext(checklist, statuses, arrivalIso), doing: by("doing"), ready: by("ready"), locked: by("locked"), done: by("done"), total: main.length };
+}
+
+/** First sentence of a description, for one-line context. */
+export function firstSentence(text: string): string {
+  const m = text.match(/^.*?[.!?](\s|$)/);
+  return (m ? m[0] : text).trim();
+}

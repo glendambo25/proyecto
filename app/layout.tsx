@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Archivo, IBM_Plex_Mono, Instrument_Serif, Reenie_Beanie } from "next/font/google";
+import { Archivo, Reenie_Beanie } from "next/font/google";
 import "./globals.css";
 import { AppProvider } from "@/lib/store";
 import AppShell from "@/components/AppShell";
@@ -8,10 +8,9 @@ import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import { isRtl } from "@/lib/i18n/locales";
 
-const archivo = Archivo({ subsets: ["latin"], axes: ["wdth"], variable: "--font-archivo" });
+// One family across the app (DESIGN.md); scripts Archivo lacks (Arabic, Devanagari, Han, Cyrillic) fall back to the system UI font.
+const archivo = Archivo({ subsets: ["latin", "latin-ext"], axes: ["wdth"], variable: "--font-archivo" });
 const hand = Reenie_Beanie({ subsets: ["latin"], weight: "400", variable: "--font-reenie" });
-const instrument = Instrument_Serif({ subsets: ["latin"], weight: "400", style: ["normal", "italic"], variable: "--font-instrument" });
-const plexMono = IBM_Plex_Mono({ subsets: ["latin"], weight: ["400", "500"], variable: "--font-plex-mono" });
 
 export const metadata: Metadata = {
   title: "Nomad – You move. We handle the paperwork.",
@@ -29,7 +28,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const locale = await getLocale();
   const messages = await getMessages();
   return (
-    <html lang={locale} dir={isRtl(locale) ? "rtl" : "ltr"} className={`${archivo.variable} ${hand.variable} ${instrument.variable} ${plexMono.variable}`}>
+    <html lang={locale} dir={isRtl(locale) ? "rtl" : "ltr"} className={`${archivo.variable} ${hand.variable}`}>
       <body className="font-sans antialiased">
         <NextIntlClientProvider locale={locale} messages={messages}>
           <AppProvider>

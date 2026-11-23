@@ -3,9 +3,11 @@
 import Link from "next/link";
 import { useLayoutEffect, useRef, useState } from "react";
 import { Check, Lock } from "lucide-react";
-import { getDestination, isBlocked, phaseLabel, progressOf } from "@/lib/content";
-import { daysFromArrival, dueDay, nextOpen, noteFor } from "@/lib/chart";
-import { DesignSwitch } from "@/lib/design";
+import { useTranslations } from "next-intl";
+import { StepHint, useRowLabel } from "@/components/ux/StepBits";
+import { blockersOf, rowState, summarise } from "@/lib/ux/guide";
+import { getDestination, isBlocked, phaseLabel } from "@/lib/content";
+import { daysFromArrival, dueDay } from "@/lib/chart";
 import { statusOf, useApp } from "@/lib/store";
 import type { Phase, Task } from "@/lib/types";
 import Contours from "./Contours";
@@ -33,6 +35,9 @@ export default function TasksChart() {
   const [h, setH] = useState(0);
 
   const days = profile ? daysFromArrival(profile.arrivalDate) : 0;
+  const t = useTranslations("tasks.mine");
+  const ts = useTranslations("state");
+  const rowLabel = useRowLabel();
 
   useLayoutEffect(() => {
     const measure = () => {
@@ -104,30 +109,57 @@ export default function TasksChart() {
 
   if (!profile) return null;
   const dest = getDestination(profile.destinationId);
-  const prog = progressOf(checklist, statuses);
-  const next = nextOpen(checklist, statuses);
+  const sum = summarise(checklist, statuses, profile.arrivalDate);
+  const next = sum.next;
   const phases = (["before", "arrival", "settle", "return"] as const).filter((p) => checklist.some((t) => t.phase === p));
   const readoutValue = days === 0 ? "0" : days < 0 ? `−${-days}` : `+${days}`;
 
   return (
     <main className="relative">
-      <header className="relative overflow-hidden px-5 pb-8 pt-6 lg:px-8 lg:pt-10">
+      <header className="relative overflow-hidden px-5 pb-6 pt-6 lg:px-8 lg:pt-10">
         <Contours levels={8} cx={0.86} cy={0.2} />
-        <div className="relative flex items-center justify-end">
-          <DesignSwitch />
-        </div>
-        <h1 className="relative mt-8 max-w-[16ch] text-[36px] font-extrabold leading-[1.02] tracking-[-0.025em] [font-stretch:110%] [text-wrap:balance] lg:text-[52px]">
-          {dest.city}, charted for {profile.name.split(" ")[0]}.
-        </h1>
-        <p className="relative mt-3 max-w-[52ch] text-[15px] text-ink-2">
-          {prog.done} of {prog.total} arrival steps done ({checklist.length} with going home) · {profile.nationalityLabel} passport · {profile.purpose === "study" ? "studies" : profile.purpose}. The rail measures days from landing; arcs show what each step waits for.
+        <p className="relative text-[15px] font-semibold text-ink-2">{dest.city}</p>
+        <h1 className="relative mt-1 text-[34px] font-extrabold leading-[1.02] tracking-[-0.025em] [font-stretch:110%] lg:text-[48px]">{t("title")}</h1>
+        <p className="relative mt-2 text-[15px] text-ink-2">
+          <span className="font-semibold text-ink">{t("done", { done: sum.done.length, total: sum.total })}</span>
+          {" · "}
+          {t("split", { open: sum.ready.length + sum.doing.length, locked: sum.locked.length })}
         </p>
+        {/* Legend: the four states and what the lines mean, readable without the explanation. */}
+        <ul className="relative mt-4 flex flex-wrap gap-x-4 gap-y-2 text-[13px] text-ink-2" aria-label={t("legend")}>
+          <li className="flex items-center gap-1.5">
+            <span className="grid h-4 w-4 place-items-center rounded-full bg-ok text-white" aria-hidden>
+              <Check size={9} strokeWidth={3} />
+            </span>
+            {ts("done")}
+          </li>
+          <li className="flex items-center gap-1.5">
+            <span className="block h-4 w-4 rounded-full border-[3px] border-accent" aria-hidden />
+            {ts("doing")}
+          </li>
+          <li className="flex items-center gap-1.5">
+            <span className="block h-4 w-4 rounded-full border-2 border-ink" aria-hidden />
+            {ts("readyShort")}
+          </li>
+          <li className="flex items-center gap-1.5">
+            <span className="grid h-4 w-4 place-items-center rounded-full border border-dashed border-ink-3 text-ink-3" aria-hidden>
+              <Lock size={8} />
+            </span>
+            {ts("locked")}
+          </li>
+          <li className="flex items-center gap-1.5">
+            <svg width="22" height="10" aria-hidden>
+              <path d="M2 5 H20" stroke="#4f46e5" strokeWidth="1.6" strokeDasharray="3 3" />
+            </svg>
+            {t("needs")}
+          </li>
+        </ul>
       </header>
 
       <div className="relative px-3 lg:px-6">
         <div ref={wrapRef} className="relative">
           {/* Rail, ticks, today marker and arcs */}
-          <svg className="pointer-events-none absolute left-0 top-0 overflow-visible" width={COL} height={h} aria-hidden>
+          <svg className="pointer-events-none absolute start-0 top-0 overflow-visible rtl:-scale-x-100" width={COL} height={h} aria-hidden>
             <line x1={RAIL_X} x2={RAIL_X} y1={0} y2={h} stroke="#111827" strokeWidth="1.5" />
             {/* Only real graduations: landing and rule-dated deadlines (no uniform ruler). */}
             {ticks.map((t) => (
@@ -143,7 +175,7 @@ export default function TasksChart() {
             <span
               key={`${t.label}-${t.y}`}
               className={`tabular pointer-events-none absolute -translate-y-1/2 whitespace-nowrap text-[10.5px] font-bold uppercase tracking-[0.06em] [font-stretch:75%] ${t.strong ? "text-ink" : "text-ink-2"}`}
-              style={{ top: t.y, left: RAIL_X + 6, background: "white", paddingInline: 2 }}
+              style={{ top: t.y, insetInlineStart: RAIL_X + 6, background: "white", paddingInline: 2 }}
             >
               {t.label}
             </span>
@@ -151,22 +183,22 @@ export default function TasksChart() {
 
           {/* Today: a marker on the rail carrying the vertical readout */}
           {todayY != null && (
-            <div className="pointer-events-none absolute z-20 -translate-y-1/2" style={{ top: todayY, left: RAIL_X - 9 }} aria-label={`Today: ${readoutValue} days from landing`}>
+            <div className="pointer-events-none absolute z-20 -translate-y-1/2" style={{ top: todayY, insetInlineStart: RAIL_X - 9 }} aria-hidden>
               <span className="block h-[18px] w-[18px] rounded-full border-[3px] border-white bg-accent shadow-[0_2px_6px_rgba(79,70,229,0.45)]" />
               {/* Readout set vertically on the rail's left, like an altitude scale; never over the arc lanes. */}
               <span
                 className="tabular absolute bottom-[-2px] left-[-14px] whitespace-nowrap text-[11px] font-bold uppercase tracking-[0.06em] text-accent [font-stretch:80%]"
                 style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
               >
-                Today {readoutValue}
+                {t("today", { value: readoutValue })}
               </span>
             </div>
           )}
 
           <ol className="relative">
             {phases.map((ph) => (
-              <li key={ph} ref={(el) => void (phaseRefs.current[ph] = el)}>
-                <h2 className="relative pb-1 pt-6 text-[12px] font-bold uppercase tracking-[0.14em] [font-stretch:80%]" style={{ paddingLeft: COL - 4 }}>
+              <li key={ph} id={ph} className="scroll-mt-4" ref={(el) => void (phaseRefs.current[ph] = el)}>
+                <h2 className="relative pb-1 pt-6 text-[12px] font-bold uppercase tracking-[0.14em] [font-stretch:80%]" style={{ paddingInlineStart: COL - 4 }}>
                   {phaseLabel[ph]}
                 </h2>
                 <ul>
@@ -180,7 +212,7 @@ export default function TasksChart() {
             ))}
           </ol>
         </div>
-        <p className="px-2 pb-4 pt-6 text-[12px] text-ink-3">Rail dates appear only where an official rule sets a deadline, counted from your arrival date. Everything else follows the arcs.</p>
+        <p className="px-2 pb-4 pt-6 text-[13px] text-ink-3">{t("railNote")}</p>
       </div>
     </main>
   );
@@ -188,17 +220,20 @@ export default function TasksChart() {
   function Row({ task, n, isNext, nodeRef }: { task: Task; n: number; isNext: boolean; nodeRef: (el: HTMLSpanElement | null) => void }) {
     const st = statusOf(statuses, task.id);
     const blocked = st === "pending" && isBlocked(task, statuses);
-    const note = noteFor(task, checklist, statuses, isNext);
     const due = dueDay(task, profile!.arrivalDate);
     const overdue = due != null && st !== "completed" && days > due;
+    const state = rowState(task, statuses);
+    const waits = state === "locked" ? blockersOf(task, checklist, statuses).map((b) => b.title).join(" + ") : "";
+    const label = rowLabel({ n, title: task.title, state, waits, isNext, deadline: task.deadline });
     return (
       <li>
         <Link
           href={`/tasks/${task.id}`}
-          className={`group relative grid items-start gap-3 rounded-2xl py-3 pr-3 transition-colors duration-150 hover:bg-accent-soft/60 ${isNext ? "bg-accent-soft/70" : ""}`}
+          aria-label={label}
+          className={`group relative grid min-h-[56px] items-start gap-3 rounded-2xl py-3 pe-3 transition-colors duration-150 hover:bg-accent-soft/60 ${isNext ? "bg-accent-soft/70" : ""}`}
           style={{ gridTemplateColumns: `${COL}px 1fr auto` }}
         >
-          <span ref={nodeRef} className="relative z-10 mt-0.5 -translate-x-1/2" style={{ marginLeft: NODE_X }} aria-hidden>
+          <span ref={nodeRef} className="relative z-10 mt-0.5 -translate-x-1/2 rtl:translate-x-1/2" style={{ marginInlineStart: NODE_X }} aria-hidden>
             {st === "completed" ? (
               <span className="grid h-6 w-6 place-items-center rounded-full bg-ok text-white">
                 <Check size={13} strokeWidth={3} />
@@ -217,24 +252,25 @@ export default function TasksChart() {
             <span className={`block text-[16px] font-semibold leading-snug ${st === "completed" ? "text-ink-3 line-through decoration-ink-3/50" : ""}`}>{task.title}</span>
             <span className="block text-[12.5px] text-ink-3">
               {String(n).padStart(2, "0")} · {task.localName ?? task.category}
-              {task.verificationStatus === "verified" ? "" : " · source pending"}
+              {task.verificationStatus === "verified" ? "" : ` · ${t("sourceNotVerified")}`}
             </span>
-            {note && (
-              <span className={`mt-0.5 block font-hand text-[21px] leading-[22px] ${overdue ? "text-stamp" : "text-accent"}`}>
-                <svg width="16" height="9" viewBox="0 0 18 10" aria-hidden className="mr-1 inline-block align-middle">
+            <StepHint task={task} checklist={checklist} statuses={statuses} arrival={profile!.arrivalDate} showDoing={false} />
+            {isNext && state === "ready" && (
+              <span className="mt-0.5 block font-hand text-[22px] leading-[22px] text-accent" aria-hidden>
+                <svg width="16" height="9" viewBox="0 0 18 10" className="me-1 inline-block align-middle">
                   <path d="M1 5 C 6 1, 10 9, 17 5" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
                 </svg>
-                {overdue ? "deadline passed: ask an advisor" : note}
+                {t("startHere")}
               </span>
             )}
           </span>
-          <span className="tabular pt-0.5 text-right text-[12px] font-semibold">
+          <span className="tabular pt-0.5 text-end text-[12.5px] font-semibold" aria-hidden>
             {due != null ? (
-              <span className={overdue ? "text-stamp" : st === "completed" ? "text-ink-3" : "text-ink"}>day +{due}</span>
+              <span className={overdue ? "text-stamp" : st === "completed" ? "text-ink-3" : "text-ink"}>{t("day", { n: due })}</span>
             ) : st === "in_progress" ? (
-              <span className="text-accent">in progress</span>
+              <span className="text-accent">{ts("doing")}</span>
             ) : st === "completed" ? (
-              <span className="text-ok">done</span>
+              <span className="text-ok">{ts("done")}</span>
             ) : null}
           </span>
         </Link>

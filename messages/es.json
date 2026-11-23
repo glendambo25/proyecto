@@ -4,7 +4,54 @@
     "tasks": "Trámites",
     "city": "Ciudad",
     "chat": "Chat",
-    "profile": "Perfil"
+    "profile": "Perfil",
+    "today": "Hoy",
+    "checklist": "Checklist",
+    "ask": "Pregunta",
+    "chats": "Chats",
+    "more": "Más",
+    "mainLabel": "Principal",
+    "moreLabel": "Más",
+    "sidebarLabel": "Barra lateral",
+    "close": "Cerrar",
+    "skip": "Saltar al contenido",
+    "loading": "Cargando tu checklist",
+    "progress": "{city} · {done} de {total} pasos hechos",
+    "yourMove": "Tu mudanza",
+    "items": {
+      "city": {
+        "label": "Guía de la ciudad",
+        "hint": "Mapa, transporte, vivienda segura"
+      },
+      "documents": {
+        "label": "Mis documentos",
+        "hint": "Qué llevar"
+      },
+      "deadlines": {
+        "label": "Plazos",
+        "hint": "Fechas y calendario"
+      },
+      "voice": {
+        "label": "Hablar por voz",
+        "hint": "Asistente de voz"
+      },
+      "goingHome": {
+        "label": "Volver a casa",
+        "hint": "Antes de dejar España"
+      },
+      "profile": {
+        "label": "Perfil",
+        "hint": "Tus datos y ajustes"
+      },
+      "plans": {
+        "label": "Planes",
+        "hint": "Premium y Hazlo por mí"
+      },
+      "office": {
+        "label": "Vista de oficina",
+        "hint": "Para universidades"
+      }
+    }
   },
   "design": {
     "chart": "Mapa",
@@ -19,13 +66,80 @@
       "body": "Tus pasos según tu ciudad, pasaporte y motivo del viaje, en el orden correcto, cada uno con su fuente oficial y la fecha en que se comprobó.",
       "cta": "Crear mi checklist",
       "demoTitle": "O abre un viajero de demo",
-      "demoNote": "Personas ficticias, basadas en casos reales de entrevistas."
+      "demoNote": "Personas ficticias, basadas en casos reales de entrevistas.",
+      "title": "Tu papeleo para España,",
+      "titleAccent": "en el orden correcto.",
+      "lead": "Responde 4 preguntas y obtén tus pasos: qué hacer primero, qué desbloquea cada paso y la fuente oficial de cada uno.",
+      "start": "Empezar",
+      "startNote": "Menos de un minuto. Sin crear cuenta.",
+      "demo": "Explorar con un estudiante de demo",
+      "office": "Para universidades: vista de la oficina internacional"
+    },
+    "back": "Atrás",
+    "position": "{n} de {total}",
+    "answered": "Preguntas respondidas",
+    "questions": {
+      "passport": "¿Con qué pasaporte viajas?",
+      "city": "¿A qué ciudad te mudas?",
+      "reason": "¿Por qué te mudas?",
+      "arrival": "¿Cuándo llegas?"
+    },
+    "hints": {
+      "passport": "Tu pasaporte decide si necesitas visado y tarjeta de residencia.",
+      "city": "Cada ciudad tiene sus propias oficinas y plazos.",
+      "reason": "Estudios, prácticas y trabajo tienen permisos distintos."
+    },
+    "passport": {
+      "otherNonEu": "Otro país fuera de la UE",
+      "eu": "Un pasaporte de la UE, el EEE o Suiza"
+    },
+    "city": {
+      "spain": "España",
+      "comingSoon": "Próximamente: solo mostramos pasos verificados",
+      "others": "Otras ciudades (piloto)"
+    },
+    "reasons": {
+      "study": {
+        "label": "Estudios",
+        "hint": "Grado, máster o intercambio"
+      },
+      "internship": {
+        "label": "Prácticas",
+        "hint": "Prácticas"
+      },
+      "work": {
+        "label": "Trabajo",
+        "hint": "Empleado o trabajador desplazado"
+      }
+    },
+    "arrival": {
+      "label": "Fecha de llegada (vale una estimación, puedes cambiarla luego)",
+      "missing": "Vuelve atrás y responde las preguntas anteriores.",
+      "finish": "Ver mis pasos"
     }
   },
   "tasks": {
     "header": {
       "title": "{city}, trazado para {name}.",
       "progress": "{done} de {total, plural, one {# paso de llegada} other {# pasos de llegada}} hechos"
+    },
+    "mine": {
+      "title": "Tu checklist",
+      "done": "{done} de {total} hechos",
+      "split": "{open} puedes hacer ya · {locked} bloqueados",
+      "legend": "Leyenda",
+      "needs": "Necesita esto antes",
+      "railNote": "La línea de la izquierda cuenta los días desde tu llegada. Solo aparecen fechas donde una norma oficial fija un plazo.",
+      "startHere": "empieza aquí",
+      "sourceNotVerified": "fuente aún sin verificar",
+      "day": "día +{n}",
+      "today": "Hoy {value}"
+    },
+    "minimal": {
+      "landingDay": "día de llegada",
+      "toLanding": "faltan {count} días para llegar",
+      "sinceLanding": "{count} días desde la llegada",
+      "next": "siguiente:"
     }
   },
   "step": {
@@ -33,7 +147,75 @@
       "start": "Empezar",
       "markDone": "Marcar como hecho",
       "undo": "Deshacer",
-      "finishFirst": "Termina antes: {steps}"
+      "finishFirst": "Termina antes: {steps}",
+      "started": "Ya he empezado",
+      "undoDone": "¿Aún no está hecho? Deshacer",
+      "next": "Siguiente",
+      "lockedUntil": "Bloqueado hasta que termines {steps}."
+    },
+    "back": "Checklist",
+    "position": "Paso {n} de {total}",
+    "doneOn": "Hecho · {date}",
+    "notVerified": "Fuente aún sin verificar",
+    "notFound": {
+      "title": "Este paso no está en tu checklist",
+      "body": "No aplica a tu pasaporte, ciudad o motivo de la mudanza."
+    },
+    "locked": {
+      "title": "{count, plural, one {Termina antes este paso} other {Termina antes estos pasos}}",
+      "body": "{count, plural, one {Este paso se abre cuando esté hecho.} other {Este paso se abre cuando estén hechos.}}"
+    },
+    "whatToDo": "Qué hacer",
+    "whatYouNeed": "Qué necesitas",
+    "docsReady": "{ready} de {total} listos",
+    "order": "Orden",
+    "needsFirst": "Necesita antes",
+    "nothingFirst": "Nada. Puedes empezar ya.",
+    "unlocks": "Desbloquea",
+    "unlocksNothing": "Ningún otro paso depende de este.",
+    "help": "Ayuda con este paso",
+    "ask": "Pregunta sobre este paso",
+    "askQuestion": "¿Qué necesito para: {title}?",
+    "talk": "Hablar con una persona",
+    "housing": "Alerta de estafas de vivienda",
+    "done": {
+      "title": "Hecho.",
+      "nowOpen": "Ya puedes hacer: {steps}",
+      "stillNeeds": "A {step} le {count, plural, one {falta # paso} other {faltan # pasos}}",
+      "oneLess": "Uno menos."
+    },
+    "announce": {
+      "done": "{title} marcado como hecho.",
+      "opened": " Ya puedes hacer: {steps}.",
+      "started": "{title} empezado.",
+      "reopened": "{title} reabierto."
+    },
+    "facts": {
+      "time": "Tiempo",
+      "cost": "Coste",
+      "deadline": "Plazo",
+      "none": "Sin plazo"
+    },
+    "scale": {
+      "doneInTime": "Hecho a tiempo",
+      "overdue": "Plazo vencido: consulta a un asesor",
+      "dueAfter": "Vence {days} días después de llegar",
+      "daysLeft": "Quedan {days} días",
+      "arrival": "llegada",
+      "day": "día {n}",
+      "today": "hoy"
+    },
+    "sources": {
+      "title": "Quién lo dice",
+      "notVerified": "Aún sin verificar",
+      "none": "Aún no hay fuente oficial verificada"
+    },
+    "dfy": {
+      "title": "¿Sin tiempo? Un colaborador puede hacerlo por ti.",
+      "body": "Un asesor colaborador se encarga de este paso de principio a fin. Demo: no se cobra nada.",
+      "cta": "Hazlo por mí",
+      "requested": "Solicitud registrada. Un colaborador te contactaría (simulado).",
+      "plans": "Ver planes"
     }
   },
   "common": {
@@ -43,5 +225,77 @@
   },
   "locale": {
     "label": "Idioma"
+  },
+  "home": {
+    "hi": "Hola, {name}",
+    "yourMoveTo": "Tu mudanza a {city}",
+    "profile": "Tu perfil",
+    "countdown": {
+      "before": "{count, plural, one {día para llegar a {city}} other {días para llegar a {city}}}",
+      "landing": "Hoy llegas a {city}",
+      "after": "{count, plural, one {día en {city}} other {días en {city}}}"
+    },
+    "next": {
+      "label": "Tu siguiente paso",
+      "keepGoing": "Sigue: tu siguiente paso",
+      "urgent": "Plazo cerca: haz esto primero",
+      "why": "Por qué ahora",
+      "deadline": "Plazo: {deadline}",
+      "unlocks": "Desbloquea {steps}",
+      "critical": "Necesario para tu visado o residencia",
+      "start": "Empezar este paso",
+      "continue": "Continuar"
+    },
+    "waiting": {
+      "title": "Ahora mismo no hay nada que empezar",
+      "body": "Tus pasos abiertos esperan a: {steps}.",
+      "cta": "Ver tu checklist"
+    },
+    "allDone": {
+      "title": "Todos los pasos de llegada hechos",
+      "body": "No pierdas de vista los pasos para cuando vuelvas a casa.",
+      "cta": "Pasos para volver"
+    },
+    "progress": {
+      "label": "Progreso",
+      "done": "{done} de {total} pasos hechos",
+      "split": "{open} abiertos · {locked} bloqueados"
+    },
+    "after": {
+      "title": "Después",
+      "all": "Checklist completo"
+    },
+    "help": {
+      "label": "Ayuda",
+      "ask": "Haz una pregunta",
+      "askHint": "Respuestas con fuente oficial",
+      "deadlines": "Plazos",
+      "deadlinesHint": "{count} abiertos"
+    },
+    "housing": "¿Buscas habitación? Evita estafas",
+    "flagged": "Marcado por tu asistente"
+  },
+  "state": {
+    "done": "Hecho",
+    "doing": "En curso",
+    "ready": "Listo para empezar",
+    "locked": "Bloqueado",
+    "readyShort": "Listo"
+  },
+  "hint": {
+    "first": "Antes:",
+    "deadline": "Plazo: {deadline}",
+    "and": " + "
+  },
+  "a11y": {
+    "row": "Paso {n}: {title}. {state}",
+    "rowNoNumber": "{title}. {state}",
+    "firstFinish": ", antes termina {steps}",
+    "isNext": ". Tu siguiente paso",
+    "deadline": ". Plazo: {deadline}",
+    "newTab": "(se abre en otra pestaña)"
+  },
+  "profile": {
+    "checklistStyle": "Estilo del checklist"
   }
 }
