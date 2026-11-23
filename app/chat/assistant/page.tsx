@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeft, ArrowRight, ArrowUp, Check, Copy, Mic, RotateCcw, ThumbsDown, ThumbsUp, UserRoundCheck } from "lucide-react";
+import { ArrowRight, ArrowUp, Check, Copy, Mic, RotateCcw, Sparkles, ThumbsDown, ThumbsUp, UserRoundCheck } from "lucide-react";
 import { getDestination, isBlocked } from "@/lib/content";
 import { statusOf, useApp, type ChatMsg } from "@/lib/store";
 import { SourceBadge } from "@/components/ui";
@@ -32,6 +32,7 @@ function Assistant() {
   const [busy, setBusy] = useState(false);
   const [fresh, setFresh] = useState(-1);
   const [copied, setCopied] = useState(-1);
+  const [failed, setFailed] = useState<string | null>(null);
   const asked = useRef(false);
   const bottom = useRef<HTMLDivElement>(null);
 
@@ -45,8 +46,6 @@ function Assistant() {
       next && { k: "Step", q: `What do I need for ${next.localName ?? next.title}?` },
       withDeadline && { k: "Deadline", q: `What is the deadline for ${withDeadline.localName ?? withDeadline.title}?` },
       { k: "Housing", q: `How do I avoid housing scams in ${dest.city}?` },
-      checklist.some((t) => t.phase === "return") && { k: "Return", q: "What do I have to do before I go back home?" },
-      { k: "Community", q: "Which insurance do other students from my university choose?" },
     ];
     return list.filter(Boolean) as { k: string; q: string }[];
   }, [checklist, statuses, dest]);
@@ -54,6 +53,7 @@ function Assistant() {
   async function ask(question: string) {
     if (!profile || !question.trim() || busy) return;
     setBusy(true);
+    setFailed(null);
     addAssistant({ role: "user", text: question, ts: new Date().toISOString() });
     log("assistant_question", { channel: "text" });
     try {
@@ -70,7 +70,7 @@ function Assistant() {
       if (j.missingTaskIds?.length) setHighlighted(j.missingTaskIds);
       log("assistant_answer", { covered: j.covered, offline: j.offline });
     } catch {
-      addAssistant({ role: "assistant", text: "I couldn't reach the assistant right now. Please try again in a moment.", covered: false });
+      setFailed(question);
     } finally {
       setBusy(false);
     }
@@ -99,61 +99,52 @@ function Assistant() {
     <main className="mx-auto flex min-h-[calc(100dvh-8rem)] max-w-3xl flex-col">
       {/* header */}
       <div className="sticky top-0 z-20 flex items-center gap-3 border-b border-line bg-paper/90 px-5 py-3 backdrop-blur">
-        <Link href="/chat" className="grid h-9 w-9 place-items-center rounded-full border border-line bg-card" aria-label="Back">
-          <ArrowLeft size={16} />
-        </Link>
         <div className="flex-1">
-          <p className="font-serif text-[22px] leading-none">Assistant</p>
-          <p className="mt-0.5 flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider text-ink-3">
-            <span className="h-1.5 w-1.5 rounded-full bg-ok" /> Verified sources · {dest.city}
-          </p>
+          <p className="text-[18px] font-bold leading-tight">Ask</p>
+          <p className="mt-0.5 text-[13px] text-ink-3">Answers only from official sources · {dest.city}</p>
         </div>
         {assistant.length > 0 && (
-          <button onClick={clearAssistant} className="grid h-9 w-9 place-items-center rounded-full border border-line bg-card" aria-label="New conversation" title="New conversation">
+          <button onClick={clearAssistant} className="grid h-11 w-11 place-items-center rounded-full border border-line bg-card hover:border-ink" aria-label="New conversation" title="New conversation">
             <RotateCcw size={15} />
           </button>
         )}
-        <button onClick={startVoice} className="grid h-9 w-9 place-items-center rounded-full bg-accent text-white" aria-label="Talk by voice" title="Talk by voice">
-          <Mic size={15} />
+        <button onClick={startVoice} className="grid h-11 w-11 place-items-center rounded-full bg-accent text-white hover:bg-ink" aria-label="Talk by voice" title="Talk by voice">
+          <Mic size={18} />
         </button>
       </div>
 
       <div className="flex-1 space-y-4 px-5 pt-5">
         {assistant.length === 0 && (
           <section className="rise">
-            <p className="eyebrow">Hi {profile.name.split(" ")[0]}</p>
-            <h1 className="display mt-2 text-[40px]">
-              Ask about your move.
-              <br />
-              <em className="text-accent">I’ll show my sources.</em>
-            </h1>
-            <p className="mt-3 text-[14px] leading-relaxed text-ink-2">
-              I only answer from official pages our team has checked, and I tell you when they were last verified. If I don’t have one, I’ll say so and connect you with an advisor.
-            </p>
-            <div className="mt-6 space-y-2">
+            <h1 className="text-[28px] font-extrabold leading-[1.08] tracking-[-0.02em] [font-stretch:108%]">What do you want to know?</h1>
+            <p className="mt-2 text-[15px] leading-relaxed text-ink-2">Every answer shows the official page and the date we checked it. If there is no verified source, I will say so.</p>
+            <ul className="mt-5 divide-y divide-line border-y border-line" aria-label="Suggested questions">
               {suggestions.map((s) => (
-                <button key={s.q} onClick={() => ask(s.q)} className="card group flex w-full items-center gap-3 p-4 text-left transition hover:border-ink">
-                  <span className="w-[72px] shrink-0 font-mono text-[10px] uppercase tracking-[0.12em] text-accent">{s.k}</span>
-                  <span className="flex-1 text-[14px] font-semibold leading-snug">{s.q}</span>
-                  <ArrowRight size={15} className="shrink-0 text-ink-3 transition group-hover:translate-x-0.5" />
-                </button>
+                <li key={s.q}>
+                  <button onClick={() => ask(s.q)} className="group flex min-h-[56px] w-full items-center gap-3 py-2 text-start hover:text-accent">
+                    <span className="flex-1 text-[15px] font-semibold leading-snug">{s.q}</span>
+                    <ArrowRight size={16} className="flip-rtl shrink-0 text-ink-3" aria-hidden />
+                  </button>
+                </li>
               ))}
-            </div>
+            </ul>
           </section>
         )}
 
         {assistant.map((m: ChatMsg, i) =>
           m.role === "user" ? (
-            <p key={i} className="ml-auto w-fit max-w-[82%] rounded-[20px] rounded-br-md bg-ink px-4 py-2.5 text-[14.5px] text-paper">
+            <p key={i} className="ms-auto w-fit max-w-[82%] rounded-[20px] rounded-ee-md bg-ink px-4 py-2.5 text-[15px] text-paper">
               {m.text}
             </p>
           ) : (
-            <article key={i} className="space-y-3">
+            <article key={i} className="space-y-3" aria-live={i === fresh ? "polite" : undefined}>
               <div className="flex items-center gap-2">
-                <span className="grid h-6 w-6 place-items-center rounded-full bg-accent font-serif text-[13px] text-white">A</span>
-                <span className="eyebrow">{m.covered === false ? "No verified source" : "Answer"}</span>
+                <span className="grid h-6 w-6 place-items-center rounded-full bg-accent text-white" aria-hidden>
+                  <Sparkles size={13} />
+                </span>
+                <span className="eyebrow">{m.covered === false ? "No verified source for this yet" : "Answer"}</span>
               </div>
-              <p className="whitespace-pre-line text-[15px] leading-relaxed text-ink">
+              <p className="whitespace-pre-line text-[15.5px] leading-relaxed text-ink">
                 <Typewriter text={m.text} active={i === fresh} />
               </p>
 
@@ -199,10 +190,10 @@ function Assistant() {
               )}
 
               <div className="flex items-center gap-1 text-ink-3">
-                <button onClick={() => setFeedback(i, "up")} className={`grid h-8 w-8 place-items-center rounded-full hover:bg-card ${m.feedback === "up" ? "text-ok" : ""}`} aria-label="Helpful">
+                <button onClick={() => setFeedback(i, "up")} className={`grid h-11 w-11 place-items-center rounded-full hover:bg-paper-2 ${m.feedback === "up" ? "text-ok" : ""}`} aria-label="Helpful">
                   <ThumbsUp size={14} />
                 </button>
-                <button onClick={() => setFeedback(i, "down")} className={`grid h-8 w-8 place-items-center rounded-full hover:bg-card ${m.feedback === "down" ? "text-stamp" : ""}`} aria-label="Not helpful">
+                <button onClick={() => setFeedback(i, "down")} className={`grid h-11 w-11 place-items-center rounded-full hover:bg-paper-2 ${m.feedback === "down" ? "text-stamp" : ""}`} aria-label="Not helpful">
                   <ThumbsDown size={14} />
                 </button>
                 <button
@@ -211,12 +202,12 @@ function Assistant() {
                     setCopied(i);
                     setTimeout(() => setCopied(-1), 1500);
                   }}
-                  className="grid h-8 w-8 place-items-center rounded-full hover:bg-card"
+                  className="grid h-11 w-11 place-items-center rounded-full hover:bg-paper-2"
                   aria-label="Copy answer"
                 >
                   {copied === i ? <Check size={14} /> : <Copy size={14} />}
                 </button>
-                {m.offline && <span className="ml-auto font-mono text-[9.5px] uppercase tracking-wider">Offline mode</span>}
+                {m.offline && <span className="ms-auto text-[12px]">Offline mode</span>}
               </div>
             </article>
           ),
@@ -224,24 +215,34 @@ function Assistant() {
 
         {busy && (
           <div className="flex items-center gap-2" aria-live="polite">
-            <span className="grid h-6 w-6 place-items-center rounded-full bg-accent font-serif text-[13px] text-white">A</span>
-            <span className="flex gap-1">
+            <span className="grid h-6 w-6 place-items-center rounded-full bg-accent text-white" aria-hidden>
+              <Sparkles size={13} />
+            </span>
+            <span className="flex gap-1" aria-hidden>
               {[0, 1, 2].map((d) => (
                 <span key={d} className="h-1.5 w-1.5 animate-bounce rounded-full bg-ink-3" style={{ animationDelay: `${d * 120}ms` }} />
               ))}
             </span>
-            <span className="font-mono text-[10.5px] text-ink-3">Checking official sources…</span>
+            <span className="text-[13.5px] text-ink-3">Checking official sources…</span>
+          </div>
+        )}
+        {failed && !busy && (
+          <div role="alert" className="flex flex-wrap items-center gap-3 rounded-2xl border border-stamp/30 bg-stamp-soft p-4 text-[14.5px]">
+            <span className="flex-1 text-ink">Could not reach the assistant. Check your connection.</span>
+            <button onClick={() => ask(failed)} className="min-h-[44px] rounded-full bg-ink px-4 font-semibold text-white hover:bg-accent">
+              Try again
+            </button>
           </div>
         )}
         <div ref={bottom} />
       </div>
 
-      <div className="sticky bottom-24 lg:bottom-6 mt-4 space-y-2 bg-gradient-to-t from-paper via-paper to-transparent px-5 pt-4">
+      <div className="sticky bottom-[64px] lg:bottom-6 mt-4 space-y-2 bg-gradient-to-t from-paper via-paper to-transparent px-5 pt-4">
         {assistant.length > 0 && !busy && (
           <div className="-mx-5 flex gap-2 overflow-x-auto px-5 pb-1">
             {suggestions.slice(0, 4).map((s) => (
-              <button key={s.q} onClick={() => ask(s.q)} className="shrink-0 rounded-full border border-line bg-card px-3.5 py-2 text-[12.5px] font-semibold hover:border-ink">
-                {s.k}: {s.q.length > 34 ? s.q.slice(0, 34) + "…" : s.q}
+              <button key={s.q} onClick={() => ask(s.q)} className="min-h-[44px] shrink-0 rounded-full border border-line bg-card px-4 text-[13.5px] font-semibold hover:border-ink">
+                {s.q}
               </button>
             ))}
           </div>
@@ -254,11 +255,11 @@ function Assistant() {
           }}
           className="flex items-center gap-2 rounded-full border border-line bg-card p-1.5 pl-4 shadow-[0_10px_30px_-15px_rgba(11,15,92,0.35)] focus-within:border-ink"
         >
-          <input value={text} onChange={(e) => setText(e.target.value)} className="flex-1 bg-transparent text-[14.5px] outline-none" placeholder="Ask about your paperwork…" aria-label="Your question" />
-          <button type="button" onClick={startVoice} className="grid h-9 w-9 place-items-center rounded-full text-ink-2 hover:bg-paper" aria-label="Talk by voice">
+          <input value={text} onChange={(e) => setText(e.target.value)} className="min-w-0 flex-1 bg-transparent text-[16px] outline-none" placeholder="Ask about your paperwork…" aria-label="Your question" />
+          <button type="button" onClick={startVoice} className="grid h-11 w-11 place-items-center rounded-full text-ink-2 hover:bg-paper" aria-label="Talk by voice">
             <Mic size={16} />
           </button>
-          <button className="grid h-9 w-9 place-items-center rounded-full bg-ink text-paper disabled:opacity-40" type="submit" disabled={busy || !text.trim()} aria-label="Ask">
+          <button className="grid h-11 w-11 place-items-center rounded-full bg-ink text-paper disabled:bg-paper-2 disabled:text-ink-3" type="submit" disabled={busy || !text.trim()} aria-label="Ask">
             <ArrowUp size={16} />
           </button>
         </form>

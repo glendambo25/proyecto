@@ -49,7 +49,7 @@ export default function BoardingPass({ profile, checklist, statuses }: { profile
           {[
             ["Passenger", profile.name.split(" ")[0]],
             ["Arrival", shortDate(profile.arrivalDate)],
-            ["Purpose", profile.purpose === "study" ? "Erasmus" : purposeLabel[profile.purpose].split(" ")[0]],
+            ["Purpose", purposeLabel[profile.purpose]],
           ].map(([k, v]) => (
             <div key={k}>
               <dt className="font-mono text-[9.5px] uppercase tracking-[0.16em] text-paper/45">{k}</dt>
