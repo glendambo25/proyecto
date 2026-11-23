@@ -8,6 +8,8 @@ import { cityCode, formatDate, getDestination, personas, progressOf, purposeLabe
 import { statusOf, useApp } from "@/lib/store";
 import { Header, Segments } from "@/components/ui";
 import { DesignSwitch } from "@/lib/design";
+import LocaleSwitcher from "@/components/i18n/LocaleSwitcher";
+import { useTranslations } from "next-intl";
 
 function Row({ k, v, tone }: { k: string; v: React.ReactNode; tone?: "ok" | "warn" }) {
   return (
@@ -38,6 +40,7 @@ function Group({ title, children }: { title: string; children: React.ReactNode }
 export default function Profile() {
   const { profile, checklist, statuses, startPersona, reset, satisfaction, rate } = useApp();
   const router = useRouter();
+  const tp = useTranslations("profile");
   const [notif, setNotif] = useState(true);
   const [family, setFamily] = useState(false);
   if (!profile) return null;
@@ -110,7 +113,9 @@ export default function Profile() {
         </Group>
 
         <Group title="Preferences">
-          <Row k="App language" v="English" />
+          <div className="flex min-h-[52px] items-center justify-between gap-4 px-4 py-2 text-[14px]">
+            <LocaleSwitcher className="w-full justify-between [&_select]:min-h-[44px]" />
+          </div>
           <div className="flex items-center justify-between px-4 py-3 text-[14px]">
             <span className="text-ink-3">Deadline reminders</span>
             <Toggle on={notif} onChange={setNotif} label="Deadline reminders" />
@@ -121,7 +126,7 @@ export default function Profile() {
           </div>
           <Row k="Privacy" v="Data stays on this device" />
           <div className="flex items-center justify-between gap-4 px-4 py-3 text-[14px]">
-            <span className="text-ink-3">Checklist style</span>
+            <span className="text-ink-3">{tp("checklistStyle")}</span>
             <DesignSwitch />
           </div>
         </Group>

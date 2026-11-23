@@ -80,6 +80,18 @@ Robustez:
 
 Escritorio: `ux-audit/after/after-desktop-*.png`. Páginas completas en móvil: `ux-audit/after/after-mobile-*-full.png`.
 
+### Nomad e idiomas (sobre `sprint-1-foundations`)
+
+- La rama se ha rebasado sobre `origin/sprint-1-foundations`. `app/layout.tsx` conserva `NextIntlClientProvider` y `<html lang dir>` del CTO, y añade la limpieza de fuentes.
+- Marca Nomad: logo en la barra lateral (en versión para fondo oscuro) y en la bienvenida del onboarding, con `components/brand/NomadLogo.tsx` dibujado a partir de `public/brand/nomad-logo.svg`. "Arrival pass" pasa a "Nomad pass".
+- Los textos de navegación, menú More, onboarding, home, checklist y detalle del trámite usan claves de next-intl (`nav.*`, `onboarding.*`, `home.*`, `tasks.mine.*`, `state.*`, `hint.*`, `a11y.*`, `step.*`, `profile.*`), con plurales ICU. Están completos en `messages/en.json` y `messages/es.json`. Los otros 10 idiomas usan el inglés de reserva hasta que se traduzcan.
+- Los nombres de país del onboarding salen de `Intl.DisplayNames`, así que se traducen solos. Las fechas dentro de frases traducidas se aíslan con marcas bidi para que no se desordenen en árabe.
+- El selector de idioma está en Perfil → Preferences. `/login` está en las rutas públicas.
+
+| Español: bienvenida | Español: home | Español: checklist | Árabe (RTL): home | Árabe (RTL): trámite |
+|---|---|---|---|---|
+| ![](ux-audit/after/i18n-es-onboarding.png) | ![](ux-audit/after/i18n-es-home.png) | ![](ux-audit/after/i18n-es-tasks.png) | ![](ux-audit/after/i18n-ar-home.png) | ![](ux-audit/after/i18n-ar-task-tie.png) |
+
 ### Verificación
 
 - `npm run typecheck` pasa.

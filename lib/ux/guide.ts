@@ -20,31 +20,24 @@ export function blockersOf(task: Task, checklist: Task[], statuses: Record<strin
   return task.dependsOn.filter((d) => statuses[d] !== "completed").map((d) => checklist.find((t) => t.id === d)).filter((t): t is Task => !!t);
 }
 
-/** Short reasons why a step matters now, taken from its data (deadline, what it unlocks, critical flag). */
-export function reasonsFor(task: Task, checklist: Task[]): string[] {
-  const out: string[] = [];
-  if (task.deadline) out.push(`Deadline: ${task.deadline}`);
+/** Why a step matters now, taken from its data (deadline, what it unlocks, critical flag). Screens translate the kind. */
+export type Reason = { kind: "deadline"; deadline: string } | { kind: "unlocks"; steps: string } | { kind: "critical" };
+
+export function reasonsFor(task: Task, checklist: Task[]): Reason[] {
+  const out: Reason[] = [];
+  if (task.deadline) out.push({ kind: "deadline", deadline: task.deadline });
   const unlocks = unlocksOf(task, checklist);
-  if (unlocks.length) out.push(`Unlocks ${unlocks.map((t) => t.title).join(", ")}`);
-  if (task.critical && !task.deadline) out.push("Required for your visa or residence");
+  if (unlocks.length) out.push({ kind: "unlocks", steps: unlocks.map((t) => t.title).join(", ") });
+  if (task.critical && !task.deadline) out.push({ kind: "critical" });
   return out;
 }
 
-export interface Countdown {
-  value: string;
-  label: string;
-  /** Accessible full sentence. */
-  sentence: string;
-}
-
-export function countdown(arrivalIso: string, city: string): Countdown {
+/** Countdown to (or days since) arrival. `kind` picks the message: home.countdown.<kind>. */
+export function countdown(arrivalIso: string): { kind: "before" | "landing" | "after"; count: number } {
   const d = daysFromArrival(arrivalIso);
-  if (d < 0) {
-    const n = -d;
-    return { value: String(n), label: n === 1 ? `day until you land in ${city}` : `days until you land in ${city}`, sentence: `${n} ${n === 1 ? "day" : "days"} until you land in ${city}` };
-  }
-  if (d === 0) return { value: "0", label: `Landing day in ${city}`, sentence: `Today you land in ${city}` };
-  return { value: String(d), label: d === 1 ? `day in ${city}` : `days in ${city}`, sentence: `Day ${d} in ${city}` };
+  if (d < 0) return { kind: "before", count: -d };
+  if (d === 0) return { kind: "landing", count: 0 };
+  return { kind: "after", count: d };
 }
 
 export function overdue(task: Task, arrivalIso: string, statuses: Record<string, TaskStatus>): boolean {

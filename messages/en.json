@@ -4,7 +4,54 @@
     "tasks": "Tasks",
     "city": "City",
     "chat": "Chat",
-    "profile": "Profile"
+    "profile": "Profile",
+    "today": "Today",
+    "checklist": "Checklist",
+    "ask": "Ask",
+    "chats": "Chats",
+    "more": "More",
+    "mainLabel": "Main",
+    "moreLabel": "More",
+    "sidebarLabel": "Sidebar",
+    "close": "Close",
+    "skip": "Skip to content",
+    "loading": "Loading your checklist",
+    "progress": "{city} · {done} of {total} steps done",
+    "yourMove": "Your move",
+    "items": {
+      "city": {
+        "label": "City guide",
+        "hint": "Map, transport, housing safety"
+      },
+      "documents": {
+        "label": "Document wallet",
+        "hint": "What to carry"
+      },
+      "deadlines": {
+        "label": "Deadlines",
+        "hint": "Dates and calendar"
+      },
+      "voice": {
+        "label": "Talk by voice",
+        "hint": "Voice assistant"
+      },
+      "goingHome": {
+        "label": "Going home",
+        "hint": "Before you leave Spain"
+      },
+      "profile": {
+        "label": "Profile",
+        "hint": "Your details and settings"
+      },
+      "plans": {
+        "label": "Plans",
+        "hint": "Premium and Do it for me"
+      },
+      "office": {
+        "label": "Office view",
+        "hint": "For universities"
+      }
+    }
   },
   "design": {
     "chart": "Chart",
@@ -19,13 +66,80 @@
       "body": "Your steps for your city, passport and reason for moving, in the order that works, each with the official source and the date it was last checked.",
       "cta": "Build my checklist",
       "demoTitle": "Or open a demo traveller",
-      "demoNote": "Fictional people, based on real interview cases."
+      "demoNote": "Fictional people, based on real interview cases.",
+      "title": "Your paperwork for Spain,",
+      "titleAccent": "in the right order.",
+      "lead": "Answer 4 questions and get your steps: what to do first, what each step unlocks, and the official source for every one.",
+      "start": "Start",
+      "startNote": "Takes under a minute. No account needed.",
+      "demo": "Explore with a demo student",
+      "office": "For universities: international office view"
+    },
+    "back": "Back",
+    "position": "{n} of {total}",
+    "answered": "Questions answered",
+    "questions": {
+      "passport": "Which passport will you travel with?",
+      "city": "Which city are you moving to?",
+      "reason": "Why are you moving?",
+      "arrival": "When do you arrive?"
+    },
+    "hints": {
+      "passport": "Your passport decides whether you need a visa and a residence card.",
+      "city": "Each city has its own offices and deadlines.",
+      "reason": "Studies, internships and work have different permits."
+    },
+    "passport": {
+      "otherNonEu": "Another country outside the EU",
+      "eu": "An EU, EEA or Swiss passport"
+    },
+    "city": {
+      "spain": "Spain",
+      "comingSoon": "Coming soon: we only show steps we have verified",
+      "others": "Other cities (pilot)"
+    },
+    "reasons": {
+      "study": {
+        "label": "Studies",
+        "hint": "Degree, master or exchange"
+      },
+      "internship": {
+        "label": "Internship",
+        "hint": "Internship"
+      },
+      "work": {
+        "label": "Work",
+        "hint": "Employee or posted worker"
+      }
+    },
+    "arrival": {
+      "label": "Arrival date (an estimate is fine, you can change it later)",
+      "missing": "Go back and answer the earlier questions.",
+      "finish": "Show my steps"
     }
   },
   "tasks": {
     "header": {
       "title": "{city}, charted for {name}.",
       "progress": "{done} of {total, plural, one {# arrival step} other {# arrival steps}} done"
+    },
+    "mine": {
+      "title": "Your checklist",
+      "done": "{done} of {total} done",
+      "split": "{open} you can do now · {locked} locked",
+      "legend": "Legend",
+      "needs": "Needs this first",
+      "railNote": "The line on the left counts days from your arrival. Dates appear only where an official rule sets a deadline.",
+      "startHere": "start here",
+      "sourceNotVerified": "source not verified yet",
+      "day": "day +{n}",
+      "today": "Today {value}"
+    },
+    "minimal": {
+      "landingDay": "landing day",
+      "toLanding": "{count} days to landing",
+      "sinceLanding": "{count} days since landing",
+      "next": "next:"
     }
   },
   "step": {
@@ -33,7 +147,75 @@
       "start": "Start",
       "markDone": "Mark as done",
       "undo": "Undo",
-      "finishFirst": "Finish first: {steps}"
+      "finishFirst": "Finish first: {steps}",
+      "started": "I've started",
+      "undoDone": "Not done yet? Undo",
+      "next": "Next",
+      "lockedUntil": "Locked until you finish {steps}."
+    },
+    "back": "Checklist",
+    "position": "Step {n} of {total}",
+    "doneOn": "Done · {date}",
+    "notVerified": "Source not verified yet",
+    "notFound": {
+      "title": "This step is not in your checklist",
+      "body": "It does not apply to your passport, city or reason for moving."
+    },
+    "locked": {
+      "title": "{count, plural, one {Finish this step first} other {Finish these steps first}}",
+      "body": "{count, plural, one {This step opens once it is done.} other {This step opens once they are done.}}"
+    },
+    "whatToDo": "What to do",
+    "whatYouNeed": "What you need",
+    "docsReady": "{ready} of {total} ready",
+    "order": "Order",
+    "needsFirst": "Needs first",
+    "nothingFirst": "Nothing. You can start now.",
+    "unlocks": "Unlocks",
+    "unlocksNothing": "No other step waits for this one.",
+    "help": "Help with this step",
+    "ask": "Ask about this step",
+    "askQuestion": "What do I need for: {title}?",
+    "talk": "Talk to a person",
+    "housing": "Housing scam alert",
+    "done": {
+      "title": "Done.",
+      "nowOpen": "Now open: {steps}",
+      "stillNeeds": "{step} still needs {count, plural, one {# more step} other {# more steps}}",
+      "oneLess": "One less thing."
+    },
+    "announce": {
+      "done": "{title} marked as done.",
+      "opened": " Now open: {steps}.",
+      "started": "{title} started.",
+      "reopened": "{title} reopened."
+    },
+    "facts": {
+      "time": "Time",
+      "cost": "Cost",
+      "deadline": "Deadline",
+      "none": "None set"
+    },
+    "scale": {
+      "doneInTime": "Done in time",
+      "overdue": "Past the deadline: ask an advisor",
+      "dueAfter": "Due {days} days after you arrive",
+      "daysLeft": "{days} days left",
+      "arrival": "arrival",
+      "day": "day {n}",
+      "today": "today"
+    },
+    "sources": {
+      "title": "Who says so",
+      "notVerified": "Not verified yet",
+      "none": "No verified official source yet"
+    },
+    "dfy": {
+      "title": "No time? A partner can do it for you.",
+      "body": "A partner advisor handles this step end to end. Demo: no payment is taken.",
+      "cta": "Do it for me",
+      "requested": "Request registered. A partner would contact you (simulated).",
+      "plans": "See plans"
     }
   },
   "common": {
@@ -43,5 +225,77 @@
   },
   "locale": {
     "label": "Language"
+  },
+  "home": {
+    "hi": "Hi {name}",
+    "yourMoveTo": "Your move to {city}",
+    "profile": "Your profile",
+    "countdown": {
+      "before": "{count, plural, one {day until you land in {city}} other {days until you land in {city}}}",
+      "landing": "Landing day in {city}",
+      "after": "{count, plural, one {day in {city}} other {days in {city}}}"
+    },
+    "next": {
+      "label": "Your next step",
+      "keepGoing": "Keep going: your next step",
+      "urgent": "Deadline soon: do this first",
+      "why": "Why now",
+      "deadline": "Deadline: {deadline}",
+      "unlocks": "Unlocks {steps}",
+      "critical": "Required for your visa or residence",
+      "start": "Start this step",
+      "continue": "Continue"
+    },
+    "waiting": {
+      "title": "Nothing to start right now",
+      "body": "Your open steps are waiting for: {steps}.",
+      "cta": "See your checklist"
+    },
+    "allDone": {
+      "title": "All arrival steps done",
+      "body": "Keep an eye on the steps for when you go home.",
+      "cta": "Going-home steps"
+    },
+    "progress": {
+      "label": "Progress",
+      "done": "{done} of {total} steps done",
+      "split": "{open} open · {locked} locked"
+    },
+    "after": {
+      "title": "After that",
+      "all": "Full checklist"
+    },
+    "help": {
+      "label": "Help",
+      "ask": "Ask a question",
+      "askHint": "Answers with official source",
+      "deadlines": "Deadlines",
+      "deadlinesHint": "{count} open"
+    },
+    "housing": "Looking for a room? Avoid scams",
+    "flagged": "Flagged by your assistant"
+  },
+  "state": {
+    "done": "Done",
+    "doing": "In progress",
+    "ready": "Ready to start",
+    "locked": "Locked",
+    "readyShort": "Ready"
+  },
+  "hint": {
+    "first": "First:",
+    "deadline": "Deadline: {deadline}",
+    "and": " + "
+  },
+  "a11y": {
+    "row": "Step {n}: {title}. {state}",
+    "rowNoNumber": "{title}. {state}",
+    "firstFinish": ", first finish {steps}",
+    "isNext": ". Your next step",
+    "deadline": ". Deadline: {deadline}",
+    "newTab": "(opens in a new tab)"
+  },
+  "profile": {
+    "checklistStyle": "Checklist style"
   }
 }

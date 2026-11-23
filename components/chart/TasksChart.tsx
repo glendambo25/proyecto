@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useLayoutEffect, useRef, useState } from "react";
 import { Check, Lock } from "lucide-react";
-import { StepHint, STATE_LABEL } from "@/components/ux/StepBits";
+import { useTranslations } from "next-intl";
+import { StepHint, useRowLabel } from "@/components/ux/StepBits";
 import { blockersOf, rowState, summarise } from "@/lib/ux/guide";
 import { getDestination, isBlocked, phaseLabel } from "@/lib/content";
 import { daysFromArrival, dueDay } from "@/lib/chart";
@@ -34,6 +35,9 @@ export default function TasksChart() {
   const [h, setH] = useState(0);
 
   const days = profile ? daysFromArrival(profile.arrivalDate) : 0;
+  const t = useTranslations("tasks.mine");
+  const ts = useTranslations("state");
+  const rowLabel = useRowLabel();
 
   useLayoutEffect(() => {
     const measure = () => {
@@ -115,41 +119,39 @@ export default function TasksChart() {
       <header className="relative overflow-hidden px-5 pb-6 pt-6 lg:px-8 lg:pt-10">
         <Contours levels={8} cx={0.86} cy={0.2} />
         <p className="relative text-[15px] font-semibold text-ink-2">{dest.city}</p>
-        <h1 className="relative mt-1 text-[34px] font-extrabold leading-[1.02] tracking-[-0.025em] [font-stretch:110%] lg:text-[48px]">Your checklist</h1>
+        <h1 className="relative mt-1 text-[34px] font-extrabold leading-[1.02] tracking-[-0.025em] [font-stretch:110%] lg:text-[48px]">{t("title")}</h1>
         <p className="relative mt-2 text-[15px] text-ink-2">
-          <span className="font-semibold text-ink">
-            {sum.done.length} of {sum.total} done
-          </span>
+          <span className="font-semibold text-ink">{t("done", { done: sum.done.length, total: sum.total })}</span>
           {" · "}
-          {sum.ready.length + sum.doing.length} you can do now · {sum.locked.length} locked
+          {t("split", { open: sum.ready.length + sum.doing.length, locked: sum.locked.length })}
         </p>
         {/* Legend: the four states and what the lines mean, readable without the explanation. */}
-        <ul className="relative mt-4 flex flex-wrap gap-x-4 gap-y-2 text-[13px] text-ink-2" aria-label="Legend">
+        <ul className="relative mt-4 flex flex-wrap gap-x-4 gap-y-2 text-[13px] text-ink-2" aria-label={t("legend")}>
           <li className="flex items-center gap-1.5">
             <span className="grid h-4 w-4 place-items-center rounded-full bg-ok text-white" aria-hidden>
               <Check size={9} strokeWidth={3} />
             </span>
-            Done
+            {ts("done")}
           </li>
           <li className="flex items-center gap-1.5">
             <span className="block h-4 w-4 rounded-full border-[3px] border-accent" aria-hidden />
-            In progress
+            {ts("doing")}
           </li>
           <li className="flex items-center gap-1.5">
             <span className="block h-4 w-4 rounded-full border-2 border-ink" aria-hidden />
-            Ready
+            {ts("readyShort")}
           </li>
           <li className="flex items-center gap-1.5">
             <span className="grid h-4 w-4 place-items-center rounded-full border border-dashed border-ink-3 text-ink-3" aria-hidden>
               <Lock size={8} />
             </span>
-            Locked
+            {ts("locked")}
           </li>
           <li className="flex items-center gap-1.5">
             <svg width="22" height="10" aria-hidden>
               <path d="M2 5 H20" stroke="#4f46e5" strokeWidth="1.6" strokeDasharray="3 3" />
             </svg>
-            Needs this first
+            {t("needs")}
           </li>
         </ul>
       </header>
@@ -188,7 +190,7 @@ export default function TasksChart() {
                 className="tabular absolute bottom-[-2px] left-[-14px] whitespace-nowrap text-[11px] font-bold uppercase tracking-[0.06em] text-accent [font-stretch:80%]"
                 style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
               >
-                Today {readoutValue}
+                {t("today", { value: readoutValue })}
               </span>
             </div>
           )}
@@ -210,7 +212,7 @@ export default function TasksChart() {
             ))}
           </ol>
         </div>
-        <p className="px-2 pb-4 pt-6 text-[13px] text-ink-3">The line on the left counts days from your arrival. Dates appear only where an official rule sets a deadline.</p>
+        <p className="px-2 pb-4 pt-6 text-[13px] text-ink-3">{t("railNote")}</p>
       </div>
     </main>
   );
@@ -221,8 +223,8 @@ export default function TasksChart() {
     const due = dueDay(task, profile!.arrivalDate);
     const overdue = due != null && st !== "completed" && days > due;
     const state = rowState(task, statuses);
-    const waits = state === "locked" ? blockersOf(task, checklist, statuses).map((b) => b.title).join(" and ") : "";
-    const label = `Step ${n}: ${task.title}. ${STATE_LABEL[state]}${waits ? `, first finish ${waits}` : ""}${isNext ? ". Your next step" : ""}${task.deadline && state !== "done" ? `. Deadline: ${task.deadline}` : ""}`;
+    const waits = state === "locked" ? blockersOf(task, checklist, statuses).map((b) => b.title).join(" + ") : "";
+    const label = rowLabel({ n, title: task.title, state, waits, isNext, deadline: task.deadline });
     return (
       <li>
         <Link
@@ -250,7 +252,7 @@ export default function TasksChart() {
             <span className={`block text-[16px] font-semibold leading-snug ${st === "completed" ? "text-ink-3 line-through decoration-ink-3/50" : ""}`}>{task.title}</span>
             <span className="block text-[12.5px] text-ink-3">
               {String(n).padStart(2, "0")} · {task.localName ?? task.category}
-              {task.verificationStatus === "verified" ? "" : " · source not verified yet"}
+              {task.verificationStatus === "verified" ? "" : ` · ${t("sourceNotVerified")}`}
             </span>
             <StepHint task={task} checklist={checklist} statuses={statuses} arrival={profile!.arrivalDate} showDoing={false} />
             {isNext && state === "ready" && (
@@ -258,17 +260,17 @@ export default function TasksChart() {
                 <svg width="16" height="9" viewBox="0 0 18 10" className="me-1 inline-block align-middle">
                   <path d="M1 5 C 6 1, 10 9, 17 5" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
                 </svg>
-                start here
+                {t("startHere")}
               </span>
             )}
           </span>
           <span className="tabular pt-0.5 text-end text-[12.5px] font-semibold" aria-hidden>
             {due != null ? (
-              <span className={overdue ? "text-stamp" : st === "completed" ? "text-ink-3" : "text-ink"}>day +{due}</span>
+              <span className={overdue ? "text-stamp" : st === "completed" ? "text-ink-3" : "text-ink"}>{t("day", { n: due })}</span>
             ) : st === "in_progress" ? (
-              <span className="text-accent">in progress</span>
+              <span className="text-accent">{ts("doing")}</span>
             ) : st === "completed" ? (
-              <span className="text-ok">done</span>
+              <span className="text-ok">{ts("done")}</span>
             ) : null}
           </span>
         </Link>

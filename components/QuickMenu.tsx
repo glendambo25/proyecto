@@ -3,17 +3,19 @@
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { BarChart3, CalendarClock, FolderCheck, MapPinned, Mic, Plane, Ticket, UserRound, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 /** Everything that is not one of the four main tabs. Same items on mobile ("More") and desktop (sidebar). */
+/** Labels live in messages/<locale>.json under nav.items.<key>.{label,hint}. */
 export const MORE_ITEMS = [
-  { href: "/city", label: "City guide", hint: "Map, transport, housing safety", Icon: MapPinned },
-  { href: "/documents", label: "Document wallet", hint: "What to carry", Icon: FolderCheck },
-  { href: "/deadlines", label: "Deadlines", hint: "Dates and calendar", Icon: CalendarClock },
-  { href: "#voice", label: "Talk by voice", hint: "Voice assistant", Icon: Mic },
-  { href: "/tasks#return", label: "Going home", hint: "Before you leave Spain", Icon: Plane },
-  { href: "/profile", label: "Profile", hint: "Your details and settings", Icon: UserRound },
-  { href: "/plans", label: "Plans", hint: "Premium and Do it for me", Icon: Ticket },
-  { href: "/office", label: "Office view", hint: "For universities", Icon: BarChart3 },
+  { href: "/city", key: "city", Icon: MapPinned },
+  { href: "/documents", key: "documents", Icon: FolderCheck },
+  { href: "/deadlines", key: "deadlines", Icon: CalendarClock },
+  { href: "#voice", key: "voice", Icon: Mic },
+  { href: "/tasks#return", key: "goingHome", Icon: Plane },
+  { href: "/profile", key: "profile", Icon: UserRound },
+  { href: "/plans", key: "plans", Icon: Ticket },
+  { href: "/office", key: "office", Icon: BarChart3 },
 ] as const;
 
 export function startVoice() {
@@ -21,6 +23,7 @@ export function startVoice() {
 }
 
 export default function QuickMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const t = useTranslations("nav");
   const closeRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     if (!open) return;
@@ -44,20 +47,20 @@ export default function QuickMenu({ open, onClose }: { open: boolean; onClose: (
         <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-line" aria-hidden />
         <div className="mb-3 flex items-center justify-between">
           <h2 id="more-title" className="text-[20px] font-bold">
-            More
+            {t("more")}
           </h2>
-          <button ref={closeRef} onClick={onClose} className="grid h-11 w-11 place-items-center rounded-full border border-line bg-card hover:border-ink" aria-label="Close">
+          <button ref={closeRef} onClick={onClose} className="grid h-11 w-11 place-items-center rounded-full border border-line bg-card hover:border-ink" aria-label={t("close")}>
             <X size={18} />
           </button>
         </div>
         <ul className="divide-y divide-line border-y border-line">
-          {MORE_ITEMS.map(({ href, label, hint, Icon }) => {
+          {MORE_ITEMS.map(({ href, key, Icon }) => {
             const inner = (
               <>
                 <Icon size={20} className="shrink-0 text-accent" aria-hidden />
                 <span className="min-w-0 flex-1">
-                  <span className="block text-[15px] font-semibold">{label}</span>
-                  <span className="block text-[13px] text-ink-3">{hint}</span>
+                  <span className="block text-[15px] font-semibold">{t(`items.${key}.label`)}</span>
+                  <span className="block text-[13px] text-ink-3">{t(`items.${key}.hint`)}</span>
                 </span>
               </>
             );

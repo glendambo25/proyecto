@@ -25,7 +25,7 @@ export default function BoardingPass({ profile, checklist, statuses }: { profile
           <rect width="100%" height="100%" fill="url(#lines)" />
         </svg>
         <div className="relative flex items-center justify-between">
-          <span className="font-mono text-[10.5px] uppercase tracking-[0.16em] text-paper/60">Arrival pass</span>
+          <span className="font-mono text-[10.5px] uppercase tracking-[0.16em] text-paper/60">Nomad pass</span>
           <span className="rounded-full border border-paper/20 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.12em] text-paper/80">{status}</span>
         </div>
         <div className="relative mt-5 flex items-end justify-between">
