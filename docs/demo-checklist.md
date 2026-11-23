@@ -22,7 +22,7 @@ Guion: [`docs/demo-script.md`](demo-script.md).
 - [ ] **Audio:** volumen alto y salida por el altavoz que oiga la sala. Prueba que se oye la voz del agente.
 - [ ] **Red:** Wi-Fi del sitio probado y el **hotspot del móvil** preparado como plan B. La voz en directo necesita red; el resto funciona en local.
 - [ ] **Vista:** móvil (F12 → modo dispositivo → 375 × 812) o escritorio. Decide una y no la cambies a mitad.
-- [ ] Comprueba que la app ya dice **Nomad** (lo trae el cambio de marca del CTO en sprint-1-foundations). Si aún dice "Arrival", sigue la nota de nombre del guion.
+- [ ] Comprueba que la app dice **Nomad** con el logo nuevo (onboarding y barra lateral).
 - [ ] **↺ Reset** en el dock (borde izquierdo). Comprueba que estás en el onboarding y que Priya aparece la primera de la lista.
 - [ ] Ten el guion abierto en otro dispositivo, no en la pantalla compartida.
 

@@ -50,7 +50,7 @@ export default function VoiceAgentMount() {
       speak: "Speak English.",
       navigate: (url: string) => router.push(url),
       context:
-        "Arrival helps students, interns and workers moving abroad with their paperwork: a personalised checklist in the right order (with dependencies), each step with its official source and last-verified date, a 24/7 assistant, local mentors and a city guide.",
+        `${APP_NAME} helps students, interns and workers moving abroad with their paperwork: a personalised checklist in the right order (with dependencies), each step with its official source and last-verified date, a 24/7 assistant, local mentors and a city guide.`,
       pages: [
         { url: "/home", title: "Home", description: "Greeting, overall progress and the list of steps with their status" },
         { url: "/tasks", title: "Tasks", description: "Full checklist in order, the dependency map (what unlocks what) and return reminders" },

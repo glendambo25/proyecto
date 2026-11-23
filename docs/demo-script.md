@@ -2,8 +2,6 @@
 
 **Historia:** Priya Nair, 22 años, india, estudiante de máster en la Universidad Pontificia Comillas (Madrid). Llegó hace 21 días. Tiene el visado, vive en una habitación temporal sin contrato y le quedan **9 días** para pedir la TIE.
 
-> **Nombre:** el producto se llama **Nomad**. Mientras no llegue el cambio de nombre del CTO (`APP_NAME` en `lib/content.ts` y el logo en `public/brand/`, en la rama sprint-1-foundations), la app todavía dice "Arrival" en pantalla. Si presentas antes de ese merge, di: "Nomad, que aquí aún sale con su nombre provisional".
-
 **Público:** inversor (K Fund) y universidad (oficina internacional).
 
 **Tesis en una frase:** *"El papeleo de llegada está en el orden correcto, con fuente oficial en cada paso, y la universidad ve quién está en riesgo antes de que sea tarde."*
