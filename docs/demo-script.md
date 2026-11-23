@@ -1,6 +1,8 @@
-# Demo de Arrival: guion (3:45)
+# Demo de Nomad: guion (3:45)
 
 **Historia:** Priya Nair, 22 años, india, estudiante de máster en la Universidad Pontificia Comillas (Madrid). Llegó hace 21 días. Tiene el visado, vive en una habitación temporal sin contrato y le quedan **9 días** para pedir la TIE.
+
+> **Nombre:** el producto se llama **Nomad**. Mientras no llegue el cambio de nombre del CTO (`APP_NAME` en `lib/content.ts` y el logo en `public/brand/`, en la rama sprint-1-foundations), la app todavía dice "Arrival" en pantalla. Si presentas antes de ese merge, di: "Nomad, que aquí aún sale con su nombre provisional".
 
 **Público:** inversor (K Fund) y universidad (oficina internacional).
 
@@ -28,7 +30,7 @@ Si algo falla en cualquier momento: punto rojo del dock → número de escena. S
 **Di:**
 > "Cada año llegan a España estudiantes de fuera de la UE [TODO: verify. Pon aquí la cifra con fuente, por ejemplo la de la tesis del CEO; si no la tienes, no digas ninguna]. Lo primero que les pasa no es la universidad: es el papeleo. Visado, TIE, padrón, banco… cada trámite depende de otro y nadie les dice en qué orden."
 >
-> "Arrival les pregunta tres cosas: de dónde vienes, a qué ciudad vas y para qué. Con eso arma su checklist."
+> "Nomad les pregunta tres cosas: de dónde vienes, a qué ciudad vas y para qué. Con eso arma su checklist."
 
 **Clic:** baja hasta *Or open a demo traveller* → **Priya Nair · Indian** (fila MAD).
 
@@ -39,7 +41,7 @@ Si algo falla en cualquier momento: punto rojo del dock → número de escena. S
 **Pantalla:** `/home`.
 
 **Di:**
-> "Esta es Priya. Llegó a Madrid hace tres semanas para un máster en Comillas. Lleva 6 de 11 pasos, y Arrival le dice cuál es el siguiente: **el alojamiento**."
+> "Esta es Priya. Llegó a Madrid hace tres semanas para un máster en Comillas. Lleva 6 de 11 pasos, y Nomad le dice cuál es el siguiente: **el alojamiento**."
 
 **Clic:** nada. Señala la tarjeta **NEXT STOP · Accommodation in Madrid** y baja a **Your itinerary**: los 6 pasos hechos, *Accommodation* en curso y *Address registration* con **BLOCKED**.
 
@@ -50,7 +52,7 @@ Si algo falla en cualquier momento: punto rojo del dock → número de escena. S
 **Di:**
 > "¿Por qué el alojamiento va primero? Porque el **empadronamiento**, que es obligatorio para todo el que vive en España, exige un documento que demuestre que vives en esa casa, normalmente el contrato. Sin contrato no hay padrón."
 >
-> "Y aquí es donde están las estafas: pagar una fianza por un piso que no existe. Por eso Arrival avisa antes de pagar."
+> "Y aquí es donde están las estafas: pagar una fianza por un piso que no existe. Por eso Nomad avisa antes de pagar."
 
 **Señala:** *Waiting for an earlier step* y el gráfico **Accommodation in Madrid ⇢ padrón**. Abajo, la fuente: **Ayuntamiento de Madrid, verificada el 19 Nov 2026**.
 
@@ -122,7 +124,7 @@ Cierra el panel con ✕.
 **Clic:** **Nudge** en una fila (cambia a *Nudged (demo)*; no se envía nada).
 
 **Cierre (3:45):**
-> "Para el estudiante, Arrival le quita semanas de incertidumbre. Para la universidad, es la primera herramienta que le dice qué alumnos están en riesgo de incumplir un plazo legal. Empezamos en Madrid con alumnos de fuera de la UE."
+> "Para el estudiante, Nomad le quita semanas de incertidumbre. Para la universidad, es la primera herramienta que le dice qué alumnos están en riesgo de incumplir un plazo legal. Empezamos en Madrid con alumnos de fuera de la UE."
 
 ---
 
@@ -144,6 +146,6 @@ Cierra el panel con ✕.
 
 - **"¿Y si la ley cambia?"** Cada paso tiene fuente y fecha de verificación, y lo que no está verificado sale marcado. [Añade aquí la frecuencia de reverificación cuando esté decidida.]
 - **"¿Inventa respuestas?"** No. Solo usa el contenido verificado, y si no hay fuente, dice "I don't have a verified official source for this yet" y ofrece un asesor.
-- **"¿Pide cita por mí?"** No. Arrival nunca pide citas ni envía nada en nombre del alumno.
+- **"¿Pide cita por mí?"** No. Nomad nunca pide citas ni envía nada en nombre del alumno.
 
 Detalles técnicos del modo demo: `lib/demo.ts`, `lib/demo-cache.ts`, `components/DemoDock.tsx`, `components/DemoOfficePanel.tsx`, `app/kit/page.tsx` y el bloque *DEMO MODE* de `public/voice-agent.js`. Checklist previa: [`docs/demo-checklist.md`](demo-checklist.md).
