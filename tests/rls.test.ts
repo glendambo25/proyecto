@@ -134,8 +134,8 @@ describe("row-level security between institutions", () => {
   it("global feature flags are readable and off by default", async () => {
     const flags = await as<{ key: string; enabled: boolean }>(U.chen, "select key, enabled from feature_flags where org_id is null order by key");
     expect(flags).toEqual([
-      { key: "people_chat", enabled: false },
-      { key: "voice_agent", enabled: false },
+      { key: "people_chat", enabled: true },
+      { key: "voice_agent", enabled: true },
     ]);
   });
 

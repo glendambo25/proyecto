@@ -4,14 +4,15 @@ import { useEffect, useState } from "react";
 import { getBrowserSupabase } from "./supabase/client";
 
 /**
- * Feature flags. Defaults are OFF for features not ready for the pilot:
+ * Feature flags. Voice and people chat are part of the value proposition (founder, 23 Nov 2026):
+ * they are ON by default; the flags remain as a kill switch per institution or via env.
  * - voice_agent: OpenAI Realtime voice assistant
  * - people_chat: chats with real people (mentors, office, partners)
  * Resolution order: demo mode (on, so demos keep working) → NEXT_PUBLIC_FLAG_<KEY>=1|0 → institution
  * flags in the database (feature_flags table) → global defaults.
  */
 export type FlagKey = "voice_agent" | "people_chat";
-const DEFAULTS: Record<FlagKey, boolean> = { voice_agent: false, people_chat: false };
+const DEFAULTS: Record<FlagKey, boolean> = { voice_agent: true, people_chat: true };
 
 const ENV: Partial<Record<FlagKey, string | undefined>> = {
   voice_agent: process.env.NEXT_PUBLIC_FLAG_VOICE_AGENT,
@@ -37,7 +38,7 @@ export function flagSync(key: FlagKey): boolean {
 
 /** React hook: starts from env/defaults, then applies the institution's database flags when signed in. */
 export function useFlag(key: FlagKey): boolean {
-  const [on, setOn] = useState(false);
+  const [on, setOn] = useState(DEFAULTS[key]);
   useEffect(() => {
     let alive = true;
     setOn(flagSync(key));

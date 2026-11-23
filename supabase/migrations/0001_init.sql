@@ -195,6 +195,6 @@ revoke all on all tables in schema public from anon;
 
 -- ---------------------------------------------------------------- seed: global flags (off by default)
 insert into public.feature_flags (org_id, key, enabled) values
-  (null, 'voice_agent', false),
-  (null, 'people_chat', false)
+  (null, 'voice_agent', true),
+  (null, 'people_chat', true)
 on conflict do nothing;
