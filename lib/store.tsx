@@ -5,6 +5,7 @@ import { identify, track } from "./analytics";
 import { getSession, loadState, saveDoc, saveEvent, saveProfile, saveStatus, type Session } from "./db/sync";
 import { getBrowserSupabase } from "./supabase/client";
 import { buildChecklist, personas } from "./content";
+import { demoOverride, isDemoMode, withDemo } from "./demo";
 import type { Task, TaskStatus, UserProfile } from "./types";
 
 export interface AppEvent {
@@ -19,6 +20,8 @@ export interface ChatMsg {
   sources?: { taskId: string; name: string; url: string | null; lastVerified: string | null; verificationStatus: string }[];
   covered?: boolean;
   offline?: boolean;
+  /** Demo mode only: a real assistant answer replayed from the rehearsal cache because the live call failed. */
+  cached?: boolean;
   missingTaskIds?: string[];
   feedback?: "up" | "down";
   ts?: string;
@@ -116,8 +119,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   );
 
   const startPersona = useCallback((id: string) => {
-    const p = personas.find((x) => x.id === id);
-    if (!p) return;
+    const found = personas.find((x) => x.id === id);
+    if (!found) return;
+    // Demo mode (lib/demo.ts): same persona with SIMULATED demo dates and progress.
+    const p = withDemo(found);
+    const demoDocs = isDemoMode() ? (demoOverride(id)?.docs ?? []) : [];
     setState({
       ...empty,
       profile: {
@@ -139,6 +145,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       },
       statuses: { ...p.initialStatus },
       completedOn: { ...(p.completedOn ?? {}) },
+      docs: demoDocs,
       events: [{ type: "onboarding_completed", ts: new Date().toISOString(), data: { persona: p.id } }],
     });
   }, []);

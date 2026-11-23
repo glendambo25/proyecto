@@ -83,12 +83,15 @@ export function offlineAnswer(req: AssistantRequest): AssistantResponse {
       offline: true,
     };
   }
-  const words = q.split(/[^a-zà-ÿ0-9]+/).filter((w) => w.length > 3);
+  // Short acronyms used in task titles (e.g. "TIE") count as keywords too.
+  const acronyms = new Set(tasks.flatMap((t) => t.title.match(/\b[A-Z]{2,4}\b/g) ?? []).map((a) => a.toLowerCase()));
+  const words = q.split(/[^a-zà-ÿ0-9]+/).filter((w) => w.length > 3 || acronyms.has(w));
   const scored = tasks
     .map((t) => {
       const hay = `${t.title} ${t.localName ?? ""} ${t.category} ${t.description}`.toLowerCase();
       let s = 0;
-      for (const w of words) if (hay.includes(w)) s += hay.indexOf(w) < t.title.length + (t.localName?.length ?? 0) + 20 ? 3 : 1;
+      for (const w of words) if (acronyms.has(w) && t.title.toLowerCase().includes(`(${w})`)) s += 6;
+      else if (hay.includes(w)) s += hay.indexOf(w) < t.title.length + (t.localName?.length ?? 0) + 20 ? 3 : 1;
       if (/(scam|fraud|deposit|estafa)/.test(q) && t.category === "Accommodation") s += 5;
       if (/(insurance|health)/.test(q) && t.category === "Insurance") s += 4;
       if (/(register|registration|address|anagrafe|anmeldung)/.test(q) && t.category === "Registration" && t.phase !== "return") s += 4;
@@ -100,7 +103,7 @@ export function offlineAnswer(req: AssistantRequest): AssistantResponse {
   const top = scored[0]?.t;
   if (!top)
     return { answer: `${NO_SOURCE} I can connect you with an advisor or the international office.`, covered: false, sources: [], missingTaskIds: [], suggestAdvisor: true, offline: true };
-  const needs = top.dependsOn.map((d) => tasks.find((t) => t.id === d)?.title).filter(Boolean);
+  const needs = top.dependsOn.filter((d) => !done(d)).map((d) => tasks.find((t) => t.id === d)?.title).filter(Boolean);
   const missing = [top.id, ...top.dependsOn].filter((id) => req.statuses?.[id] !== "completed");
   let answer = `${top.title}${top.localName ? ` (${top.localName})` : ""}. ${top.description}`;
   if (needs.length) answer += `\n\nDo this first: ${needs.join(", ")}.`;

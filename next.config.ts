@@ -6,6 +6,8 @@ const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  // Hides the dev-mode "N" badge so it does not show during live demos (npm run dev).
+  devIndicators: false,
 };
 
 export default withNextIntl(nextConfig);

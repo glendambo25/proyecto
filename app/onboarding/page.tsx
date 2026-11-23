@@ -7,6 +7,7 @@ import { APP_NAME, cityCode, destinations, getDestination, personas, purposeLabe
 import { daysFromArrival, readout } from "@/lib/chart";
 import { DesignSwitch, useDesign } from "@/lib/design";
 import { useApp } from "@/lib/store";
+import { withDemo } from "@/lib/demo";
 import type { Nationality, Purpose } from "@/lib/types";
 import Contours from "@/components/chart/Contours";
 
@@ -109,7 +110,7 @@ export default function Onboarding() {
             <ul className="divide-y divide-line border-y border-line">
               {personas.map((p) => {
                 const pd = getDestination(p.destinationId);
-                const r = readout(daysFromArrival(p.arrivalDate));
+                const r = readout(daysFromArrival(withDemo(p).arrivalDate));
                 return (
                   <li key={p.id}>
                     <button

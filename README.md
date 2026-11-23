@@ -17,6 +17,10 @@ npm run dev                  # http://localhost:3000
 - `OPENAI_API_KEY` activa el agente de voz (OpenAI Realtime, del `voice-agent-kit`).
 - Despliegue: Vercel (importar el repo y añadir las variables de entorno).
 
+## Modo demo
+
+`?demo=priya` en cualquier página carga la demo de inversores y universidades (Priya, alumna de fuera de la UE en Madrid), con un dock para saltar entre escenas y reiniciar con un clic. Guion: [`docs/demo-script.md`](docs/demo-script.md). Checklist previa y variables de entorno: [`docs/demo-checklist.md`](docs/demo-checklist.md). Qué es real y qué es simulado: tabla al final del guion.
+
 ## Estructura
 
 | Ruta | Qué es |

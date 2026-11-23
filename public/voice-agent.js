@@ -24,6 +24,11 @@
  * Arrival additions (on top of voice-agent-kit, logic otherwise unchanged):
  *   tools        extra app tools: [{ definition: <Realtime function tool>, run: async (args) => result }]
  *   rules        extra lines appended to the instructions (string[])
+ *   demo         () => boolean. DEMO MODE ONLY: if true, the call gives up after connectTimeoutMs and switches to the
+ *                fallback below instead of showing an error (see docs/demo-script.md).
+ *   fallback     async (question) => answerText. SIMULATED VOICE: used when Realtime is unavailable in demo mode;
+ *                answers come from the app (verified assistant) and are spoken with the browser's speech synthesis.
+ *   fallbackSuggestions  string[] one-tap questions shown in the fallback panel
  *   speak        language instruction, e.g. 'Speak English.' (overrides the default)
  */
 (function () {
@@ -62,6 +67,8 @@
     '.va-l{margin:0;padding:6px 9px;border-radius:10px;max-width:92%}.va-l.u{align-self:flex-end;background:#f0f0f3}.va-l.a{background:#eef5ff}.va-l.s{align-self:center;color:#777;font-size:12px;background:none}' +
     '.va-acc{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:12px;color:#666}.va-acc select{flex:1;border:1px solid #ddd;border-radius:8px;padding:6px 8px;background:#fff;font:inherit;color:#111}.va-root.min .va-acc{display:none}' +
     '.va-form{display:flex;gap:6px}.va-in{flex:1;border:1px solid #ddd;border-radius:8px;padding:8px}.va-sm{border:1px solid #ddd;background:#fff;border-radius:8px;padding:8px 10px;cursor:pointer}' +
+    '.va-chips{display:flex;flex-wrap:wrap;gap:6px;align-self:stretch}.va-chip{border:1px solid #c7d2fe;background:#eef2ff;color:#312e81;border-radius:999px;padding:5px 10px;font:600 12px system-ui,sans-serif;cursor:pointer;text-align:left}' +
+    '.va-root[data-s=fallback] .va-dot{background:#c2410c}.va-root[data-s=thinking] .va-dot{background:#f0b429;animation:va-p .7s infinite}' +
     '.va-mark{outline:3px solid #ff3b30!important;outline-offset:3px!important;border-radius:4px;transition:outline .2s}';
   document.head.appendChild(css);
 
@@ -255,7 +262,73 @@
       go();
     }, GRACE_MS);
   }
+  /* ---------------- DEMO MODE fallback (SIMULATED voice) ----------------
+   * Only when C.demo() is true. If OpenAI Realtime cannot connect (no key, no network, timeout), the panel
+   * stays usable: questions (typed, tapped or dictated with the browser's speech recognition when available)
+   * go to C.fallback (the app's verified assistant) and the answer is read out with speechSynthesis. */
+  var FALLBACK = false, REC = null;
+  function demoOn() { try { return !!(C.demo && C.demo() && C.fallback); } catch (e) { return false; } }
+  // Spoken version: first two sentences + "Do this first" / deadline / source lines (the full answer stays on screen).
+  function spoken(t) {
+    var all = String(t).replace(/·/g, ',').replace(/\s+/g, ' ').match(/[^.!?]+[.!?]+/g) || [String(t)];
+    var keep = all.slice(0, 2).concat(all.filter(function (x, i) { return i >= 2 && /(do this first|deadline|source:)/i.test(x); }));
+    return keep.join(' ').slice(0, 700);
+  }
+  function speakText(t) {
+    try {
+      if (!window.speechSynthesis) return; speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(spoken(t)); u.lang = ES ? 'es-ES' : 'en-GB'; u.rate = 1.03;
+      u.onstart = function () { state('speaking', T('Speaking (backup voice)', 'Hablando (voz de respaldo)')); };
+      u.onend = function () { if (FALLBACK) state('fallback', T('Backup voice', 'Voz de respaldo')); };
+      speechSynthesis.speak(u);
+    } catch (e) {}
+  }
+  function askFallback(t) {
+    line('u', t); emit('fallback_question', { text: t }); state('thinking', T('Thinking…', 'Pensando…'));
+    Promise.resolve().then(function () { return C.fallback(t); })
+      .then(function (a) { line('a', a); emit('assistant_said', { text: a, fallback: true }); state('fallback', T('Backup voice', 'Voz de respaldo')); speakText(a); })
+      .catch(function () { line('s', T('Still offline. Open the Assistant tab for the same answer.', 'Sin conexión. Abre el asistente para la misma respuesta.')); state('fallback', ''); });
+  }
+  function listenOnce() {
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) { line('s', T('Type or tap a question.', 'Escribe o toca una pregunta.')); return; }
+    try {
+      REC = new SR(); REC.lang = ES ? 'es-ES' : 'en-GB'; REC.interimResults = false; REC.maxAlternatives = 1;
+      state('listening', T('Listening (backup)', 'Te escucho (respaldo)'));
+      REC.onresult = function (e) { var t = e.results[0][0].transcript; if (t) askFallback(t); };
+      REC.onerror = function () { line('s', T('Could not hear you: type or tap a question.', 'No te he oído: escribe o toca una pregunta.')); state('fallback', ''); };
+      REC.onend = function () { REC = null; if (root.dataset.s === 'listening') state('fallback', T('Backup voice', 'Voz de respaldo')); };
+      REC.start();
+    } catch (e) { line('s', T('Type or tap a question.', 'Escribe o toca una pregunta.')); }
+  }
+  function enterFallback(reason) {
+    FALLBACK = true; root.classList.add('open'); emit('fallback_start', { reason: reason });
+    console.warn('[voice-agent] DEMO FALLBACK (simulated voice):', reason);
+    line('s', T('Live voice is unavailable right now, switching to the backup voice. Same verified answers.', 'La voz en directo no está disponible: paso a la voz de respaldo. Mismas respuestas verificadas.'));
+    var box = document.createElement('div'); box.className = 'va-chips';
+    (C.fallbackSuggestions || []).forEach(function (q) {
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'va-chip'; b.textContent = q;
+      b.addEventListener('click', function () { askFallback(q); }); box.appendChild(b);
+    });
+    if (box.children.length) { lines.appendChild(box); lines.scrollTop = 1e9; }
+    btnText.textContent = '🎙️ ' + T('Ask by voice', 'Preguntar por voz');
+    state('fallback', T('Backup voice', 'Voz de respaldo'));
+  }
+  function withTimeout(p, ms) {
+    if (!demoOn()) return p;
+    return Promise.race([p, new Promise(function (_, rej) { setTimeout(function () { rej(new Error('connect timeout ' + ms + ' ms')); }, ms); })]);
+  }
+  function waitOpen(dc, ms) {
+    if (!demoOn()) return Promise.resolve();
+    return new Promise(function (res, rej) {
+      if (dc.readyState === 'open') return res();
+      var t = setTimeout(function () { rej(new Error('data channel did not open')); }, ms);
+      dc.addEventListener('open', function () { clearTimeout(t); res(); });
+    });
+  }
+
   function start() {
+    FALLBACK = false;
     state('connecting', T('Connecting…', 'Conectando…'));
     var pc = new RTCPeerConnection(), audio = new Audio(); audio.autoplay = true;
     pc.ontrack = function (e) { audio.srcObject = e.streams[0]; };
@@ -309,7 +382,8 @@
     var mic = navigator.mediaDevices && navigator.mediaDevices.getUserMedia
       ? navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } }).catch(function (e) { micErr = (e && e.name) || 'Error'; return null; })
       : Promise.resolve(null);
-    return Promise.all([key, mic])
+    var connectMs = C.connectTimeoutMs || 9000;
+    return withTimeout(Promise.all([key, mic])
       .then(function (r) {
         RT.mic = r[1];
         if (r[1]) pc.addTrack(r[1].getTracks()[0]); else { pc.addTransceiver('audio', { direction: 'recvonly' }); line('s', micReason()); }
@@ -318,17 +392,19 @@
         }); });
       })
       .then(function (res) { if (!res.ok) return res.text().then(function (t) { throw new Error('realtime ' + res.status + ' ' + t.slice(0, 160)); }); return res.text(); })
-      .then(function (sdp) { return pc.setRemoteDescription({ type: 'answer', sdp: sdp }); })
-      .catch(function (e) { console.warn('[voice-agent] voice unavailable:', e.message); stop(true); line('s', T('I could not connect right now. Try again in a moment.', 'No he podido conectarme. Prueba otra vez en un momento.')); throw e; });
+      .then(function (sdp) { return pc.setRemoteDescription({ type: 'answer', sdp: sdp }); }), connectMs)
+      .then(function () { return waitOpen(dc, 6000); })
+      .catch(function (e) { console.warn('[voice-agent] voice unavailable:', e.message); stop(true); if (demoOn()) { enterFallback(e.message); return; } line('s', T('I could not connect right now. Try again in a moment.', 'No he podido conectarme. Prueba otra vez en un momento.')); throw e; });
   }
   function stop(keepFrame) {
     if (RT) { try { RT.mic && RT.mic.getTracks().forEach(function (t) { t.stop(); }); RT.pc.close(); } catch (e) {} RT = null; emit('call_end'); }
+    FALLBACK = false; try { REC && REC.abort(); window.speechSynthesis && speechSynthesis.cancel(); } catch (e) {}
     busy = false; pending = []; state('idle', ''); btnText.textContent = '🎙️ ' + T('Talk', 'Hablar');
     if (!keepFrame) { leaveFrame(); root.classList.remove('open', 'min'); }
   }
 
   /* Panel controls (Arrival): close, minimise, drag anywhere on screen. */
-  root.querySelector('.va-x').addEventListener('click', function () { if (RT) stop(); else root.classList.remove('open', 'min'); });
+  root.querySelector('.va-x').addEventListener('click', function () { if (RT || FALLBACK) stop(); else root.classList.remove('open', 'min'); });
   root.querySelector('.va-min').addEventListener('click', function () { root.classList.toggle('min'); });
   // Accent picker: same effect as asking out loud; works before or during a call.
   var accSel = root.querySelector('.va-acc-sel');
@@ -357,11 +433,13 @@
   btn.addEventListener('pointerenter', function () { if (!RT) preload().catch(function () {}); });
   btn.addEventListener('click', function () {
     if (RT) { stop(); return; }
+    if (FALLBACK) { listenOnce(); return; }
     root.classList.add('open'); btnText.textContent = '■ ' + T('Hang up', 'Colgar');
     start().catch(function () {});
   });
   root.querySelector('.va-form').addEventListener('submit', function (e) {
     e.preventDefault(); var i = root.querySelector('.va-in'), t = i.value.trim(); if (!t) return; i.value = '';
+    if (FALLBACK) { askFallback(t); return; }
     line('u', t); emit('user_typed', { text: t });
     if (RT && RT.dc.readyState === 'open') { send({ type: 'conversation.item.create', item: { type: 'message', role: 'user', content: [{ type: 'input_text', text: t }] } }); respond(); }
     else { root.classList.add('open'); btnText.textContent = '■ ' + T('Hang up', 'Colgar'); start().then(function () {
@@ -369,6 +447,6 @@
       setTimeout(function () { clearInterval(w); }, 8000);
     }).catch(function () {}); }
   });
-  window.VoiceAgent = { start: function () { if (!RT) { root.classList.add('open'); return start(); } }, stop: stop, readScreen: readScreen };
+  window.VoiceAgent = { start: function () { if (FALLBACK) { root.classList.add('open'); return Promise.resolve(); } if (!RT) { root.classList.add('open'); return start(); } }, stop: stop, readScreen: readScreen };
   if (DBG) window.VoiceAgent._tool = runTool;
 })();

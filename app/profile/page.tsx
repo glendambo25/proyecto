@@ -61,11 +61,11 @@ export default function Profile() {
           <div>
             <p className="text-[15px] font-semibold">{profile.name}</p>
             <p className="text-[13px] text-ink-2">
-              {profile.purpose === "study" ? "Erasmus student" : purposeLabel[profile.purpose]} · {profile.institution}
+              {profile.purpose === "study" ? (profile.nationality === "eu" ? "Erasmus student" : "Student") : purposeLabel[profile.purpose]} · {profile.institution}
             </p>
             <div className="mt-2 flex flex-wrap gap-1.5">
               {profile.age && <span className="chip border-line text-ink-2">{profile.age} yrs</span>}
-              <span className="chip border-line text-ink-2">{profile.purpose === "study" ? "Erasmus" : profile.purpose}</span>
+              <span className="chip border-line text-ink-2">{profile.purpose === "study" ? (profile.nationality === "eu" ? "Erasmus" : "Studies") : profile.purpose}</span>
               <span className="chip border-accent/30 bg-accent-soft text-accent">{cityCode[dest.id]} · {dest.city}</span>
             </div>
           </div>

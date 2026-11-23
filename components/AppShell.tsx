@@ -3,9 +3,11 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { BarChart3, CalendarClock, FolderCheck, House, ListChecks, Map, MessageCircle, Mic, Sparkles, Ticket, UserRound } from "lucide-react";
+import { BarChart3, CalendarClock, FolderCheck, House, ListChecks, Map, MessageCircle, Mic, Package, Sparkles, Ticket, UserRound } from "lucide-react";
 import { APP_NAME, cityCode, getDestination, personas, progressOf } from "@/lib/content";
 import { useApp } from "@/lib/store";
+import { DEMO_PERSONA, isDemoMode, setDemoMode } from "@/lib/demo";
+import DemoDock from "./DemoDock";
 import { Segments } from "./ui";
 
 const TABS = [
@@ -22,6 +24,7 @@ const TOOLS = [
   { href: "/deadlines", label: "Deadlines", Icon: CalendarClock },
   { href: "/plans", label: "Plans", Icon: Ticket },
   { href: "/office", label: "Office view", Icon: BarChart3 },
+  { href: "/kit", label: "Local kit", Icon: Package },
 ];
 
 const PUBLIC = ["/", "/onboarding", "/office", "/login"];
@@ -92,7 +95,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!ready) return;
     const q = new URLSearchParams(window.location.search);
-    const demo = q.get("demo");
+    let demo = q.get("demo");
+    if (demo === "1") demo = DEMO_PERSONA; // alias used in the demo brief
     const design = q.get("design");
     if (design === "chart" || design === "minimal") {
       try {
@@ -100,12 +104,23 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       } catch {}
       window.dispatchEvent(new Event("arrival-design-change"));
     }
-    if (demo && personas.some((p) => p.id === demo) && profile?.personaId !== demo) {
-      startPersona(demo);
+    // Demo mode (lib/demo.ts, docs/demo-script.md): ?demo=priya turns it on and loads the ideal state,
+    // &reset=1 restarts it, ?demo=off leaves it. The query is stripped afterwards so reloads don't reset.
+    if (demo === "off") {
+      setDemoMode(false);
+      window.history.replaceState(null, "", path);
+      return;
+    }
+    if (demo && personas.some((p) => p.id === demo)) {
+      const enteringDemo = demo === DEMO_PERSONA && !isDemoMode();
+      if (demo === DEMO_PERSONA) setDemoMode(true);
+      const restart = q.get("reset") === "1" || enteringDemo || profile?.personaId !== demo;
+      window.history.replaceState(null, "", path);
+      if (restart) startPersona(demo);
       return;
     }
     if (!profile && !isPublic) router.replace("/onboarding");
-  }, [ready, profile, isPublic, router, startPersona]);
+  }, [ready, profile, isPublic, router, startPersona, path]);
 
   // Conversation screens have their own composer + mic: hide the floating voice button there (and on onboarding).
   useEffect(() => {
@@ -118,6 +133,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <>
+      <DemoDock />
       {showNav && <Sidebar path={path} />}
       <div className={showNav ? "lg:pl-[272px]" : ""}>
         <div className={`mx-auto min-h-dvh ${fullBleed ? "max-w-[1200px]" : "max-w-[440px] lg:max-w-[1120px] lg:px-6"} ${showNav ? "pb-32 lg:pb-16" : ""}`}>
