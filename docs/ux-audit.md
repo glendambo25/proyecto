@@ -54,6 +54,8 @@ Páginas completas: `ux-audit/before/before-mobile-*-full.png`. Escritorio: `ux-
 | 9 | Accesibilidad, RTL y textos largos | Los objetivos táctiles miden 44 px o más en todo el flujo principal (barra 56 px, acciones 48-56 px). Hay enlace "Skip to content". El onboarding mueve el foco a cada pregunta. Hay anuncios `aria-live` al marcar pasos y en las respuestas del asistente. La hoja More es un `dialog` modal con `inert` cuando está cerrada. Se respeta `prefers-reduced-motion`. Se usan propiedades lógicas (`ps`, `start`, `ms-auto`, `text-start`), las flechas se invierten en RTL (`.flip-rtl`) y la regla y los arcos del checklist se reflejan en RTL. Los títulos usan `overflow-wrap:anywhere` y `hyphens`, y las etiquetas de la barra se parten en 2 líneas en vez de solaparse. |
 | 10 | Asistente sobrecargado | Titular corto, una frase de confianza y 4 sugerencias en lista. Se elimina la de "Community", que no se puede responder con contenido verificado. Si falla la red sale un aviso con "Try again". El campo de texto es de 16 px (iOS no hace zoom) y los botones de 44 px. La respuesta sigue mostrando fuente y fecha. |
 
+**El plazo legal manda.** El siguiente paso es el primero abierto según las dependencias, salvo que un paso desbloqueado tenga un plazo oficial (`deadlineRule`) a 14 días o menos, o ya vencido. En ese caso pasa delante con la etiqueta "Deadline soon: do this first". Ejemplo: a los 20 días de llegar, la TIE adelanta al alojamiento (captura `ux-audit/after/after-mobile-home-deadline-soon.png`). Lo detectó la sesión de demo.
+
 Otros cambios: la carga muestra un esqueleto en vez de "Loading…". Los anclajes `/tasks#return` ya llevan a "When you go back". El Perfil ya no dice "Erasmus" y aguanta perfiles sin nombre.
 
 ### Capturas: después

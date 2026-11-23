@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { Check, ChevronRight, Lock } from "lucide-react";
 import { getDestination, isBlocked, phaseLabel, progressOf } from "@/lib/content";
-import { daysFromArrival, dueDay, nextOpen } from "@/lib/chart";
+import { daysFromArrival, dueDay } from "@/lib/chart";
+import { pickNext } from "@/lib/ux/guide";
 import { statusOf, useApp } from "@/lib/store";
 import type { Task } from "@/lib/types";
 
@@ -13,7 +14,7 @@ export default function TasksMinimal() {
   if (!profile) return null;
   const dest = getDestination(profile.destinationId);
   const prog = progressOf(checklist, statuses);
-  const next = nextOpen(checklist, statuses);
+  const next = pickNext(checklist, statuses, profile.arrivalDate);
   const phases = (["before", "arrival", "settle", "return"] as const).filter((p) => checklist.some((t) => t.phase === p));
   const days = daysFromArrival(profile.arrivalDate);
   const overdueOf = (t: Task) => {

@@ -6,7 +6,7 @@ import { Check, Lock } from "lucide-react";
 import { StepHint, STATE_LABEL } from "@/components/ux/StepBits";
 import { blockersOf, rowState, summarise } from "@/lib/ux/guide";
 import { getDestination, isBlocked, phaseLabel } from "@/lib/content";
-import { daysFromArrival, dueDay, nextOpen } from "@/lib/chart";
+import { daysFromArrival, dueDay } from "@/lib/chart";
 import { statusOf, useApp } from "@/lib/store";
 import type { Phase, Task } from "@/lib/types";
 import Contours from "./Contours";
@@ -105,8 +105,8 @@ export default function TasksChart() {
 
   if (!profile) return null;
   const dest = getDestination(profile.destinationId);
-  const sum = summarise(checklist, statuses);
-  const next = nextOpen(checklist, statuses);
+  const sum = summarise(checklist, statuses, profile.arrivalDate);
+  const next = sum.next;
   const phases = (["before", "arrival", "settle", "return"] as const).filter((p) => checklist.some((t) => t.phase === p));
   const readoutValue = days === 0 ? "0" : days < 0 ? `−${-days}` : `+${days}`;
 

@@ -62,10 +62,30 @@ export interface Summary {
   total: number;
 }
 
-export function summarise(checklist: Task[], statuses: Record<string, TaskStatus>): Summary {
+/** Days of warning before an official deadline makes a step jump the queue. */
+export const URGENT_DAYS = 14;
+
+/**
+ * The one step to do next. Normally the first open step in dependency order, but a step whose
+ * official deadline (deadlineRule) is within URGENT_DAYS, or already passed, goes first: the nearest one wins.
+ */
+export function pickNext(checklist: Task[], statuses: Record<string, TaskStatus>, arrivalIso?: string): Task | undefined {
+  if (arrivalIso) {
+    const today = daysFromArrival(arrivalIso);
+    const urgent = checklist
+      .filter((t) => t.phase !== "return" && (statuses[t.id] ?? "pending") !== "completed" && !isBlocked(t, statuses))
+      .map((t) => ({ t, due: dueDay(t, arrivalIso) }))
+      .filter((x): x is { t: Task; due: number } => x.due != null && x.due - today <= URGENT_DAYS)
+      .sort((a, b) => a.due - b.due)[0];
+    if (urgent) return urgent.t;
+  }
+  return nextOpen(checklist, statuses);
+}
+
+export function summarise(checklist: Task[], statuses: Record<string, TaskStatus>, arrivalIso?: string): Summary {
   const main = checklist.filter((t) => t.phase !== "return");
   const by = (s: RowState) => main.filter((t) => rowState(t, statuses) === s);
-  return { next: nextOpen(checklist, statuses), doing: by("doing"), ready: by("ready"), locked: by("locked"), done: by("done"), total: main.length };
+  return { next: pickNext(checklist, statuses, arrivalIso), doing: by("doing"), ready: by("ready"), locked: by("locked"), done: by("done"), total: main.length };
 }
 
 /** First sentence of a description, for one-line context. */

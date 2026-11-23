@@ -6,13 +6,14 @@ import { getDestination } from "@/lib/content";
 import { statusOf, useApp } from "@/lib/store";
 import { Segments } from "@/components/ui";
 import { StepRow } from "@/components/ux/StepBits";
-import { blockersOf, countdown, firstSentence, overdue, reasonsFor, summarise } from "@/lib/ux/guide";
+import { blockersOf, countdown, firstSentence, overdue, reasonsFor, summarise, URGENT_DAYS } from "@/lib/ux/guide";
+import { daysFromArrival, dueDay } from "@/lib/chart";
 
 export default function Home() {
   const { profile, checklist, statuses, highlighted } = useApp();
   if (!profile) return null;
   const dest = getDestination(profile.destinationId);
-  const sum = summarise(checklist, statuses);
+  const sum = summarise(checklist, statuses, profile.arrivalDate);
   const next = sum.next;
   const cd = countdown(profile.arrivalDate, dest.city);
   const firstName = profile.name.split(" ")[0];
@@ -28,6 +29,7 @@ export default function Home() {
   const allDone = sum.total > 0 && sum.done.length === sum.total;
   const waitingOnly = !next && !allDone;
   const nextState = next ? statusOf(statuses, next.id) : null;
+  const nextDue = next ? dueDay(next, profile.arrivalDate) : null;
 
   return (
     <main className="px-5 pt-5 lg:px-4 lg:pt-10">
@@ -53,7 +55,7 @@ export default function Home() {
           {/* The one main action. */}
           {next && (
             <section aria-labelledby="next-title" className="rise mt-6 rounded-3xl border border-accent/25 bg-accent-soft p-5">
-              <p className="text-[14px] font-semibold text-accent">{nextState === "in_progress" ? "Keep going: your next step" : "Your next step"}</p>
+              <p className="text-[14px] font-semibold text-accent">{nextDue != null && nextDue - daysFromArrival(profile.arrivalDate) <= URGENT_DAYS ? "Deadline soon: do this first" : nextState === "in_progress" ? "Keep going: your next step" : "Your next step"}</p>
               <h1 id="next-title" className="mt-1 text-[26px] font-extrabold leading-[1.08] tracking-[-0.02em] [font-stretch:108%]">
                 {next.title}
               </h1>
