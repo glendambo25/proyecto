@@ -1,0 +1,50 @@
+{
+  "_meta": {
+    "status": "machine-translated, needs native review"
+  },
+  "nav": {
+    "home": "首页",
+    "tasks": "手续",
+    "city": "城市",
+    "chat": "聊天",
+    "profile": "我的"
+  },
+  "design": {
+    "chart": "图谱",
+    "minimal": "极简",
+    "label": "设计方向"
+  },
+  "onboarding": {
+    "welcome": {
+      "headline1": "你负责搬家。",
+      "headline2": "我们帮你理清",
+      "headline3": "所有手续。",
+      "body": "根据你的城市、护照和出行目的列出步骤，按正确顺序排列，每一步都附有官方来源和最近核实日期。",
+      "cta": "生成我的清单",
+      "demoTitle": "或打开一个演示用户",
+      "demoNote": "虚构人物，基于真实访谈案例。"
+    }
+  },
+  "tasks": {
+    "header": {
+      "title": "{city}，为 {name} 规划。",
+      "progress": "已完成 {done} / {total, plural, other {# 个抵达步骤}}"
+    }
+  },
+  "step": {
+    "actions": {
+      "start": "开始",
+      "markDone": "标记为完成",
+      "undo": "撤销",
+      "finishFirst": "请先完成：{steps}"
+    }
+  },
+  "common": {
+    "verifiedSource": "官方来源 · 核实于 {date}",
+    "sourcePending": "来源待核实",
+    "todoVerify": "待办：核实"
+  },
+  "locale": {
+    "label": "语言"
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "_meta": {
+    "status": "machine-translated, needs native review"
+  },
+  "nav": {
+    "home": "Start",
+    "tasks": "Behördengänge",
+    "city": "Stadt",
+    "chat": "Chat",
+    "profile": "Profil"
+  },
+  "design": {
+    "chart": "Karte",
+    "minimal": "Minimal",
+    "label": "Designrichtung"
+  },
+  "onboarding": {
+    "welcome": {
+      "headline1": "Du ziehst um.",
+      "headline2": "Wir planen",
+      "headline3": "den Papierkram.",
+      "body": "Deine Schritte für deine Stadt, deinen Pass und deinen Umzugsgrund, in der richtigen Reihenfolge, jeweils mit offizieller Quelle und dem Datum der letzten Prüfung.",
+      "cta": "Meine Checkliste erstellen",
+      "demoTitle": "Oder eine Demo-Person öffnen",
+      "demoNote": "Fiktive Personen, basierend auf echten Interviewfällen."
+    }
+  },
+  "tasks": {
+    "header": {
+      "title": "{city}, geplant für {name}.",
+      "progress": "{done} von {total, plural, one {# Ankunftsschritt} other {# Ankunftsschritten}} erledigt"
+    }
+  },
+  "step": {
+    "actions": {
+      "start": "Starten",
+      "markDone": "Als erledigt markieren",
+      "undo": "Rückgängig",
+      "finishFirst": "Zuerst erledigen: {steps}"
+    }
+  },
+  "common": {
+    "verifiedSource": "Offizielle Quelle · geprüft am {date}",
+    "sourcePending": "Quelle noch nicht geprüft",
+    "todoVerify": "TODO: prüfen"
+  },
+  "locale": {
+    "label": "Sprache"
+  }
+}

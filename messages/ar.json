@@ -1,0 +1,50 @@
+{
+  "_meta": {
+    "status": "machine-translated, needs native review"
+  },
+  "nav": {
+    "home": "الرئيسية",
+    "tasks": "الإجراءات",
+    "city": "المدينة",
+    "chat": "الدردشة",
+    "profile": "الملف الشخصي"
+  },
+  "design": {
+    "chart": "خريطة",
+    "minimal": "بسيط",
+    "label": "اتجاه التصميم"
+  },
+  "onboarding": {
+    "welcome": {
+      "headline1": "أنت تنتقل.",
+      "headline2": "ونحن نرسم",
+      "headline3": "الأوراق.",
+      "body": "خطواتك حسب مدينتك وجواز سفرك وسبب انتقالك، بالترتيب الصحيح، ولكل خطوة مصدرها الرسمي وتاريخ آخر تحقق.",
+      "cta": "أنشئ قائمتي",
+      "demoTitle": "أو افتح مسافرًا تجريبيًا",
+      "demoNote": "أشخاص خياليون مستندون إلى حالات حقيقية من المقابلات."
+    }
+  },
+  "tasks": {
+    "header": {
+      "title": "{city}، مخطط لـ {name}.",
+      "progress": "تم إنجاز {done} من {total, plural, one {# خطوة وصول} other {# خطوات وصول}}"
+    }
+  },
+  "step": {
+    "actions": {
+      "start": "ابدأ",
+      "markDone": "وضع علامة كمكتمل",
+      "undo": "تراجع",
+      "finishFirst": "أنهِ أولًا: {steps}"
+    }
+  },
+  "common": {
+    "verifiedSource": "مصدر رسمي · تم التحقق في {date}",
+    "sourcePending": "المصدر بانتظار التحقق",
+    "todoVerify": "للتنفيذ: التحقق"
+  },
+  "locale": {
+    "label": "اللغة"
+  }
+}

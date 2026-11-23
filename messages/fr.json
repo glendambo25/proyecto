@@ -1,0 +1,50 @@
+{
+  "_meta": {
+    "status": "machine-translated, needs native review"
+  },
+  "nav": {
+    "home": "Accueil",
+    "tasks": "Démarches",
+    "city": "Ville",
+    "chat": "Discussion",
+    "profile": "Profil"
+  },
+  "design": {
+    "chart": "Carte",
+    "minimal": "Minimal",
+    "label": "Direction graphique"
+  },
+  "onboarding": {
+    "welcome": {
+      "headline1": "Vous déménagez.",
+      "headline2": "Nous traçons",
+      "headline3": "les démarches.",
+      "body": "Vos étapes selon votre ville, votre passeport et le motif de votre séjour, dans le bon ordre, chacune avec sa source officielle et la date de sa dernière vérification.",
+      "cta": "Créer ma checklist",
+      "demoTitle": "Ou ouvrez un voyageur de démo",
+      "demoNote": "Personnes fictives, inspirées de cas réels d’entretiens."
+    }
+  },
+  "tasks": {
+    "header": {
+      "title": "{city}, tracée pour {name}.",
+      "progress": "{done} sur {total, plural, one {# étape d’arrivée} other {# étapes d’arrivée}} terminées"
+    }
+  },
+  "step": {
+    "actions": {
+      "start": "Commencer",
+      "markDone": "Marquer comme fait",
+      "undo": "Annuler",
+      "finishFirst": "Terminez d’abord : {steps}"
+    }
+  },
+  "common": {
+    "verifiedSource": "Source officielle · vérifiée le {date}",
+    "sourcePending": "Source en attente de vérification",
+    "todoVerify": "À FAIRE : vérifier"
+  },
+  "locale": {
+    "label": "Langue"
+  }
+}

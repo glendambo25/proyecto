@@ -1,0 +1,50 @@
+{
+  "_meta": {
+    "status": "machine-translated, needs native review"
+  },
+  "nav": {
+    "home": "Home",
+    "tasks": "Pratiche",
+    "city": "Città",
+    "chat": "Chat",
+    "profile": "Profilo"
+  },
+  "design": {
+    "chart": "Mappa",
+    "minimal": "Minimal",
+    "label": "Direzione grafica"
+  },
+  "onboarding": {
+    "welcome": {
+      "headline1": "Tu ti trasferisci.",
+      "headline2": "Noi tracciamo",
+      "headline3": "le pratiche.",
+      "body": "I tuoi passi per la tua città, passaporto e motivo del trasferimento, nell’ordine giusto, ognuno con la fonte ufficiale e la data dell’ultima verifica.",
+      "cta": "Crea la mia checklist",
+      "demoTitle": "Oppure apri un viaggiatore demo",
+      "demoNote": "Persone fittizie, basate su casi reali di interviste."
+    }
+  },
+  "tasks": {
+    "header": {
+      "title": "{city}, tracciata per {name}.",
+      "progress": "{done} di {total, plural, one {# passo di arrivo} other {# passi di arrivo}} completati"
+    }
+  },
+  "step": {
+    "actions": {
+      "start": "Inizia",
+      "markDone": "Segna come fatto",
+      "undo": "Annulla",
+      "finishFirst": "Prima completa: {steps}"
+    }
+  },
+  "common": {
+    "verifiedSource": "Fonte ufficiale · verificata il {date}",
+    "sourcePending": "Fonte in attesa di verifica",
+    "todoVerify": "DA FARE: verificare"
+  },
+  "locale": {
+    "label": "Lingua"
+  }
+}

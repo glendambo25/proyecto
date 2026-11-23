@@ -1,0 +1,50 @@
+{
+  "_meta": {
+    "status": "machine-translated, needs native review"
+  },
+  "nav": {
+    "home": "होम",
+    "tasks": "प्रक्रियाएँ",
+    "city": "शहर",
+    "chat": "चैट",
+    "profile": "प्रोफ़ाइल"
+  },
+  "design": {
+    "chart": "चार्ट",
+    "minimal": "मिनिमल",
+    "label": "डिज़ाइन दिशा"
+  },
+  "onboarding": {
+    "welcome": {
+      "headline1": "आप शिफ्ट हो रहे हैं।",
+      "headline2": "हम संभालते हैं",
+      "headline3": "सारी कागज़ी कार्रवाई।",
+      "body": "आपके शहर, पासपोर्ट और आने के कारण के अनुसार आपके कदम, सही क्रम में, हर एक के साथ आधिकारिक स्रोत और अंतिम जाँच की तारीख।",
+      "cta": "मेरी चेकलिस्ट बनाएँ",
+      "demoTitle": "या एक डेमो यात्री खोलें",
+      "demoNote": "काल्पनिक लोग, वास्तविक साक्षात्कार मामलों पर आधारित।"
+    }
+  },
+  "tasks": {
+    "header": {
+      "title": "{city}, {name} के लिए तैयार।",
+      "progress": "{total, plural, one {# आगमन चरण} other {# आगमन चरणों}} में से {done} पूरे"
+    }
+  },
+  "step": {
+    "actions": {
+      "start": "शुरू करें",
+      "markDone": "पूरा चिह्नित करें",
+      "undo": "पूर्ववत करें",
+      "finishFirst": "पहले पूरा करें: {steps}"
+    }
+  },
+  "common": {
+    "verifiedSource": "आधिकारिक स्रोत · {date} को सत्यापित",
+    "sourcePending": "स्रोत का सत्यापन बाकी",
+    "todoVerify": "करना है: सत्यापित करें"
+  },
+  "locale": {
+    "label": "भाषा"
+  }
+}

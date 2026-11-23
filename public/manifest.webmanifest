@@ -1,6 +1,6 @@
 {
-  "name": "Arrival",
-  "short_name": "Arrival",
+  "name": "Nomad",
+  "short_name": "Nomad",
   "description": "You move. We handle the paperwork.",
   "start_url": "/home",
   "display": "standalone",

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 268 64" role="img" aria-label="Nomad">
+  <!-- Mark -->
+  <rect width="64" height="64" rx="16" fill="#111827"/>
+  <path d="M18 46 V30 a14 14 0 0 1 28 0 V40" fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="46" cy="47.5" r="4.5" fill="#4f46e5"/>
+  <!-- Wordmark "nomad": drawn with one round stroke so it needs no font -->
+  <g transform="translate(84 18)" fill="none" stroke="#111827" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M2 30 V14 a10 10 0 0 1 20 0 V30"/>
+    <circle cx="44" cy="18" r="12"/>
+    <path d="M66 30 V14 a8 8 0 0 1 16 0 V30 M82 14 a8 8 0 0 1 16 0 V30"/>
+    <circle cx="120" cy="18" r="12"/>
+    <path d="M132 6 V30"/>
+    <circle cx="156" cy="18" r="12"/>
+    <path d="M168 -8 V30"/>
+  </g>
+  <circle cx="258" cy="45.5" r="4.5" fill="#4f46e5"/>
+</svg>

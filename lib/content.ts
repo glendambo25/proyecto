@@ -7,7 +7,7 @@ import newYork from "@/content/new-york.json";
 import personasJson from "@/content/personas.json";
 import type { Destination, Nationality, Persona, Purpose, Task, TaskStatus } from "./types";
 
-export const APP_NAME = "Arrival";
+export const APP_NAME = "Nomad";
 export const TAGLINE = "You move. We handle the paperwork.";
 
 export const destinations = [madrid, turin, milan, munich, luxembourg, newYork] as unknown as Destination[];

@@ -1,6 +1,9 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { identify, track } from "./analytics";
+import { getSession, loadState, saveDoc, saveEvent, saveProfile, saveStatus, type Session } from "./db/sync";
+import { getBrowserSupabase } from "./supabase/client";
 import { buildChecklist, personas } from "./content";
 import type { Task, TaskStatus, UserProfile } from "./types";
 
@@ -72,9 +75,45 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     } catch {}
   }, [state, ready]);
 
-  const log = useCallback((type: string, data?: Record<string, unknown>) => {
-    setState((s) => ({ ...s, events: [...s.events.slice(-499), { type, ts: new Date().toISOString(), data }] }));
+  // Database (Supabase EU): when signed in, the server copy wins; local storage stays as offline cache.
+  const session = useRef<Session | null>(null);
+  useEffect(() => {
+    if (!ready) return;
+    const sb = getBrowserSupabase();
+    if (!sb) return;
+    let alive = true;
+    (async () => {
+      const s = await getSession(sb);
+      if (!alive || !s) return;
+      session.current = s;
+      identify(s.userId, s.orgId);
+      const remote = await loadState(sb, s);
+      if (!alive) return;
+      setState((cur) => ({
+        ...cur,
+        profile: remote.profile ?? cur.profile,
+        statuses: remote.profile ? remote.statuses : cur.statuses,
+        completedOn: remote.profile ? remote.completedOn : cur.completedOn,
+        docs: remote.profile ? remote.docs : cur.docs,
+      }));
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [ready]);
+  const remote = useCallback(<A extends unknown[]>(fn: (sb: NonNullable<ReturnType<typeof getBrowserSupabase>>, s: Session, ...a: A) => Promise<unknown>, ...a: A) => {
+    const sb = getBrowserSupabase();
+    if (sb && session.current) fn(sb, session.current, ...a).catch(() => {});
   }, []);
+
+  const log = useCallback(
+    (type: string, data?: Record<string, unknown>) => {
+      setState((s) => ({ ...s, events: [...s.events.slice(-499), { type, ts: new Date().toISOString(), data }] }));
+      track(type, data);
+      remote(saveEvent, type, data);
+    },
+    [remote],
+  );
 
   const startPersona = useCallback((id: string) => {
     const p = personas.find((x) => x.id === id);
@@ -104,11 +143,18 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
-  const startCustom = useCallback((profile: UserProfile) => {
-    setState({ ...empty, profile, events: [{ type: "onboarding_completed", ts: new Date().toISOString(), data: { destination: profile.destinationId } }] });
-  }, []);
+  const startCustom = useCallback(
+    (profile: UserProfile) => {
+      setState({ ...empty, profile, events: [{ type: "onboarding_completed", ts: new Date().toISOString(), data: { destination: profile.destinationId } }] });
+      track("onboarding_completed", { destination: profile.destinationId });
+      remote(saveProfile, profile);
+    },
+    [remote],
+  );
 
   const setStatus = useCallback((taskId: string, st: TaskStatus) => {
+    track("task_status", { taskId, status: st });
+    remote(saveStatus, taskId, st);
     setState((s) => ({
       ...s,
       statuses: { ...s.statuses, [taskId]: st },
@@ -116,7 +162,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       highlighted: s.highlighted.filter((h) => h !== taskId),
       events: [...s.events, { type: "task_status", ts: new Date().toISOString(), data: { taskId, status: st } }],
     }));
-  }, []);
+  }, [remote]);
 
   const addAssistant = useCallback((m: ChatMsg) => setState((s) => ({ ...s, assistant: [...s.assistant.slice(-60), m] })), []);
   const setHighlighted = useCallback((ids: string[]) => setState((s) => ({ ...s, highlighted: ids })), []);
@@ -134,8 +180,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   );
 
   const toggleDoc = useCallback(
-    (doc: string) => setState((s) => ({ ...s, docs: s.docs.includes(doc) ? s.docs.filter((d) => d !== doc) : [...s.docs, doc] })),
-    [],
+    (doc: string) =>
+      setState((s) => {
+        const ready = !s.docs.includes(doc);
+        remote(saveDoc, doc, ready);
+        return { ...s, docs: ready ? [...s.docs, doc] : s.docs.filter((d) => d !== doc) };
+      }),
+    [remote],
   );
   const setFeedback = useCallback(
     (index: number, f: "up" | "down") =>

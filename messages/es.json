@@ -1,0 +1,47 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "tasks": "Trámites",
+    "city": "Ciudad",
+    "chat": "Chat",
+    "profile": "Perfil"
+  },
+  "design": {
+    "chart": "Mapa",
+    "minimal": "Minimal",
+    "label": "Dirección de diseño"
+  },
+  "onboarding": {
+    "welcome": {
+      "headline1": "Te mudas.",
+      "headline2": "Nosotros trazamos",
+      "headline3": "el papeleo.",
+      "body": "Tus pasos según tu ciudad, pasaporte y motivo del viaje, en el orden correcto, cada uno con su fuente oficial y la fecha en que se comprobó.",
+      "cta": "Crear mi checklist",
+      "demoTitle": "O abre un viajero de demo",
+      "demoNote": "Personas ficticias, basadas en casos reales de entrevistas."
+    }
+  },
+  "tasks": {
+    "header": {
+      "title": "{city}, trazado para {name}.",
+      "progress": "{done} de {total, plural, one {# paso de llegada} other {# pasos de llegada}} hechos"
+    }
+  },
+  "step": {
+    "actions": {
+      "start": "Empezar",
+      "markDone": "Marcar como hecho",
+      "undo": "Deshacer",
+      "finishFirst": "Termina antes: {steps}"
+    }
+  },
+  "common": {
+    "verifiedSource": "Fuente oficial · verificada el {date}",
+    "sourcePending": "Fuente pendiente de verificar",
+    "todoVerify": "PENDIENTE: verificar"
+  },
+  "locale": {
+    "label": "Idioma"
+  }
+}

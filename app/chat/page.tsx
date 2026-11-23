@@ -6,6 +6,7 @@ import { ArrowRight, Search } from "lucide-react";
 import { getDestination } from "@/lib/content";
 import { threadsFor, type ChatFilter } from "@/lib/chats";
 import { useApp } from "@/lib/store";
+import { useFlag } from "@/lib/flags";
 import { Header, Tabs } from "@/components/ui";
 import Monogram from "@/components/Monogram";
 
@@ -13,10 +14,11 @@ export default function Chats() {
   const { profile } = useApp();
   const [filter, setFilter] = useState<ChatFilter>("All");
   const [q, setQ] = useState("");
+  const peopleChat = useFlag("people_chat");
   if (!profile) return null;
   const dest = getDestination(profile.destinationId);
   const all = threadsFor(dest, profile.institution);
-  const threads = all.filter((t) => (filter === "All" || t.group === filter) && (t.name + t.role).toLowerCase().includes(q.toLowerCase()));
+  const threads = peopleChat ? all.filter((t) => (filter === "All" || t.group === filter) && (t.name + t.role).toLowerCase().includes(q.toLowerCase())) : [];
 
   return (
     <main>
@@ -51,6 +53,7 @@ export default function Chats() {
         </label>
         <Tabs<ChatFilter> options={["All", "Uni", "City", "Work"]} value={filter} onChange={setFilter} />
 
+        {!peopleChat && <p className="rounded-[22px] border border-dashed border-line p-4 text-[14px] text-ink-2">Chats with mentors, your international office and partners are coming soon. The assistant above is available now.</p>}
         <ul className="divide-y divide-line overflow-hidden rounded-[22px] border border-line bg-card">
           {threads.map((t) => (
             <li key={t.id}>

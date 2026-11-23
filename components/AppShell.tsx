@@ -24,7 +24,7 @@ const TOOLS = [
   { href: "/office", label: "Office view", Icon: BarChart3 },
 ];
 
-const PUBLIC = ["/", "/onboarding", "/office"];
+const PUBLIC = ["/", "/onboarding", "/office", "/login"];
 
 function Sidebar({ path }: { path: string }) {
   const { profile, checklist, statuses } = useApp();

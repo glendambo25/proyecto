@@ -1,0 +1,47 @@
+{
+  "nav": {
+    "home": "Home",
+    "tasks": "Tasks",
+    "city": "City",
+    "chat": "Chat",
+    "profile": "Profile"
+  },
+  "design": {
+    "chart": "Chart",
+    "minimal": "Minimal",
+    "label": "Design direction"
+  },
+  "onboarding": {
+    "welcome": {
+      "headline1": "You move.",
+      "headline2": "We chart the",
+      "headline3": "paperwork.",
+      "body": "Your steps for your city, passport and reason for moving, in the order that works, each with the official source and the date it was last checked.",
+      "cta": "Build my checklist",
+      "demoTitle": "Or open a demo traveller",
+      "demoNote": "Fictional people, based on real interview cases."
+    }
+  },
+  "tasks": {
+    "header": {
+      "title": "{city}, charted for {name}.",
+      "progress": "{done} of {total, plural, one {# arrival step} other {# arrival steps}} done"
+    }
+  },
+  "step": {
+    "actions": {
+      "start": "Start",
+      "markDone": "Mark as done",
+      "undo": "Undo",
+      "finishFirst": "Finish first: {steps}"
+    }
+  },
+  "common": {
+    "verifiedSource": "Official source · verified {date}",
+    "sourcePending": "Source pending verification",
+    "todoVerify": "TODO: verify"
+  },
+  "locale": {
+    "label": "Language"
+  }
+}

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { APP_NAME, formatDate, getDestination, isBlocked } from "@/lib/content";
 import { statusOf, useApp } from "@/lib/store";
+import { useFlag } from "@/lib/flags";
 
 declare global {
   interface Window {
@@ -18,6 +19,7 @@ declare global {
  * the router for navigation, and two app tools that keep it grounded in the verified content.
  */
 export default function VoiceAgentMount() {
+  const voiceOn = useFlag("voice_agent");
   const router = useRouter();
   const app = useApp();
   const ref = useRef(app);
@@ -114,6 +116,6 @@ export default function VoiceAgentMount() {
     setConfigured(true);
   }, [router]);
 
-  if (!configured) return null;
+  if (!configured || !voiceOn) return null;
   return <Script src="/voice-agent.js" strategy="afterInteractive" />;
 }

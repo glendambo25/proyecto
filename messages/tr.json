@@ -1,0 +1,50 @@
+{
+  "_meta": {
+    "status": "machine-translated, needs native review"
+  },
+  "nav": {
+    "home": "Ana sayfa",
+    "tasks": "İşlemler",
+    "city": "Şehir",
+    "chat": "Sohbet",
+    "profile": "Profil"
+  },
+  "design": {
+    "chart": "Harita",
+    "minimal": "Minimal",
+    "label": "Tasarım yönü"
+  },
+  "onboarding": {
+    "welcome": {
+      "headline1": "Sen taşınıyorsun.",
+      "headline2": "Biz evrak işlerini",
+      "headline3": "planlıyoruz.",
+      "body": "Şehrine, pasaportuna ve taşınma nedenine göre adımların, doğru sırayla, her biri resmi kaynağı ve son kontrol tarihiyle.",
+      "cta": "Kontrol listemi oluştur",
+      "demoTitle": "Ya da bir demo yolcu aç",
+      "demoNote": "Gerçek görüşme vakalarına dayanan kurgusal kişiler."
+    }
+  },
+  "tasks": {
+    "header": {
+      "title": "{city}, {name} için planlandı.",
+      "progress": "{total, plural, other {# varış adımından}} {done} tanesi tamamlandı"
+    }
+  },
+  "step": {
+    "actions": {
+      "start": "Başla",
+      "markDone": "Tamamlandı olarak işaretle",
+      "undo": "Geri al",
+      "finishFirst": "Önce tamamla: {steps}"
+    }
+  },
+  "common": {
+    "verifiedSource": "Resmî kaynak · {date} tarihinde doğrulandı",
+    "sourcePending": "Kaynak doğrulama bekliyor",
+    "todoVerify": "YAPILACAK: doğrula"
+  },
+  "locale": {
+    "label": "Dil"
+  }
+}

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Nomad">
+  <!-- Nomad mark: a route that leaves the ground, crosses, and lands on a destination point. -->
+  <rect width="64" height="64" rx="16" fill="#111827"/>
+  <path d="M18 46 V30 a14 14 0 0 1 28 0 V40" fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="46" cy="47.5" r="4.5" fill="#4f46e5"/>
+</svg>
