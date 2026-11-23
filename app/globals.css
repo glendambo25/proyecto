@@ -211,3 +211,11 @@ body[data-va-hidden] .va-root[data-s="idle"]:not(.open) {
 .leaflet-tile-pane {
   filter: grayscale(0.85) sepia(0.15) contrast(0.95);
 }
+
+/* DEMO MODE (lib/demo.ts): keep the idle voice button visible on mobile so the presenter can tap it.
+   Never starts a call by itself; pages with their own mic (data-va-hidden) still hide it. */
+@media (max-width: 1023px) {
+  body[data-demo]:not([data-va-hidden]) .va-root[data-s="idle"] {
+    display: flex !important;
+  }
+}

@@ -16,7 +16,13 @@ export default function DemoDock() {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const read = () => setOn(isDemoMode());
+    const read = () => {
+      const demo = isDemoMode();
+      setOn(demo);
+      // CSS hook: in demo mode the idle voice button stays visible on mobile (see globals.css).
+      if (demo) document.body.dataset.demo = "1";
+      else delete document.body.dataset.demo;
+    };
     read();
     window.addEventListener("arrival-demo-change", read);
     return () => window.removeEventListener("arrival-demo-change", read);

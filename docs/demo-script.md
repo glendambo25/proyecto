@@ -128,6 +128,20 @@ Cierra el panel con ✕.
 
 ---
 
+## Si presentas con el rediseño de UX (feat/ux-intuitiva)
+
+Cuando se fusione esa rama, cambian estos clics. El texto que dices no cambia.
+
+| Escena | Clic con el rediseño |
+|---|---|
+| 1 · Onboarding | Pulsa **Explore with a demo student** y después **Priya Nair**. |
+| 2 · Siguiente paso | Tarjeta **Your next step**: ahora sale la **TIE** con **Deadline soon: do this first**, porque los plazos de 14 días o menos van delante. Di: "lo urgente primero: la TIE vence en 9 días". |
+| 3 · Dependencias | Pestaña **Tasks** → **Checklist** → **Address registration**. |
+| 4 · Asistente | Pestaña central **Ask** de la barra inferior. |
+| 5 · Voz | Botón **Talk by voice** del asistente (en móvil, el botón flotante solo aparece en modo demo). |
+| 6 · Plazo | Tarjeta **Deadlines** de la home. |
+| 7–8 · Kit y universidad | Hoja **More** (móvil) o sección **More** de la barra lateral. *Local kit* hay que moverlo allí al fusionar. |
+
 ## Qué es real y qué es simulado
 
 | En pantalla | Real o simulado |
