@@ -1,4 +1,4 @@
-# Deploy / preview
+# NOMAD — deploy / preview
 
 ## Today: GitHub Codespaces (free, private, no new accounts)
 
@@ -41,6 +41,7 @@ git merge origin/redesign/impeccable
 git push origin infra/deploy
 ```
 
+Rebase base is always `origin/redesign/impeccable` (main is behind; never deploy main).
 Existing codespaces then need `git pull && npm run build && npm start` (or just
 delete and create a new one). The two files can also be merged into any other
 branch; then use `?ref=<that-branch>` in the link.

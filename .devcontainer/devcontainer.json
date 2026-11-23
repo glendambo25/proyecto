@@ -1,15 +1,15 @@
 {
-  // Arrival preview in GitHub Codespaces: builds the app and serves it on port 3000.
+  // NOMAD preview in GitHub Codespaces: builds the app and serves it on port 3000.
   // No API keys are needed: without ANTHROPIC_API_KEY the assistant answers in offline mode.
   // See docs/deploy.md.
-  "name": "Arrival preview",
+  "name": "NOMAD preview",
   "image": "mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm",
   "hostRequirements": { "cpus": 2 },
   "postCreateCommand": "npm ci --no-audit --no-fund && npm run build",
   "postAttachCommand": { "app": "npm start" },
   "forwardPorts": [3000],
   "portsAttributes": {
-    "3000": { "label": "Arrival", "onAutoForward": "openBrowser" }
+    "3000": { "label": "NOMAD", "onAutoForward": "openBrowser" }
   },
   "customizations": {
     "codespaces": { "openFiles": ["docs/deploy.md"] }
