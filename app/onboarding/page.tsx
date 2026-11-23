@@ -6,6 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { ArrowLeft, ArrowRight, Check, ChevronDown } from "lucide-react";
 import { destinations, getDestination, personas, purposeLabel } from "@/lib/content";
 import { useApp } from "@/lib/store";
+import { withDemo } from "@/lib/demo";
 import type { Nationality, Purpose } from "@/lib/types";
 import Contours from "@/components/chart/Contours";
 import NomadLogo from "@/components/brand/NomadLogo";

@@ -35,3 +35,6 @@ next-env.d.ts
 **/.impeccable/live/*.png
 # impeccable-ignore-end
 public/_impeccable/
+
+# Demo rehearsal cache (lib/demo-cache.ts): real assistant answers saved during rehearsals
+.demo-cache/

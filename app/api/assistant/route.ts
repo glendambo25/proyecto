@@ -2,6 +2,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { NextResponse } from "next/server";
 import { askAssistant, offlineAnswer, type AssistantRequest } from "@/lib/assistant";
 import { destinations } from "@/lib/content";
+import { DEMO_ASSISTANT_TIMEOUT_MS, getCached, isDemoRequest, saveCached, withTimeout } from "@/lib/demo-cache";
 
 export const runtime = "nodejs";
 
@@ -19,9 +20,19 @@ export async function POST(req: Request) {
   if (body.nationality !== "eu" && body.nationality !== "non-eu") body.nationality = "eu";
   if (!["study", "internship", "work"].includes(body.purpose)) body.purpose = "study";
 
+  const demo = isDemoRequest(req);
   try {
-    return NextResponse.json(await askAssistant(body));
+    if (!demo) return NextResponse.json(await askAssistant(body));
+    // DEMO MODE: never hang on stage. Live answer within the time limit, saved for rehearsal replay.
+    const live = await withTimeout(askAssistant(body), DEMO_ASSISTANT_TIMEOUT_MS);
+    saveCached(body, live);
+    return NextResponse.json(live);
   } catch (error) {
+    if (demo) {
+      const cached = getCached(body);
+      console.warn(`[assistant] demo fallback (${cached ? "cached rehearsal answer" : "offline answer"}):`, (error as Error)?.message);
+      if (cached) return NextResponse.json({ ...cached, cached: true });
+    }
     // Fall back to the offline, source-cited answer so the demo never breaks.
     if (error instanceof Anthropic.AuthenticationError) console.error("[assistant] invalid ANTHROPIC_API_KEY");
     else if (error instanceof Anthropic.RateLimitError) console.error("[assistant] rate limited");

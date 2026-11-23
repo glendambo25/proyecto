@@ -5,6 +5,7 @@ import { useMemo } from "react";
 import { buildChecklist, destinations, getDestination } from "@/lib/content";
 import { useApp } from "@/lib/store";
 import type { Task } from "@/lib/types";
+import DemoOfficePanel from "@/components/DemoOfficePanel";
 
 /** Deterministic pseudo-random generator so the simulated cohort is the same on every load. */
 function rng(seed: number) {
@@ -68,13 +69,15 @@ export default function Office() {
         <div>
           <p className="eyebrow">International office · B2B view</p>
           <h1 className="display mt-2 text-[44px]">
-            Outgoing students, <em className="text-accent">at a glance</em>
+            Your students, <em className="text-accent">at a glance</em>
           </h1>
         </div>
         <Link href="/home" className="btn-ghost">
           ← Back to student app
         </Link>
       </header>
+
+      <DemoOfficePanel />
 
       <p className="rounded-2xl border border-dashed border-stamp/40 bg-stamp-soft px-4 py-3 font-mono text-[11px] leading-relaxed text-stamp">
         <b>Simulated cohort (demo data)</b> to show what the office would see during the pilot. “Hours saved” uses per-step estimates that are hypotheses to validate, not measured results.

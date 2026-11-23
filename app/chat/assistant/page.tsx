@@ -61,7 +61,7 @@ function Assistant() {
       const history = assistant.slice(-6).map((m) => ({ role: m.role, text: m.text }));
       const j = await requestAnswer({ question, destinationId: profile.destinationId, nationality: profile.nationality, purpose: profile.purpose, statuses, history });
       setFresh(assistant.length + 1);
-      addAssistant({ role: "assistant", text: j.answer, sources: j.sources, covered: j.covered, offline: j.offline, missingTaskIds: j.missingTaskIds, ts: new Date().toISOString() });
+      addAssistant({ role: "assistant", text: j.answer, sources: j.sources, covered: j.covered, offline: j.offline, cached: j.cached, missingTaskIds: j.missingTaskIds, ts: new Date().toISOString() });
       if (j.missingTaskIds?.length) setHighlighted(j.missingTaskIds);
       log("assistant_answer", { covered: j.covered, offline: j.offline });
     } catch {
@@ -202,7 +202,7 @@ function Assistant() {
                 >
                   {copied === i ? <Check size={14} /> : <Copy size={14} />}
                 </button>
-                {m.offline && <span className="ms-auto text-[12px]">Offline mode</span>}
+                {(m.offline || m.cached) && <span className="ms-auto text-[12px]">{m.offline ? "Offline mode" : "Cached answer (demo)"}</span>}
               </div>
             </article>
           ),

@@ -8,6 +8,7 @@ import { statusOf, useApp } from "@/lib/store";
 import { useFlag } from "@/lib/flags";
 import { STATIC_EXPORT } from "@/lib/runtime";
 import { requestAnswer } from "@/lib/assistant-client";
+import { DEMO_QUESTIONS, isDemoMode } from "@/lib/demo";
 
 declare global {
   interface Window {
@@ -37,13 +38,24 @@ export default function VoiceAgentMount() {
       };
       return;
     }
+    /** Ask /api/assistant (live Claude → demo cache → offline verified answer) and mirror it in the assistant chat. */
+    const askVerified = async (question: string) => {
+      const { profile, statuses, addAssistant, setHighlighted, log } = ref.current;
+      if (!profile) throw new Error("no profile yet");
+      const j = await requestAnswer({ question, destinationId: profile.destinationId, nationality: profile.nationality, purpose: profile.purpose, statuses });
+      addAssistant({ role: "user", text: `🎙️ ${question}` });
+      addAssistant({ role: "assistant", text: j.answer, sources: j.sources, covered: j.covered, offline: j.offline, cached: j.cached });
+      if (j.missingTaskIds?.length) setHighlighted(j.missingTaskIds);
+      log("assistant_question", { channel: "voice", covered: j.covered });
+      return j;
+    };
     window.VoiceAgentConfig = {
       language: "en",
       name: `${APP_NAME} voice assistant`,
       speak: "Speak English.",
       navigate: (url: string) => router.push(url),
       context:
-        "Arrival helps students, interns and workers moving abroad with their paperwork: a personalised checklist in the right order (with dependencies), each step with its official source and last-verified date, a 24/7 assistant, local mentors and a city guide.",
+        `${APP_NAME} helps students, interns and workers moving abroad with their paperwork: a personalised checklist in the right order (with dependencies), each step with its official source and last-verified date, a 24/7 assistant, local mentors and a city guide.`,
       pages: [
         { url: "/home", title: "Home", description: "Greeting, overall progress and the list of steps with their status" },
         { url: "/tasks", title: "Tasks", description: "Full checklist in order, the dependency map (what unlocks what) and return reminders" },
@@ -52,6 +64,9 @@ export default function VoiceAgentMount() {
         { url: "/chat/assistant", title: "AI assistant", description: "Text assistant that answers with official source and date" },
         { url: "/profile", title: "Profile", description: "Personal details, destination, documents, preferences, demo profile switch" },
         { url: "/plans", title: "Plans", description: "Free, Premium pack and Done for you (prices are hypotheses)" },
+        { url: "/deadlines", title: "Deadlines", description: "Legal deadlines estimated from the arrival date, with calendar export" },
+        { url: "/kit", title: "Local kit", description: "Starter kit for the city: transport pass, bank account, padron, SIM (partner offers are demo)" },
+        { url: "/office", title: "Office view", description: "University view: cohort progress and students at risk" },
       ],
       rules: [
         "For any question about requirements, documents, deadlines, costs, offices or order of steps, ALWAYS call ask_verified_assistant and answer only from its result. If it returns covered=false, say you don't have a verified official source for this yet and offer an advisor.",
@@ -95,13 +110,8 @@ export default function VoiceAgentMount() {
             parameters: { type: "object", properties: { question: { type: "string" } }, required: ["question"] },
           },
           run: async ({ question }: { question: string }) => {
-            const { profile, statuses, addAssistant, setHighlighted, log } = ref.current;
-            if (!profile) return { ok: false, error: "no profile yet" };
-            const j = await requestAnswer({ question, destinationId: profile.destinationId, nationality: profile.nationality, purpose: profile.purpose, statuses });
-            addAssistant({ role: "user", text: `🎙️ ${question}` });
-            addAssistant({ role: "assistant", text: j.answer, sources: j.sources, covered: j.covered, offline: j.offline });
-            if (j.missingTaskIds?.length) setHighlighted(j.missingTaskIds);
-            log("assistant_question", { channel: "voice", covered: j.covered });
+            if (!ref.current.profile) return { ok: false, error: "no profile yet" };
+            const j = await askVerified(question);
             return {
               ok: true,
               answer: j.answer,
@@ -116,6 +126,18 @@ export default function VoiceAgentMount() {
           },
         },
       ],
+      // DEMO MODE (lib/demo.ts): never hang on stage. If Realtime can't connect in 9 s, the panel switches to a
+      // SIMULATED voice (browser speech) that answers with the same verified assistant (/api/assistant).
+      demo: () => isDemoMode(),
+      connectTimeoutMs: 9000,
+      fallback: async (question: string) => {
+        const j = await askVerified(question);
+        const src = (j.sources ?? [])[0] as { name: string; lastVerified: string | null } | undefined;
+        return src ? `${j.answer}
+
+Source: ${src.name}${src.lastVerified ? `, checked ${formatDate(src.lastVerified)}` : ""}.` : j.answer;
+      },
+      fallbackSuggestions: [DEMO_QUESTIONS.voice, "What should I do next?"],
       onEvent: (e: { type: string }) => ref.current.log(`voice_${e.type}`),
     };
     setConfigured(true);

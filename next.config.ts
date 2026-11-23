@@ -11,6 +11,8 @@ const basePath = process.env.NEXT_PUBLIC_BASE_PATH || undefined;
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   ...(isStatic ? { output: "export" as const, basePath, images: { unoptimized: true } } : {}),
+  // Hides the dev-mode "N" badge so it does not show during live demos (npm run dev).
+  devIndicators: false,
 };
 
 export default withNextIntl(nextConfig);
