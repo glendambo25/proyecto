@@ -16,7 +16,7 @@ const plexMono = IBM_Plex_Mono({ subsets: ["latin"], weight: ["400", "500"], var
 export const metadata: Metadata = {
   title: "Nomad – You move. We handle the paperwork.",
   description: "Personalised arrival checklist, verified answers and local help for students and interns moving abroad.",
-  manifest: "/manifest.webmanifest",
+  manifest: `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/manifest.webmanifest`,
 };
 
 export const viewport: Viewport = {

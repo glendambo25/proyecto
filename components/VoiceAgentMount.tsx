@@ -6,6 +6,8 @@ import { useEffect, useRef, useState } from "react";
 import { APP_NAME, formatDate, getDestination, isBlocked } from "@/lib/content";
 import { statusOf, useApp } from "@/lib/store";
 import { useFlag } from "@/lib/flags";
+import { STATIC_EXPORT } from "@/lib/runtime";
+import { requestAnswer } from "@/lib/assistant-client";
 
 declare global {
   interface Window {
@@ -27,6 +29,14 @@ export default function VoiceAgentMount() {
   const [configured, setConfigured] = useState(false);
 
   useEffect(() => {
+    if (STATIC_EXPORT) {
+      // Static hosting has no server to mint the OpenAI session key: voice buttons explain instead of failing silently.
+      window.VoiceAgent = {
+        start: () => window.alert("Voice is available in the full version of Nomad. Here, use the text assistant."),
+        stop: () => {},
+      };
+      return;
+    }
     window.VoiceAgentConfig = {
       language: "en",
       name: `${APP_NAME} voice assistant`,
@@ -87,12 +97,7 @@ export default function VoiceAgentMount() {
           run: async ({ question }: { question: string }) => {
             const { profile, statuses, addAssistant, setHighlighted, log } = ref.current;
             if (!profile) return { ok: false, error: "no profile yet" };
-            const r = await fetch("/api/assistant", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ question, destinationId: profile.destinationId, nationality: profile.nationality, purpose: profile.purpose, statuses }),
-            });
-            const j = await r.json();
+            const j = await requestAnswer({ question, destinationId: profile.destinationId, nationality: profile.nationality, purpose: profile.purpose, statuses });
             addAssistant({ role: "user", text: `🎙️ ${question}` });
             addAssistant({ role: "assistant", text: j.answer, sources: j.sources, covered: j.covered, offline: j.offline });
             if (j.missingTaskIds?.length) setHighlighted(j.missingTaskIds);
@@ -116,6 +121,6 @@ export default function VoiceAgentMount() {
     setConfigured(true);
   }, [router]);
 
-  if (!configured || !voiceOn) return null;
+  if (STATIC_EXPORT || !configured || !voiceOn) return null;
   return <Script src="/voice-agent.js" strategy="afterInteractive" />;
 }
